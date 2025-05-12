@@ -9,8 +9,7 @@
     "dev": "vite",
     "dist-extension": "vite build && node extension.js",
     "dist-android": "vite build && npx cap sync",
-    "generate-assets": "npx @capacitor/assets generate --android --assetPath files/png/assets --iconBackgroundColor #9016ff --splashBackgroundColor #9016ff --splashBackgroundColorDark #9016ff",
-    "start": "vite build && electron ."
+    "generate-assets": "npx @capacitor/assets generate --android --assetPath files/png/assets --iconBackgroundColor #9016ff --splashBackgroundColor #9016ff --splashBackgroundColorDark #9016ff"
   },
   "dependencies": {
     "@tweenjs/tween.js": "^25.0.0",

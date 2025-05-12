@@ -1,10 +1,12 @@
 <script setup>
-  import '../../v2/src/scss/Global.scss';
-  import { onMounted, onUnmounted, shallowReactive, reactive, ref, watch } from 'vue';
+  import '../scss/Global.scss';
+  import { onMounted, onUnmounted } from 'vue';
+  import { useRoute } from 'vue-router'
   import { useI18n } from 'vue-i18n';
 
   // Initialize components
   const i18n = useI18n();
+  const route = useRoute();
 
   function onLoad() {
     
@@ -20,7 +22,14 @@
 </script>
 
 <template>
-
+  <!-- Render page component using Routes.js -->
+  <div class="page" :class="route.name">
+    <router-view v-slot="{ Component }">
+      <transition name="fade">
+        <component :is="Component" />
+      </transition>
+    </router-view>
+  </div>
 </template>
 
 <style lang="scss" scoped>
