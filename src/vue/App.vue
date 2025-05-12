@@ -3,14 +3,14 @@
   import { onMounted, onUnmounted } from 'vue';
   import { useRoute } from 'vue-router'
   import { useI18n } from 'vue-i18n';
+  import { Game } from '../js/Game.js';
 
   // Initialize components
   const i18n = useI18n();
   const route = useRoute();
+  const game = window.game = new Game();
 
-  function onLoad() {
-    
-  }
+  game.assets.load('../png/icon.png');
 
   onMounted(function() {
     
