@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Boxel Arcade",
+  "description": "Boxel Arcade is a speedrunning arcade game.",
+  "version": "0.0.1",
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Boxel Arcade"
+  },
+  "icons": { 
+    "16": "png/icon16.png", 
+    "32": "png/icon32.png",
+    "48": "png/icon48.png", 
+    "128": "png/icon128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval';"
+  },
+  "permissions": [
+    "storage"
+  ]
+}
