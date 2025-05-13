@@ -10,7 +10,11 @@
   const route = useRoute();
   const game = window.game = new Game();
 
-  game.assets.load('../png/icon.png');
+  game.assets.addEventListener('onProgress', e => console.log(e));
+  game.assets.load([
+    '../png/icon.png',
+    '../ogg/click.ogg'
+  ], () => console.log(Object.keys(game.assets.cache)));
 
   onMounted(function() {
     
