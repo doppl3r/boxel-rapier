@@ -10,11 +10,18 @@
   const route = useRoute();
   const game = window.game = new Game();
 
+  // Listen to asset events
+  game.assets.addEventListener('onStart', e => console.log(e));
   game.assets.addEventListener('onProgress', e => console.log(e));
-  game.assets.load([
-    '../png/icon.png',
-    '../ogg/click.ogg'
-  ], () => console.log(Object.keys(game.assets.cache)));
+  game.assets.addEventListener('onLoad', e => console.log(e));
+  game.assets.addEventListener('onError', e => console.error(e));
+
+  // Load batch of assets
+  game.assets.loadBatch([
+      '../png/icon.png',
+      '../ogg/click.ogg'
+    ]
+  );
 
   onMounted(function() {
     

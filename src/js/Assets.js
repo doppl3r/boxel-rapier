@@ -1,4 +1,4 @@
-import { AudioListener, AudioLoader, EventDispatcher, TextureLoader } from 'three';
+import { Audio, AudioListener, AudioLoader, EventDispatcher, LoadingManager, TextureLoader } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 class Assets extends EventDispatcher {
@@ -9,11 +9,18 @@ class Assets extends EventDispatcher {
     // Store assets in memory
     this.cache = {};
     
-    // Define components
+    // Define manager and assign callbacks
+    this.manager = new LoadingManager();
+    this.manager.onStart = (url, index, total) => this.dispatchEvent({ type: 'onStart', url, index, total });
+    this.manager.onLoad = () => this.dispatchEvent({ type: 'onLoad' });
+    this.manager.onProgress = (url, index, total) => this.dispatchEvent({ type: 'onProgress', url, index, total });
+    this.manager.onError = url => this.dispatchEvent({ type: 'onError', url });
+    
+    // Initialize loaders with manager
     this.audioListener = new AudioListener();
-    this.audioLoader = new AudioLoader();
-    this.modelLoader = new GLTFLoader()
-    this.textureLoader = new TextureLoader();
+    this.audioLoader = new AudioLoader(this.manager);
+    this.modelLoader = new GLTFLoader(this.manager)
+    this.textureLoader = new TextureLoader(this.manager);
 
     // Acceptable file types
     this.types = {
@@ -23,43 +30,29 @@ class Assets extends EventDispatcher {
     }
   }
 
-  load(url, onLoad) {
-    // Load url array promises
-    if (Array.isArray(url)) {
-      const promises = url.map(path => this.load(path));
-      this.track(promises);
-      return Promise.all(promises).then(onLoad).catch(err => console.error(err));
-    }
-
+  load(url) {
     // Get file details
     const fileType = url.substring(url.lastIndexOf('.') + 1);
     const fileName = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.'));
-    let loader, promise;
 
     // Assign loader by file type
-    if (this.types.audio.includes(fileType)) loader = this.audioLoader;
-    else if (this.types.models.includes(fileType)) loader = this.modelLoader;
-    else if (this.types.textures.includes(fileType)) loader = this.textureLoader;
-
-    // Return promise from loader
-    if (loader) {
-      promise = loader.loadAsync(url)
-        .then(value => { this.set(fileName, value); return url; })
-        .catch(() => { console.error(`File "${ url }" not found`); return url; });
+    if (this.types.audio.includes(fileType)) {
+      const audio = new Audio(this.audioListener);
+      this.audioLoader.load(url, buffer => this.set(fileName, audio.setBuffer(buffer)));
     }
-    return promise;
+    else if (this.types.models.includes(fileType)) {
+      this.modelLoader.load(url, gltf => this.set(fileName, gltf.scene));
+    }
+    else if (this.types.textures.includes(fileType)) {
+      this.textureLoader.load(url, texture => this.set(fileName, texture));
+    }
+    else {
+      console.error(`File type ".${ fileType }" not supported`)
+    }
   }
 
-  track(promises) {
-    let length = promises.length;
-    promises.forEach(promise =>
-      promise.then(url => this.dispatchEvent({
-        type: 'onProgress',
-        url: url,
-        loaded: promises.length - (--length),
-        total: promises.length
-      }))
-    );
+  loadBatch(urls) {
+    urls.forEach(path => this.load(path));
   }
 
   set(key, value) {
