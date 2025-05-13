@@ -14,12 +14,12 @@
   game.assets.addEventListener('onStart', e => console.log(e));
   game.assets.addEventListener('onProgress', e => console.log(e));
   game.assets.addEventListener('onLoad', e => console.log(e));
-  game.assets.addEventListener('onError', e => console.error(e));
 
   // Load batch of assets
   game.assets.loadBatch([
       '../png/icon.png',
-      '../ogg/click.ogg'
+      '../ogg/click.ogg',
+      '../glb/player.glb'
     ]
   );
 
