@@ -1,10 +1,10 @@
 /*
   Executes single or multiple functions at a recurring frequency. The first
-  action determines the shared alpha value for all sibling functions.
+  or "base" loop determines the shared alpha value for all sibling functions.
 
-  Tip: Add your physics function first (ex: 30hz), then add the rendering
-  function at a higher frequency (ex: -1 = unlimited). Use the alpha value
-  to interpolate rendered objects between engine steps.
+  Tip: Add your physics loop first (ex: 1000ms / 30fps), then add the
+  rendering loop without any delay. Use the alpha value to interpolate
+  rendered objects during your physics engine delay.
 
   Clock credit: mrdoob
 */
