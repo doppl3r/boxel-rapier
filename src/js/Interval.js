@@ -17,8 +17,7 @@ class Interval {
 
   add(callback, delay) {
     // Create a loop with a callback and delay (milliseconds)
-    const loop = new Loop(callback, delay);
-    return this.loops.push(loop) - 1; // Return loop index
+    return this.loops.push({ callback, delay, sum: 0, alpha: 0, frame: 0 }) - 1;
   }
 
   get(i) {
@@ -44,9 +43,9 @@ class Interval {
         // Add delta time to sum
         this.loops[i].sum += delta;
 
-        // Trigger loop callback and keep sum remainder
+        // Trigger loop callback
         if (this.loops[i].sum >= this.loops[i].delay) {
-          this.loops[i].callback(this.loops[i].sum - delta, alpha, this.loops[i].frame++);
+          this.loops[i].callback(this.loops[i].sum, alpha);
           this.loops[i].sum %= this.loops[i].delay;
         }
       }
@@ -55,7 +54,7 @@ class Interval {
 
   start() {
     this.running = true;
-    this.loops.forEach(loop => loop.reset());
+    this.loops.forEach(loop => loop.sum = loop.alpha = loop.frame = 0);
     
     // Start thread after the first animation frame
     const thread = timestamp => this.update(thread, timestamp);
@@ -64,29 +63,6 @@ class Interval {
 
   stop() {
     this.running = false;
-  }
-}
-
-/*
-  A loop triggers a callback after a specific time delay (milliseconds).
-  The delay is measured by delay over 1 second.
-  
-  Ex: delay (60fps): 1000ms / 60 frames = 16ms
-*/
-
-class Loop {
-  constructor(callback = () => {}, delay = -1) {
-    this.delay = delay;
-    this.sum = 0;
-    this.alpha = 0;
-    this.frame = 0;
-    this.callback = callback;
-  }
-
-  reset() {
-    this.sum = 0;
-    this.alpha = 0;
-    this.frame = 0;
   }
 }
 

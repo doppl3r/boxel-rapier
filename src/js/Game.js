@@ -13,18 +13,21 @@ class Game {
     console.log(this.scene);
   }
 
-  update(delta, alpha, frame ) {
-    console.log(delta, alpha, frame);
+  update(delta, alpha) {
+    console.log('interval', delta, alpha);
   }
   
-  render(delta, alpha, frame) {
-    //console.log(delta, alpha, frame);
+  render(delta, alpha) {
+    //console.log(delta, alpha);
   }
 
   start() {
-    this.interval.add((delta, alpha, frame) => this.update(delta, alpha, frame), 1000 / 1);
-    this.interval.add((delta, alpha, frame) => this.render(delta, alpha, frame));
-    this.interval.start()
+    this.interval.add((delta, alpha) => this.update(delta, alpha), 1000 / 1);
+    this.interval.add((delta, alpha) => this.render(delta, alpha));
+    this.interval.start();
+
+    let i = 0;
+    //setInterval(() => console.log('setInterval', i++), 1000 / 4);
   }
 }
 
