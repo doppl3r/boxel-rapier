@@ -12,12 +12,11 @@ class Interval {
     this.loops = [];
     this.speed = 1;
     this.running = false;
-    this.timestamp = 0;
   }
 
-  add(callback, delay) {
+  add(callback, delay = -1) {
     // Create a loop with a callback and delay (milliseconds)
-    return this.loops.push({ callback, delay, sum: 0, alpha: 0, frame: 0 }) - 1;
+    return this.loops.push({ callback, delay, sum: 0, alpha: 0 });
   }
 
   get(i) {
@@ -45,7 +44,8 @@ class Interval {
 
         // Trigger loop callback
         if (this.loops[i].sum >= this.loops[i].delay) {
-          this.loops[i].callback(this.loops[i].sum, alpha);
+          this.loops[i].alpha = alpha;
+          this.loops[i].callback(this.loops[i]);
           this.loops[i].sum %= this.loops[i].delay;
         }
       }
@@ -54,7 +54,7 @@ class Interval {
 
   start() {
     this.running = true;
-    this.loops.forEach(loop => loop.sum = loop.alpha = loop.frame = 0);
+    this.loops.forEach(loop => loop.delta = loop.alpha = loop.frame = 0);
     
     // Start thread after the first animation frame
     const thread = timestamp => this.update(thread, timestamp);

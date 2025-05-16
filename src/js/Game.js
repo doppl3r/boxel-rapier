@@ -13,17 +13,17 @@ class Game {
     console.log(this.scene);
   }
 
-  update(delta, alpha) {
-    console.log('interval', delta, alpha);
+  update({ delay, alpha }) {
+    console.log(delay, alpha);
   }
   
-  render(delta, alpha) {
+  render({ delta, alpha }) {
     //console.log(delta, alpha);
   }
 
   start() {
-    this.interval.add((delta, alpha) => this.update(delta, alpha), 1000 / 1);
-    this.interval.add((delta, alpha) => this.render(delta, alpha));
+    this.interval.add(loop => this.update(loop), 1000 / 1);
+    this.interval.add(loop => this.render(loop));
     this.interval.start();
 
     let i = 0;
