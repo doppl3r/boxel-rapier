@@ -26,7 +26,7 @@ class Game {
     this.interval.start();
 
     //let i = 0;
-    //setInterval(() => console.log('setInterval', i++), 1000 / 4);
+    //setInterval(() => console.log('setInterval', ++i), 1000 / 1);
     //setTimeout(() => this.interval.start(), 1000 / 1);
   }
 }
