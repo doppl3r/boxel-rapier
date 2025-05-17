@@ -10,24 +10,24 @@ class Game {
 
     // TODO: Remove test
     this.start();
-    console.log(this.scene);
   }
 
-  update({ delay, alpha }) {
-    console.log(delay, alpha);
+  update({ delta, alpha }) {
+    console.log('update', delta, alpha);
   }
   
   render({ delta, alpha }) {
-    //console.log(delta, alpha);
+    console.log('render', delta, alpha);
   }
 
   start() {
     this.interval.add(loop => this.update(loop), 1000 / 1);
-    this.interval.add(loop => this.render(loop));
+    this.interval.add(loop => this.render(loop), 1000 / 4);
     this.interval.start();
 
-    let i = 0;
+    //let i = 0;
     //setInterval(() => console.log('setInterval', i++), 1000 / 4);
+    //setTimeout(() => this.interval.start(), 1000 / 1);
   }
 }
 
