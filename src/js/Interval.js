@@ -13,7 +13,7 @@ class Interval {
     this.speed = 1;
     this.thread = () => {};
     this.threadTimestamp = 0;
-    this.threadRunning = 0;
+    this.threadRunning =false;
   }
 
   add(callback, delay = -1) {
@@ -42,7 +42,7 @@ class Interval {
   }
 
   update(timestamp) {
-    if (this.threadRunning == true) {
+    if (this.threadRunning === true) {
       // Rerun thread on next repaint
       requestAnimationFrame(this.thread);
 
