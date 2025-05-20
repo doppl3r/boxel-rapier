@@ -10,7 +10,7 @@ class Game {
 
     // TODO: Remove tests
     this.start();
-    this.scene.load();
+    this.scene.load('./json/level-1.json');
   }
 
   update({ delta }) {

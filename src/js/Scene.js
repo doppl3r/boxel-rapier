@@ -1,8 +1,10 @@
 import { EventQueue, World } from '@dimforge/rapier3d';
+import { ObjectAssignDeep } from './ObjectAssignDeep.js'
 import { Graphics } from './Graphics.js';
 import { Debugger } from './Debugger.js'
 import { Entity } from './Entity.js'
 import { EntityHelper } from './EntityHelper.js'
+import { EntityTemplates } from './EntityTemplates.js'
 
 class Scene {
   constructor() {
@@ -71,9 +73,15 @@ class Scene {
 
   }
 
-  load(json) {
+  async load(url) {
     const entity = this.create();
-    console.log(entity);
+    const json = await (await fetch('./json/level-1.json')).json();
+
+    json.children.forEach(child => {
+      // Merge options from template
+      const options = ObjectAssignDeep(EntityTemplates['cuboid'], child.body);
+      console.log(options);
+    });
   }
 }
 
