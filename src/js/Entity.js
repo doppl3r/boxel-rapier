@@ -27,7 +27,10 @@ class Entity extends EventDispatcher {
     this.type = options.type;
     this.object3D;
     this.rigidBody;
-    this.rigidBodySnapshot;
+    this.rigidBodySnapshot = {
+      position: new Vector3(),
+      rotation: new Quaternion()
+    };
   }
 
   update(delta) {
@@ -43,8 +46,8 @@ class Entity extends EventDispatcher {
   }
 
   lerp3DObject(alpha = 0) {
-    this.object3D?.position.lerpVectors(this.rigidBodySnapshot?.positionPrev, this.rigidBodySnapshot?.position, alpha);
-    this.object3D?.quaternion.slerpQuaternions(this.rigidBodySnapshot?.rotationPrev, this.rigidBodySnapshot?.rotation, alpha);
+    this.object3D?.position.lerpVectors(this.rigidBodySnapshot?.position, this.getPosition(), alpha);
+    this.object3D?.quaternion.slerpQuaternions(this.rigidBodySnapshot?.rotation, this.getRotation(), alpha);
   }
 
   setRigidBody(rigidBody) {
@@ -52,21 +55,23 @@ class Entity extends EventDispatcher {
   }
 
   getPosition() {
+    if (this.rigidBody?.isKinematic()) return this.rigidBody?.nextTranslation();
     return this.rigidBody?.translation();
   }
 
   setPosition(position) {
-    this.rigidBody?.setTranslation(position);
+    if (this.rigidBody?.isKinematic()) this.rigidBody?.setNextKinematicTranslation(position);
+    else this.rigidBody?.setTranslation(position);
   }
 
   getRotation() {
-    const rotation = this.rigidBody?.rotation()
-    if (this.rigidBody?.isKinematic()) rotation = this.rigidBody?.nextRotation()
-    return rotation;
+    if (this.rigidBody?.isKinematic()) return this.rigidBody?.nextRotation();
+    return this.rigidBody?.rotation();
   }
 
   setRotation(rotation) {
-    this.rigidBody?.setRotation(rotation);
+    if (this.rigidBody?.isKinematic()) this.rigidBody?.setNextKinematicRotation(rotation);
+    else this.rigidBody?.setRotation(rotation);
   }
 }
 

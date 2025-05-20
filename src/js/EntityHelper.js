@@ -64,6 +64,7 @@ class EntityHelper {
       translation: { x: 0, y: 0, z: 0 }
     }, options);
 
+    // Create collider description using shape "type" (ex: "cuboid") with parameters (ex: 0.5, 0.5, 0.5)
     const colliderDesc = ColliderDesc[options.shapeDesc[0]](...options.shapeDesc.slice(1));
     colliderDesc.setActiveCollisionTypes(isNaN(options.activeCollisionTypes) ? ActiveCollisionTypes[options.activeCollisionTypes] : options.activeCollisionTypes);
     colliderDesc.setActiveEvents(isNaN(options.activeEvents) ? ActiveEvents[options.activeEvents] : options.activeEvents);

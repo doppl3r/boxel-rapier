@@ -51,14 +51,29 @@ class Scene {
     });
   }
 
-  create(options) {
-    const object3D = EntityHelper.create3DObject();
-    const rigidBodyDesc = EntityHelper.createRigidBodyDesc({});
-    const rigidBody = EntityHelper.createRigidBody(rigidBodyDesc, this.world);
-    const colliderDesc = EntityHelper.createColliderDesc({ shapeDesc: ['cuboid', 0.5, 0.5, 0.5] });
-    const collider = EntityHelper.createCollider(colliderDesc, rigidBody, this.world);
-    const entity = new Entity();
+  async load(url) {
+    const json = await (await fetch(url)).json();
 
+    json.children.forEach(child => {
+      // Merge options from template
+      const options = ObjectAssignDeep(EntityTemplates[child.template], child);
+      const entity = this.create(options);
+      this.add(entity);
+    });
+  }
+
+  create(options) {
+    const entity = new Entity(options);
+    const object3D = EntityHelper.create3DObject();
+    const rigidBodyDesc = EntityHelper.createRigidBodyDesc(options.body);
+    const rigidBody = EntityHelper.createRigidBody(rigidBodyDesc, this.world);
+
+    // Create colliders from array
+    options.colliders.forEach(colliderOptions => {
+      const colliderDesc = EntityHelper.createColliderDesc(colliderOptions);
+      EntityHelper.createCollider(colliderDesc, rigidBody, this.world);
+    })
+    
     // Assign components to entity
     entity.set3DObject(object3D);
     entity.setRigidBody(rigidBody);
@@ -66,22 +81,19 @@ class Scene {
   }
 
   add(entity) {
-    
+    this.entities.set(entity.id, entity);
+    this.graphics.scene.add(entity.object3D);
+
+    console.log(entity);
   }
 
   remove(entity) {
+    this.entities.delete(entity.id);
+    this.graphics.scene.remove(entity.object3D);
 
-  }
-
-  async load(url) {
-    const entity = this.create();
-    const json = await (await fetch('./json/level-1.json')).json();
-
-    json.children.forEach(child => {
-      // Merge options from template
-      const options = ObjectAssignDeep(EntityTemplates['cuboid'], child.body);
-      console.log(options);
-    });
+    // Dispatch 'removed' event to observers
+    entity.dispatchEvent({ type: 'removed' });
+    return entity;
   }
 }
 

@@ -1,19 +1,40 @@
-
 class EntityTemplates {
   constructor() {
 
   }
 
-  static cuboid = {
+  static cube = {
     body: {
-      position: { x: 0, y: 0, z: 0 },
-      status: 1
+      status: 1 // Fixed
     },
     colliders: [
       {
         shapeDesc: ['cuboid', 0.5, 0.5, 0.5]
       }
-    ]
+    ],
+    name: 'cube',
+    object3d: {
+      model: {
+        name: 'cube'
+      }
+    }
+  }
+
+  static player = {
+    body: {
+      status: 2 // KinematicPositionBased
+    },
+    colliders: [
+      {
+        shapeDesc: ['cuboid', 0.375, 0.375, 0.375]
+      }
+    ],
+    name: 'player',
+    object3d: {
+      model: {
+        name: 'player'
+      }
+    }
   }
 }
 
