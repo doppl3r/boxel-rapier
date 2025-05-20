@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import App from '../vue/App.vue'
 import i18n from './i18n.js';
-import Routes from './routes/Routes.js'
+import Routes from './Routes.js'
 
 /*
   Router history modes

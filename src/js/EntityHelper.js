@@ -87,21 +87,6 @@ class EntityHelper {
   static createShape(...args) {
     return ColliderDesc[args[0]](...args.slice(1));
   }
-
-  static createRigidBodySnapshot() {
-    return {
-      position_1: new Vector3(),
-      position_2: new Vector3(),
-      rotation_1: new Quaternion(),
-      rotation_2: new Quaternion()
-    };
-  }
-
-  static lerpObject3D(object, alpha = 0) {
-    // Linear interpolation using alpha value
-    this.object.position.lerpVectors(this.snapshot.position_1, this.snapshot.position_2, alpha);
-    this.object.quaternion.slerpQuaternions(this.snapshot.rotation_1, this.snapshot.rotation_2, alpha);
-  }
 }
 
 // Assign local helper components

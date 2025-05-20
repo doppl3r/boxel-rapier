@@ -1,4 +1,4 @@
-import PageHome from '../../vue/PageHome.vue'
+import PageHome from '../vue/PageHome.vue'
 
 /*
   Vue Router is used to change page components using URL paths. This solution 
