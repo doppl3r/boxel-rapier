@@ -27,7 +27,9 @@ class Entity extends EventDispatcher {
     this.type = options.type;
     this.object3D;
     this.rigidBody;
-    this.rigidBodySnapshot = {
+    this.snapshot = {
+      positionPrev: new Vector3(),
+      rotationPrev: new Quaternion(),
       position: new Vector3(),
       rotation: new Quaternion()
     }
@@ -47,14 +49,16 @@ class Entity extends EventDispatcher {
   
   takeSnapshot() {
     if (this.rigidBody) {
-      this.rigidBodySnapshot.position.copy(this.getPosition());
-      this.rigidBodySnapshot.rotation.copy(this.getRotation());
+      this.snapshot.positionPrev.copy(this.snapshot.position);
+      this.snapshot.rotationPrev.copy(this.snapshot.rotation);
+      this.snapshot.position.copy(this.getPosition());
+      this.snapshot.rotation.copy(this.getRotation());
     }
   }
 
   lerp3DObject(alpha = 0) {
-    this.object3D?.position.lerpVectors(this.rigidBodySnapshot.position, this.getPosition(), alpha);
-    this.object3D?.quaternion.slerpQuaternions(this.rigidBodySnapshot.rotation, this.getRotation(), alpha);
+    this.object3D?.position.lerpVectors(this.snapshot.positionPrev, this.snapshot.position, alpha);
+    this.object3D?.quaternion.slerpQuaternions(this.snapshot.rotationPrev, this.snapshot.rotation, alpha);
   }
 
   setRigidBody(rigidBody) {

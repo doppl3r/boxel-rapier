@@ -89,8 +89,6 @@ class Scene {
   add(entity) {
     this.entities.set(entity.id, entity);
     this.graphics.scene.add(entity.object3D);
-
-    console.log(entity);
   }
 
   remove(entity) {

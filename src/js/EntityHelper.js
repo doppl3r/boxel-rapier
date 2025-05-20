@@ -93,8 +93,8 @@ class EntityHelper {
     const object3D = new Object3D();
     if (options) {
       if (options.userData) {
-        // Load and add asset from singleton assets
         if (options.userData.path) {
+          // Load asset from singleton assets
           game.assets.load(options.userData.path, asset => {
             object3D.add(asset);
           });

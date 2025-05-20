@@ -14,8 +14,7 @@ class EntityTemplates {
     ],
     name: 'cube',
     object3d: {
-      asset: {
-        name: 'cube',
+      userData: {
         path: '../glb/cube.glb'
       }
     }
