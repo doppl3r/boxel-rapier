@@ -1,5 +1,6 @@
 import { Euler, Object3D, Quaternion, Vector3 } from 'three';
-import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidBodyType, Shape } from '@dimforge/rapier3d';
+import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidBodyType } from '@dimforge/rapier3d';
+import { LightFactory } from './LightFactory.js';
 
 class EntityHelper {
   constructor() {
@@ -86,6 +87,25 @@ class EntityHelper {
 
   static createShape(...args) {
     return ColliderDesc[args[0]](...args.slice(1));
+  }
+
+  static createObject3D(options) {
+    const object3D = new Object3D();
+    if (options) {
+      if (options.userData) {
+        // Load and add asset from singleton assets
+        if (options.userData.path) {
+          game.assets.load(options.userData.path, asset => {
+            object3D.add(asset);
+          });
+        }
+        else if (options.userData.type.includes('Light')) {
+          // Create 3D light
+          object3D.add(LightFactory.create(options.userData.type, options.userData))
+        }
+      }
+    }
+    return object3D;
   }
 }
 

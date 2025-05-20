@@ -1,5 +1,5 @@
 import { EventQueue, World } from '@dimforge/rapier3d';
-import { ObjectAssignDeep } from './ObjectAssignDeep.js'
+import { ObjectAssign } from './ObjectAssignDeep.js'
 import { Graphics } from './Graphics.js';
 import { Debugger } from './Debugger.js'
 import { Entity } from './Entity.js'
@@ -59,23 +59,26 @@ class Scene {
 
     json.children.forEach(child => {
       // Merge options from template
-      const options = ObjectAssignDeep(EntityTemplates[child.template], child);
+      const options = ObjectAssign(EntityTemplates[child.template], child);
       const entity = this.create(options);
       this.add(entity);
     });
+
+    // TODO: Replace camera logic
+    this.graphics.camera.position.z = 10;
   }
 
   create(options) {
     const entity = new Entity(options);
-    const object3D = EntityHelper.create3DObject();
+    const object3D = EntityHelper.createObject3D(options.object3d);
     const rigidBodyDesc = EntityHelper.createRigidBodyDesc(options.body);
     const rigidBody = EntityHelper.createRigidBody(rigidBodyDesc, this.world);
 
     // Create colliders from array
-    options.colliders.forEach(colliderOptions => {
+    options.colliders?.forEach(colliderOptions => {
       const colliderDesc = EntityHelper.createColliderDesc(colliderOptions);
       EntityHelper.createCollider(colliderDesc, rigidBody, this.world);
-    })
+    });
     
     // Assign components to entity
     entity.set3DObject(object3D);

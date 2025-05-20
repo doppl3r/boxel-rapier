@@ -35,6 +35,10 @@ class Assets extends EventDispatcher {
     const fileType = url.substring(url.lastIndexOf('.') + 1);
     const fileName = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.'));
 
+    // Prevent duplicates
+    if (this.get(fileName) === undefined) this.set(fileName, {});
+    else return;
+
     // Conditionally load file types
     if (this.types.audio.includes(fileType)) {
       // Load Audio type
@@ -48,8 +52,8 @@ class Assets extends EventDispatcher {
     else if (this.types.models.includes(fileType)) {
       // Load GLTF type
       this.gltfLoader.load(url, gltf => {
-        this.set(fileName, gltf)
-        if (onLoad) onLoad(gltf);
+        this.set(fileName, gltf.scene)
+        if (onLoad) onLoad(gltf.scene);
       });
     }
     else if (this.types.textures.includes(fileType)) {

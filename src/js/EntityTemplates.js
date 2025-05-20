@@ -14,15 +14,29 @@ class EntityTemplates {
     ],
     name: 'cube',
     object3d: {
-      model: {
-        name: 'cube'
+      asset: {
+        name: 'cube',
+        path: '../glb/cube.glb'
+      }
+    }
+  }
+
+  static light = {
+    body: {
+      status: 1
+    },
+    name: 'light',
+    object3d: {
+      userData: {
+        type: 'PointLight',
+        color: '#ffffff'
       }
     }
   }
 
   static player = {
     body: {
-      status: 2 // KinematicPositionBased
+      status: 0 // 2 = KinematicPositionBased
     },
     colliders: [
       {
@@ -31,8 +45,8 @@ class EntityTemplates {
     ],
     name: 'player',
     object3d: {
-      model: {
-        name: 'player'
+      userData: {
+        path: '../glb/player.glb'
       }
     }
   }
