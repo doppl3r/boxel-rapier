@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import App from '../vue/App.vue'
 import i18n from './i18n.js';
 import Routes from './Routes.js'
@@ -15,7 +15,7 @@ import Routes from './Routes.js'
 */
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes: Routes
 });
 

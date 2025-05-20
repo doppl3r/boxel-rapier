@@ -8,7 +8,7 @@ html {
   -ms-touch-action: manipulation;
   height: 100vh;
   min-height: 22.5em; // 360px
-  min-width: 11.25; // 180px
+  min-width: 11.25em; // 180px
   overflow: hidden;
   touch-action: manipulation;
   width: 100vw;
@@ -21,6 +21,7 @@ html {
     line-height: 1em;
     width: inherit;
     height: inherit;
+    overflow: hidden;
 
     #app {
       height: inherit;

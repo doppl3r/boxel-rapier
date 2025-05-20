@@ -22,8 +22,8 @@ class Game {
   }
 
   start() {
-    this.interval.add(loop => this.update(loop), 1000 / 1);
-    this.interval.add(loop => this.render(loop), 1000 / 4);
+    this.interval.add(loop => this.update(loop), 1000 / 30);
+    this.interval.add(loop => this.render(loop));
     this.interval.start();
   }
 }

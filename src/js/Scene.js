@@ -49,6 +49,9 @@ class Scene {
     this.entities.forEach(function(entity) {
       entity.render(delta, alpha);
     });
+
+    // Render all graphics
+    this.graphics.render();
   }
 
   async load(url) {
