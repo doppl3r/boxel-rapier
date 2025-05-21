@@ -1,9 +1,10 @@
 import { Euler, Object3D, Quaternion, Vector3 } from 'three';
 import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidBodyType } from '@dimforge/rapier3d';
 import { LightFactory } from './LightFactory.js';
-import { Entity } from './Entity.js'
-import { EntityTemplates } from './EntityTemplates.js'
-import { ObjectAssign } from './ObjectAssignDeep.js'
+import { Entity } from './Entity.js';
+import { EntityTemplates } from './EntityTemplates.js';
+import { EntityEvents } from './EntityEvents.js';
+import { ObjectAssign } from './ObjectAssignDeep.js';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 
 class EntityFactory {
@@ -12,14 +13,15 @@ class EntityFactory {
   }
 
   static create(options, world) {
-    // Merge options with existing template
-    options = ObjectAssign(EntityTemplates[options.template], options);
+    // Combine new options with existing template
+    options = ObjectAssign({}, EntityTemplates[options.template], options);
 
     // Initialize entity
     const entity = new Entity(options);
     const object3D = this.createObject3D(options.object3d);
     const rigidBodyDesc = this.createRigidBodyDesc(options.body);
     const rigidBody = this.createRigidBody(rigidBodyDesc, world);
+    const events = this.createEvents(options.events);
 
     // Create colliders from array
     options.colliders?.forEach(colliderOptions => {
@@ -30,6 +32,7 @@ class EntityFactory {
     // Assign components to entity
     entity.set3DObject(object3D);
     entity.setRigidBody(rigidBody);
+    entity.setEvents(events);
     return entity;
   }
 
@@ -132,6 +135,13 @@ class EntityFactory {
       }
     }
     return object3D;
+  }
+
+  static createEvents(options) {
+    // Assign new functions from EntityEvents by name
+    const events = {};
+    options?.forEach(e => events[e.name] = EntityEvents[e.name]);
+    return events;
   }
 }
 

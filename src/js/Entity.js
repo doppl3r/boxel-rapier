@@ -85,6 +85,13 @@ class Entity extends EventDispatcher {
     if (this.rigidBody?.isKinematic()) this.rigidBody?.setNextKinematicRotation(rotation);
     else this.rigidBody?.setRotation(rotation);
   }
+
+  setEvents(events) {
+    // Assign all event functions to entity
+    Object.keys(events).forEach(key => {
+      this[key] = events[key];
+    })
+  }
 }
 
 export { Entity }
