@@ -35,7 +35,7 @@ class Assets extends EventDispatcher {
     // Get file details
     const fileType = url.substring(url.lastIndexOf('.') + 1);
     const fileName = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.'));
-    const queued = this.queue.filter(item => item.name === fileName).length > 0;
+    const queued = this.queue.find(item => item.name === fileName) !== undefined;
     const asset = this.get(fileName); // Default = undefined
 
     // Add item to the queue

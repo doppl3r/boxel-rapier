@@ -1,6 +1,7 @@
 import { Euler, Object3D, Quaternion, Vector3 } from 'three';
 import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidBodyType } from '@dimforge/rapier3d';
 import { LightFactory } from './LightFactory.js';
+import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 
 class EntityHelper {
   constructor() {
@@ -96,7 +97,7 @@ class EntityHelper {
         if (options.userData.path) {
           // Load asset from singleton assets
           game.assets.load(options.userData.path, asset => {
-            object3D.add(asset);
+            object3D.add(clone(asset));
           });
         }
         else if (options.userData.type.includes('Light')) {

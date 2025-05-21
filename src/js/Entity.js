@@ -47,10 +47,10 @@ class Entity extends EventDispatcher {
     this.object3D = object3D;
   }
   
-  takeSnapshot() {
+  takeSnapshot(copy = false) {
     if (this.rigidBody) {
-      this.snapshot.positionPrev.copy(this.snapshot.position);
-      this.snapshot.rotationPrev.copy(this.snapshot.rotation);
+      this.snapshot.positionPrev.copy(copy ? this.getPosition() : this.snapshot.position);
+      this.snapshot.rotationPrev.copy(copy ? this.getRotation() : this.snapshot.rotation);
       this.snapshot.position.copy(this.getPosition());
       this.snapshot.rotation.copy(this.getRotation());
     }
@@ -63,7 +63,7 @@ class Entity extends EventDispatcher {
 
   setRigidBody(rigidBody) {
     this.rigidBody = rigidBody;
-    this.takeSnapshot();
+    this.takeSnapshot(true);
   }
 
   getPosition() {
