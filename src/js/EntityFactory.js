@@ -1,11 +1,30 @@
 import { Euler, Object3D, Quaternion, Vector3 } from 'three';
 import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidBodyType } from '@dimforge/rapier3d';
 import { LightFactory } from './LightFactory.js';
+import { Entity } from './Entity.js'
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 
-class EntityHelper {
+class EntityFactory {
   constructor() {
 
+  }
+
+  static create(options, world) {
+    const entity = new Entity(options);
+    const object3D = this.createObject3D(options.object3d);
+    const rigidBodyDesc = this.createRigidBodyDesc(options.body);
+    const rigidBody = this.createRigidBody(rigidBodyDesc, world);
+
+    // Create colliders from array
+    options.colliders?.forEach(colliderOptions => {
+      const colliderDesc = this.createColliderDesc(colliderOptions);
+      this.createCollider(colliderDesc, rigidBody, world);
+    });
+    
+    // Assign components to entity
+    entity.set3DObject(object3D);
+    entity.setRigidBody(rigidBody);
+    return entity;
   }
 
   static create3DObject() {
@@ -23,7 +42,6 @@ class EntityHelper {
       isEnabled: true,
       linearDamping: 0,
       position: { x: 0, y: 0, z: 0 },
-      quaternion: { x: 0, y: 0, z: 0, w: 1 },
       rotation: { x: 0, y: 0, z: 0 },
       sleeping: false,
       softCcdPrediction: 0,
@@ -31,13 +49,14 @@ class EntityHelper {
     }, options);
 
     const rigidBodyDesc = new RigidBodyDesc(isNaN(options.status) ? RigidBodyType[options.status] : options.status);
+    const rotation = options.w ? _q.copy(options.rotation) : _q.setFromEuler(_e.setFromVector3(_v.copy(options.rotation)));
     rigidBodyDesc.enabledRotations(options.enabledRotations.x, options.enabledRotations.y, options.enabledRotations.z);
     rigidBodyDesc.enabledTranslations(options.enabledTranslations.x, options.enabledTranslations.y, options.enabledTranslations.z);
     rigidBodyDesc.setAngularDamping(options.angularDamping);
     rigidBodyDesc.setCcdEnabled(options.ccd);
     rigidBodyDesc.setEnabled(options.isEnabled);
     rigidBodyDesc.setLinearDamping(options.linearDamping);
-    rigidBodyDesc.setRotation(_quaternion.setFromEuler(_euler.setFromVector3(_vector.copy(options.rotation))));
+    rigidBodyDesc.setRotation(rotation);
     rigidBodyDesc.setSleeping(options.sleeping);
     rigidBodyDesc.setSoftCcdPrediction(options.softCcdPrediction);
     rigidBodyDesc.setTranslation(options.position.x, options.position.y, options.position.z);
@@ -111,8 +130,8 @@ class EntityHelper {
 }
 
 // Assign local helper components
-const _vector = new Vector3();
-const _euler = new Euler();
-const _quaternion = new Quaternion();
+const _v = new Vector3();
+const _e = new Euler();
+const _q = new Quaternion();
 
-export { EntityHelper }
+export { EntityFactory }
