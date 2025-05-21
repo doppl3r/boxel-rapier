@@ -2,6 +2,8 @@ import { Euler, Object3D, Quaternion, Vector3 } from 'three';
 import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidBodyType } from '@dimforge/rapier3d';
 import { LightFactory } from './LightFactory.js';
 import { Entity } from './Entity.js'
+import { EntityTemplates } from './EntityTemplates.js'
+import { ObjectAssign } from './ObjectAssignDeep.js'
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 
 class EntityFactory {
@@ -10,6 +12,10 @@ class EntityFactory {
   }
 
   static create(options, world) {
+    // Merge options with existing template
+    options = ObjectAssign(EntityTemplates[options.template], options);
+
+    // Initialize entity
     const entity = new Entity(options);
     const object3D = this.createObject3D(options.object3d);
     const rigidBodyDesc = this.createRigidBodyDesc(options.body);

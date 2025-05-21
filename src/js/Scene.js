@@ -1,9 +1,7 @@
 import { EventQueue, World } from '@dimforge/rapier3d';
-import { ObjectAssign } from './ObjectAssignDeep.js'
 import { Graphics } from './Graphics.js';
 import { Debugger } from './Debugger.js'
 import { EntityFactory } from './EntityFactory.js'
-import { EntityTemplates } from './EntityTemplates.js'
 
 class Scene {
   constructor() {
@@ -57,9 +55,8 @@ class Scene {
     const json = await (await fetch(url)).json();
 
     json.children.forEach(child => {
-      // Merge options from template
-      const options = ObjectAssign(EntityTemplates[child.template], child);
-      const entity = EntityFactory.create(options, this.world);
+      // Create entity from child options
+      const entity = EntityFactory.create(child, this.world);
       this.add(entity);
     });
 
