@@ -30,8 +30,8 @@ class Scene {
     this.eventQueue.drainCollisionEvents(function(handle1, handle2, started) {
       const collider1 = this.world.getCollider(handle1);
       const collider2 = this.world.getCollider(handle2);
-      const entity1 = this.entities.get(collider1._parent);
-      const entity2 = this.entities.get(collider2._parent);
+      const entity1 = this.entities.get(collider1._parent.handle);
+      const entity2 = this.entities.get(collider2._parent.handle);
       const event1 = { entity: entity1, handle: handle1, pair: entity2, started: started, type: 'collision' };
       const event2 = { entity: entity2, handle: handle2, pair: entity1, started: started, type: 'collision' };
       entity1.dispatchEvent(event1);
@@ -66,6 +66,10 @@ class Scene {
     // Set entity key with unique rigidBody handle
     this.entities.set(entity.rigidBody.handle, entity);
     this.graphics.scene.add(entity.object3D);
+    
+    // Dispatch 'added' event to observers
+    entity.dispatchEvent({ type: 'added' });
+    return entity;
   }
 
   remove(entity) {

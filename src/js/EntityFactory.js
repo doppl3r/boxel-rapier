@@ -21,18 +21,18 @@ class EntityFactory {
     const object3D = this.createObject3D(options.object3d);
     const rigidBodyDesc = this.createRigidBodyDesc(options.body, entity);
     const rigidBody = this.createRigidBody(rigidBodyDesc, world);
-    const actions = this.createActions(options.actions);
 
     // Create colliders from array
     options.colliders?.forEach(colliderOptions => {
+      // Create the collider and attach to the rigidBody
       const colliderDesc = this.createColliderDesc(colliderOptions);
       this.createCollider(colliderDesc, rigidBody, world);
+      this.createCollisionEvents(colliderOptions.events, entity);
     });
     
     // Assign components to entity
     entity.set3DObject(object3D);
     entity.setRigidBody(rigidBody);
-    entity.setActions(actions);
     return entity;
   }
 
@@ -138,11 +138,9 @@ class EntityFactory {
     return object3D;
   }
 
-  static createActions(options) {
-    // Assign new functions from EntityActions by name
-    const events = {};
-    options?.forEach(e => events[e.name] = EntityActions[e.name]);
-    return events;
+  static createCollisionEvents(events, entity) {
+    // Assign all collider actions to the entity
+    events?.forEach(e => entity.addEventListener('collision', EntityActions[e.name]));
   }
 
   static destroy(entity, world) {

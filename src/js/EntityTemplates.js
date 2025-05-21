@@ -33,6 +33,29 @@ class EntityTemplates {
     }
   }
 
+  static teleport = {
+    body: {
+      status: 1
+    },
+    colliders: [
+      {
+        events: [
+          {
+            name: 'teleport',
+            value: { x: 0, y: 3, z: 0 }
+          }
+        ],
+        shapeDesc: ['cuboid', 0.5, 0.5, 0.5]
+      }
+    ],
+    name: 'teleport',
+    object3d: {
+      userData: {
+        path: '../glb/cube.glb'
+      }
+    }
+  }
+
   static player = {
     body: {
       status: 0 // 2 = KinematicPositionBased

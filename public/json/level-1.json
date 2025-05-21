@@ -40,13 +40,7 @@
       "body": {
         "position": { "x": 0, "y": 0, "z": 0 }
       },
-      "events": [
-        {
-          "name": "teleport",
-          "value": { "x": 0, "y": 3, "z": 0 }
-        }
-      ],
-      "template": "cube"
+      "template": "teleport"
     },
     {
       "body": {
