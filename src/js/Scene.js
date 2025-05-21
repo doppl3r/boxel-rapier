@@ -10,13 +10,13 @@ class Scene {
     this.world.numSolverIterations = 4; // Default = 4
     this.debugger = new Debugger(this.world);
     this.graphics.scene.add(this.debugger);
-    this.events = new EventQueue(true);
+    this.eventQueue = new EventQueue(true);
     this.entities = new Map();
   }
 
   update(delta) {
     // 1: Advance the simulation by one time step
-    this.world.step(this.events);
+    this.world.step(this.eventQueue);
 
     // 2: Update debugger from world buffer
     this.debugger.update();
@@ -27,15 +27,13 @@ class Scene {
     });
 
     // 4: Dispatch collision events to each entity pair
-    this.events.drainCollisionEvents(function(handle1, handle2, started) {
+    this.eventQueue.drainCollisionEvents(function(handle1, handle2, started) {
       const collider1 = this.world.getCollider(handle1);
       const collider2 = this.world.getCollider(handle2);
-      const rigidBody1 = collider1._parent;
-      const rigidBody2 = collider2._parent;
-      const entity1 = this.entities.get(rigidBody1.userData.id);
-      const entity2 = this.entities.get(rigidBody2.userData.id);
-      const event1 = { handle: handle1, pair: entity2, started: started, type: 'collision' };
-      const event2 = { handle: handle2, pair: entity1, started: started, type: 'collision' };
+      const entity1 = this.entities.get(collider1._parent);
+      const entity2 = this.entities.get(collider2._parent);
+      const event1 = { entity: entity1, handle: handle1, pair: entity2, started: started, type: 'collision' };
+      const event2 = { entity: entity2, handle: handle2, pair: entity1, started: started, type: 'collision' };
       entity1.dispatchEvent(event1);
       entity2.dispatchEvent(event2);
     }.bind(this));
@@ -65,13 +63,15 @@ class Scene {
   }
 
   add(entity) {
-    this.entities.set(entity.id, entity);
+    // Set entity key with unique rigidBody handle
+    this.entities.set(entity.rigidBody.handle, entity);
     this.graphics.scene.add(entity.object3D);
   }
 
   remove(entity) {
     this.entities.delete(entity.id);
     this.graphics.scene.remove(entity.object3D);
+    EntityFactory.destroy(entity, this.world);
 
     // Dispatch 'removed' event to observers
     entity.dispatchEvent({ type: 'removed' });

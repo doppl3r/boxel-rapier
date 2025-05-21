@@ -86,10 +86,10 @@ class Entity extends EventDispatcher {
     else this.rigidBody?.setRotation(rotation);
   }
 
-  setEvents(events) {
+  setActions(actions) {
     // Assign all event functions to entity
-    Object.keys(events).forEach(key => {
-      this[key] = events[key];
+    Object.keys(actions).forEach(key => {
+      this[key] = actions[key];
     })
   }
 }

@@ -3,7 +3,7 @@ import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidB
 import { LightFactory } from './LightFactory.js';
 import { Entity } from './Entity.js';
 import { EntityTemplates } from './EntityTemplates.js';
-import { EntityEvents } from './EntityEvents.js';
+import { EntityActions } from './EntityActions.js';
 import { ObjectAssign } from './ObjectAssignDeep.js';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 
@@ -19,9 +19,9 @@ class EntityFactory {
     // Initialize entity
     const entity = new Entity(options);
     const object3D = this.createObject3D(options.object3d);
-    const rigidBodyDesc = this.createRigidBodyDesc(options.body);
+    const rigidBodyDesc = this.createRigidBodyDesc(options.body, entity);
     const rigidBody = this.createRigidBody(rigidBodyDesc, world);
-    const events = this.createEvents(options.events);
+    const actions = this.createActions(options.actions);
 
     // Create colliders from array
     options.colliders?.forEach(colliderOptions => {
@@ -32,7 +32,7 @@ class EntityFactory {
     // Assign components to entity
     entity.set3DObject(object3D);
     entity.setRigidBody(rigidBody);
-    entity.setEvents(events);
+    entity.setActions(actions);
     return entity;
   }
 
@@ -54,7 +54,8 @@ class EntityFactory {
       rotation: { x: 0, y: 0, z: 0 },
       sleeping: false,
       softCcdPrediction: 0,
-      status: 0 // 0: Dynamic, 1: Fixed, 2: KinematicPositionBased, 3: KinematicVelocityBased
+      status: 0, // 0: Dynamic, 1: Fixed, 2: KinematicPositionBased, 3: KinematicVelocityBased
+      userData: {}
     }, options);
 
     const rigidBodyDesc = new RigidBodyDesc(isNaN(options.status) ? RigidBodyType[options.status] : options.status);
@@ -69,7 +70,7 @@ class EntityFactory {
     rigidBodyDesc.setSleeping(options.sleeping);
     rigidBodyDesc.setSoftCcdPrediction(options.softCcdPrediction);
     rigidBodyDesc.setTranslation(options.position.x, options.position.y, options.position.z);
-    rigidBodyDesc.setUserData({ id: options.id, parentId: options.parentId }); // Store entity IDs for Physics.js
+    rigidBodyDesc.setUserData(options.userData);
     return rigidBodyDesc;
   }
 
@@ -79,8 +80,8 @@ class EntityFactory {
 
   static createColliderDesc(options) {
     options = Object.assign({
-      activeCollisionTypes: 'DEFAULT', // 1: DYNAMIC_DYNAMIC, 2: DYNAMIC_FIXED, 12: DYNAMIC_KINEMATIC, 15: DEFAULT, 32: FIXED_FIXED, 8704: KINEMATIC_FIXED, 52224: KINEMATIC_KINEMATIC, 60943: ALL
-      activeEvents: 'NONE', // 0: NONE, 1: COLLISION_EVENTS, 2: CONTACT_FORCE_EVENTS
+      activeCollisionTypes: 'ALL', // 1: DYNAMIC_DYNAMIC, 2: DYNAMIC_FIXED, 12: DYNAMIC_KINEMATIC, 15: DEFAULT, 32: FIXED_FIXED, 8704: KINEMATIC_FIXED, 52224: KINEMATIC_KINEMATIC, 60943: ALL
+      activeEvents: 'COLLISION_EVENTS', // 0: NONE, 1: COLLISION_EVENTS, 2: CONTACT_FORCE_EVENTS
       collisionGroups: 0xFFFFFFFF,
       contactForceEventThreshold: 0,
       density: 1,
@@ -137,11 +138,22 @@ class EntityFactory {
     return object3D;
   }
 
-  static createEvents(options) {
-    // Assign new functions from EntityEvents by name
+  static createActions(options) {
+    // Assign new functions from EntityActions by name
     const events = {};
-    options?.forEach(e => events[e.name] = EntityEvents[e.name]);
+    options?.forEach(e => events[e.name] = EntityActions[e.name]);
     return events;
+  }
+
+  static destroy(entity, world) {
+    // Remove rigid body
+    world.removeRigidBody(entity.rigidBody);
+
+    // Remove colliders
+    for (let i = entity.rigidBody.numColliders() - 1; i >= 0; i--) {
+      const collider = entity.rigidBody.collider(i);
+      world.removeCollider(collider);
+    }
   }
 }
 
