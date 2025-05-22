@@ -27,18 +27,13 @@ class EntityFactory {
       // Create the collider and attach to the rigidBody
       const colliderDesc = this.createColliderDesc(colliderOptions);
       this.createCollider(colliderDesc, rigidBody, world);
-      this.createCollisionEvents(colliderOptions.events, entity);
+      this.createColliderEvents(colliderOptions.events, entity);
     });
     
     // Assign components to entity
     entity.set3DObject(object3D);
     entity.setRigidBody(rigidBody);
     return entity;
-  }
-
-  static create3DObject() {
-    const object3D = new Object3D();
-    return object3D;
   }
 
   static createRigidBodyDesc(options) {
@@ -115,30 +110,7 @@ class EntityFactory {
     return world.createCollider(colliderDesc, rigidBody);
   }
 
-  static createShape(...args) {
-    return ColliderDesc[args[0]](...args.slice(1));
-  }
-
-  static createObject3D(options) {
-    const object3D = new Object3D();
-    if (options) {
-      if (options.userData) {
-        if (options.userData.path) {
-          // Load asset from singleton assets
-          game.assets.load(options.userData.path, asset => {
-            object3D.add(clone(asset));
-          });
-        }
-        else if (options.userData.type.includes('Light')) {
-          // Create 3D light
-          object3D.add(LightFactory.create(options.userData.type, options.userData))
-        }
-      }
-    }
-    return object3D;
-  }
-
-  static createCollisionEvents(events, entity) {
+  static createColliderEvents(events, entity) {
     // Loop through array of event descriptions
     events?.forEach(event => {
       // Add collision event listener to entity
@@ -149,6 +121,49 @@ class EntityFactory {
         }
       });
     });
+  }
+
+  static createObject3D(options) {
+    const object3D = new Object3D();
+    if (options?.userData?.path) {
+      // Load asset from singleton assets
+      game.assets.load(options.userData.path, asset => {
+        object3D.add(clone(asset));
+      });
+    }
+    else if (options?.userData?.type?.includes('Light')) {
+      // Create 3D light
+      object3D.add(LightFactory.create(options.userData.type, options.userData))
+    }
+    return object3D;
+  }
+
+  static createController(options) {
+    options = Object.assign({
+      applyImpulsesMass: 1,
+      applyImpulsesToDynamicBodies: true,
+      autostepMaxHeight: 0.5,
+      autostepMinWidth: 0.2,
+      autostepIncludeDynamicBodies: true,
+      maxSlopeClimbAngle: 45 * Math.PI / 180,
+      minSlopeClimbAngle: 30 * Math.PI / 180,
+      offset: 0.01,
+      slideEnabled: true,
+      snapToGroundDistance: 0.5
+    }, options);
+
+    // Create character controller from world
+    const controller = this.world.createCharacterController(options.offset); // Spacing
+
+    // Update controller settings
+    controller.setSlideEnabled(options.slideEnabled); // Allow sliding down hill
+    controller.setMaxSlopeClimbAngle(options.maxSlopeClimbAngle); // Don’t allow climbing slopes larger than 45 degrees.
+    controller.setMinSlopeSlideAngle(options.minSlopeClimbAngle); // Automatically slide down on slopes smaller than 30 degrees.
+    controller.enableAutostep(options.autostepMaxHeight, options.autostepMinWidth, options.autostepIncludeDynamicBodies); // (maxHeight, minWidth, includeDynamicBodies) Stair behavior
+    controller.enableSnapToGround(options.snapToGroundDistance); // (distance) Set ground snap behavior
+    controller.setApplyImpulsesToDynamicBodies(options.applyImpulsesToDynamicBodies); // Add push behavior
+    controller.setCharacterMass(options.applyImpulsesMass); // (mass) Set character mass
+    return controller;
   }
 
   static destroy(entity, world) {

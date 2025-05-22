@@ -40,7 +40,7 @@
       "body": {
         "position": { "x": 0, "y": 0, "z": 0 }
       },
-      "template": "teleport"
+      "template": "cube"
     },
     {
       "body": {
@@ -52,7 +52,7 @@
       "body": {
         "position": { "x": 2, "y": 0, "z": 0 }
       },
-      "template": "cube"
+      "template": "teleport"
     }
   ]
 }

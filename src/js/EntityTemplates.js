@@ -58,7 +58,7 @@ class EntityTemplates {
 
   static player = {
     body: {
-      status: 0 // 2 = KinematicPositionBased
+      status: 2 // 2 = KinematicPositionBased
     },
     colliders: [
       {
