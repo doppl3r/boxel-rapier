@@ -3,7 +3,7 @@ import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidB
 import { LightFactory } from './LightFactory.js';
 import { Entity } from './Entity.js';
 import { EntityTemplates } from './EntityTemplates.js';
-import { EntityActions } from './EntityActions.js';
+import { EntityEvents } from './EntityEvents.js';
 import { ObjectAssign } from './ObjectAssignDeep.js';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 
@@ -145,7 +145,7 @@ class EntityFactory {
       entity.addEventListener('collision', e => {
         // Trigger event on initial contact (or if event "started" matches collision "started")
         if (event.started === undefined && e.started === true || event.started === e.started) {
-          EntityActions[event.name]({ value: event.value, ...e });
+          EntityEvents[event.name]({ value: event.value, ...e });
         }
       });
     });

@@ -1,4 +1,4 @@
-class EntityActions {
+class EntityEvents {
   constructor() {
 
   }
@@ -8,4 +8,4 @@ class EntityActions {
   }
 }
 
-export { EntityActions }
+export { EntityEvents }
