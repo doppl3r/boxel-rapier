@@ -3,8 +3,8 @@ class EntityActions {
 
   }
 
-  static teleport = value => {
-    console.log(value)
+  static teleport = event => {
+    setTimeout(() => event.pair.setPosition(event.value), 1000);
   }
 }
 

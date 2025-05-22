@@ -139,8 +139,16 @@ class EntityFactory {
   }
 
   static createCollisionEvents(events, entity) {
-    // Assign all collider actions to the entity
-    events?.forEach(e => entity.addEventListener('collision', EntityActions[e.name]));
+    // Loop through array of event descriptions
+    events?.forEach(event => {
+      // Add collision event listener to entity
+      entity.addEventListener('collision', e => {
+        // Trigger event on initial contact (or if event "started" matches collision "started")
+        if (event.started === undefined && e.started === true || event.started === e.started) {
+          EntityActions[event.name]({ value: event.value, ...e });
+        }
+      });
+    });
   }
 
   static destroy(entity, world) {

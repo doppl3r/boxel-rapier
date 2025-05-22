@@ -32,8 +32,8 @@ class Scene {
       const collider2 = this.world.getCollider(handle2);
       const entity1 = this.entities.get(collider1._parent.handle);
       const entity2 = this.entities.get(collider2._parent.handle);
-      const event1 = { entity: entity1, handle: handle1, pair: entity2, started: started, type: 'collision' };
-      const event2 = { entity: entity2, handle: handle2, pair: entity1, started: started, type: 'collision' };
+      const event1 = { handle: handle1, pair: entity2, started: started, type: 'collision' };
+      const event2 = { handle: handle2, pair: entity1, started: started, type: 'collision' };
       entity1.dispatchEvent(event1);
       entity2.dispatchEvent(event2);
     }.bind(this));
