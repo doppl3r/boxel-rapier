@@ -33,6 +33,33 @@ class EntityTemplates {
     }
   }
 
+  static spike = {
+    body: {
+      status: 1
+    },
+    colliders: [
+      {
+        shapeDesc: ['cuboid', 0.5, 0.5, 0.5]
+      },
+      {
+        events: [
+          {
+            name: 'teleport',
+            value: { x: 0, y: 3, z: 0 }
+          }
+        ],
+        shapeDesc: ['cuboid', 0.375, 0.125, 0.375],
+        translation: { x: 0, y: 0.5, z: 0 }
+      }
+    ],
+    object3d: {
+      userData: {
+        path: '../glb/spike.glb'
+      }
+    },
+    name: 'teleport'
+  }
+
   static teleport = {
     body: {
       status: 1

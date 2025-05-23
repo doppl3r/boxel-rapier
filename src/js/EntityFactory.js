@@ -26,8 +26,8 @@ class EntityFactory {
     options.colliders?.forEach(colliderOptions => {
       // Create the collider and attach to the rigidBody
       const colliderDesc = this.createColliderDesc(colliderOptions);
-      this.createCollider(colliderDesc, rigidBody, world);
-      this.createColliderEvents(colliderOptions.events, entity);
+      const collider = this.createCollider(colliderDesc, rigidBody, world);
+      this.createColliderEvents(colliderOptions.events, collider, entity);
     });
     
     // Assign components to entity
@@ -110,14 +110,17 @@ class EntityFactory {
     return world.createCollider(colliderDesc, rigidBody);
   }
 
-  static createColliderEvents(events, entity) {
+  static createColliderEvents(events, collider, entity) {
     // Loop through array of event descriptions
     events?.forEach(event => {
       // Add collision event listener to entity
       entity.addEventListener('collision', e => {
         // Trigger event on initial contact (or if event "started" matches collision "started")
         if (event.started === undefined && e.started === true || event.started === e.started) {
-          EntityEvents[event.name]({ value: event.value, ...e });
+          // Trigger match collider handles
+          if (e.handle === collider.handle) {
+            EntityEvents[event.name]({ value: event.value, ...e });
+          }
         }
       });
     });

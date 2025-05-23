@@ -65,8 +65,13 @@ class EntityController {
     this.move(this.velocity);
 
     // Check collisions for base collider
-    if (this.controller.computedCollision(0)) {
+    const collision = this.controller.computedCollision(0);
+    if (collision) {
       this.allowJump = true;
+      // Check ceiling collision
+      if (collision.normal1.y < -0.5) {
+        this.velocity.y = 0;
+      }
     }
 
     // Set vertical velocity to zero if grounded
