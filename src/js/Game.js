@@ -13,16 +13,16 @@ class Game {
     this.scene.load('./json/level-1.json');
   }
 
-  update({ delta }) {
-    this.scene.update(delta);
+  update(loop) {
+    this.scene.update(loop);
   }
   
-  render({ delta, alpha }) {
-    this.scene.render(delta, alpha);
+  render(loop) {
+    this.scene.render(loop);
   }
 
   start() {
-    this.interval.add(loop => this.update(loop), 1000 / 30);
+    this.interval.add(loop => this.update(loop), 1000 / 60);
     this.interval.add(loop => this.render(loop));
     this.interval.start();
   }

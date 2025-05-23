@@ -138,7 +138,7 @@ class EntityFactory {
     return object3D;
   }
 
-  static createController(options) {
+  static createController(options, world) {
     options = Object.assign({
       applyImpulsesMass: 1,
       applyImpulsesToDynamicBodies: true,
@@ -153,7 +153,7 @@ class EntityFactory {
     }, options);
 
     // Create character controller from world
-    const controller = this.world.createCharacterController(options.offset); // Spacing
+    const controller = world.createCharacterController(options.offset); // Spacing
 
     // Update controller settings
     controller.setSlideEnabled(options.slideEnabled); // Allow sliding down hill

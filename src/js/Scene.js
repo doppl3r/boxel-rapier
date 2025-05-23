@@ -1,7 +1,8 @@
 import { EventQueue, World } from '@dimforge/rapier3d';
 import { Graphics } from './Graphics.js';
-import { Debugger } from './Debugger.js'
-import { EntityFactory } from './EntityFactory.js'
+import { Debugger } from './Debugger.js';
+import { EntityFactory } from './EntityFactory.js';
+import { EntityController } from './EntityController.js';
 
 class Scene {
   constructor() {
@@ -11,10 +12,11 @@ class Scene {
     this.debugger = new Debugger(this.world);
     this.graphics.scene.add(this.debugger);
     this.eventQueue = new EventQueue(true);
+    this.entityController = new EntityController();
     this.entities = new Map();
   }
 
-  update(delta) {
+  update(loop) {
     // 1: Advance the simulation by one time step
     this.world.step(this.eventQueue);
 
@@ -23,7 +25,7 @@ class Scene {
 
     // 3: Update all entities
     this.entities.forEach(function(entity) {
-      entity.update(delta);
+      entity.update(loop);
     });
 
     // 4: Dispatch collision events to each entity pair
@@ -39,10 +41,10 @@ class Scene {
     }.bind(this));
   }
 
-  render(delta, alpha) {
+  render(loop) {
     // Update all 3D object rendering properties
     this.entities.forEach(function(entity) {
-      entity.render(delta, alpha);
+      entity.render(loop);
     });
 
     // Render all graphics
@@ -56,6 +58,12 @@ class Scene {
       // Create entity from child options
       const entity = EntityFactory.create(child, this.world);
       this.add(entity);
+
+      // Assign controller to player type
+      if (child.template === 'player') {
+        this.entityController.setController(EntityFactory.createController({}, this.world));
+        this.entityController.setEntity(entity);
+      }
     });
 
     // TODO: Replace camera logic

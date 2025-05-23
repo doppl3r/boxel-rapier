@@ -35,12 +35,19 @@ class Entity extends EventDispatcher {
     }
   }
 
-  update(delta) {
+  update(loop) {
+    // Dispatch event before updating
+    this.dispatchEvent({ type: 'beforeUpdate', loop });
+
+    // Store world position in snapshot
     this.takeSnapshot();
+
+    // Dispatch event after updating
+    this.dispatchEvent({ type: 'updated', loop });
   }
   
-  render(delta, alpha) {
-    this.lerp3DObject(alpha);
+  render(loop) {
+    this.lerp3DObject(loop.alpha);
   }
   
   set3DObject(object3D) {
@@ -74,6 +81,8 @@ class Entity extends EventDispatcher {
   setPosition(position) {
     if (this.rigidBody?.isKinematic()) this.rigidBody?.setNextKinematicTranslation(position);
     else this.rigidBody?.setTranslation(position);
+    this.snapshot.positionPrev.copy(position);
+    this.snapshot.position.copy(position);
   }
 
   getRotation() {
@@ -84,6 +93,8 @@ class Entity extends EventDispatcher {
   setRotation(rotation) {
     if (this.rigidBody?.isKinematic()) this.rigidBody?.setNextKinematicRotation(rotation);
     else this.rigidBody?.setRotation(rotation);
+    this.snapshot.rotationPrev.copy(position);
+    this.snapshot.rotation.copy(position);
   }
 }
 

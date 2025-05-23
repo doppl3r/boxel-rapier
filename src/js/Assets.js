@@ -77,7 +77,7 @@ class Assets extends EventDispatcher {
     // Set loaded asset by name
     this.set(name, asset);
  
-    // Remove item from queue and run callbacks
+    // Run callbacks and remove items from queue
     for (let i = this.queue.length - 1; i >= 0; i--) {
       if (this.queue[i].name === name) {
         this.queue[i].callback(asset);
