@@ -1,4 +1,4 @@
-import { EventDispatcher, MathUtils, Quaternion, Vector3 } from 'three';
+import { Euler, EventDispatcher, MathUtils, Quaternion, Vector3 } from 'three';
 
 /*
   An entity is an abstract class that contains a single 3D object and a
@@ -47,7 +47,14 @@ class Entity extends EventDispatcher {
   }
   
   render(loop) {
+    // Dispatch event after updating
+    this.dispatchEvent({ type: 'beforeRender', loop });
+
+    // Interpolate (lerp/slerp) object3D
     this.lerp3DObject(loop.alpha);
+
+    // Dispatch event after updating
+    this.dispatchEvent({ type: 'rendered', loop });
   }
   
   set3DObject(object3D) {
@@ -91,11 +98,20 @@ class Entity extends EventDispatcher {
   }
 
   setRotation(rotation) {
+    // Resolve Euler rotation type before assigning rotation
+    rotation = rotation.w ? rotation : _q.setFromEuler(_e.setFromVector3(_v.copy(rotation)));
+
+    // Check rigidBody type before assigning
     if (this.rigidBody?.isKinematic()) this.rigidBody?.setNextKinematicRotation(rotation);
     else this.rigidBody?.setRotation(rotation);
-    this.snapshot.rotationPrev.copy(position);
-    this.snapshot.rotation.copy(position);
+    this.snapshot.rotationPrev.copy(rotation);
+    this.snapshot.rotation.copy(rotation);
   }
 }
+
+// Assign local helper components
+const _v = new Vector3();
+const _e = new Euler();
+const _q = new Quaternion();
 
 export { Entity }

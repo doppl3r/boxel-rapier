@@ -124,7 +124,20 @@ class EntityFactory {
   }
 
   static createObject3D(options) {
+    options = Object.assign({
+      position: { x: 0, y: 0, z: 0 },
+      rotation: { x: 0, y: 0, z: 0 },
+      scale: { x: 1, y: 1, z: 1 }
+    }, options);
+
+    // Create object from options
     const object3D = new Object3D();
+    const rotation = options.rotation.w ? _e.setFromQuaternion(_q.copy(options.rotation)) : _e.setFromVector3(_v.copy(options.rotation));
+    object3D.position.copy(options.position);
+    object3D.rotation.copy(rotation);
+    object3D.scale.copy(options.scale);
+
+    // Create optional children
     if (options?.userData?.path) {
       // Load asset from singleton assets
       game.assets.load(options.userData.path, asset => {
@@ -142,14 +155,14 @@ class EntityFactory {
     options = Object.assign({
       applyImpulsesMass: 1,
       applyImpulsesToDynamicBodies: true,
-      autostepMaxHeight: 0.5,
-      autostepMinWidth: 0.2,
+      autostepMaxHeight: 0.125, // 0.5
+      autostepMinWidth: 0.5, // 0.2
       autostepIncludeDynamicBodies: true,
       maxSlopeClimbAngle: 45 * Math.PI / 180,
       minSlopeClimbAngle: 30 * Math.PI / 180,
       offset: 0.01,
       slideEnabled: true,
-      snapToGroundDistance: 0.5
+      snapToGroundDistance: 0
     }, options);
 
     // Create character controller from world

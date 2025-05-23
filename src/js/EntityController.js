@@ -37,8 +37,8 @@ class EntityController {
 
   setEntity(entity) {
     this.entity = entity;
-    this.entity.addEventListener('beforeUpdate', e => this.update(e.loop));
-    this.entity.addEventListener('collision', e => { if (e.started) this.allowJump = true; });
+    this.entity.addEventListener('updated', e => this.update(e.loop));
+    this.entity.addEventListener('rendered', e => this.render(e.loop));
   }
 
   update(loop) {
@@ -54,9 +54,9 @@ class EntityController {
     }
 
     // Apply constant gravity force (and horizontal damping)
-    this.velocity.y -= 0.0125;
-    this.velocity.z *= 0.9;
-    this.velocity.x *= 0.9;
+    this.velocity.y -= 0.025;
+    this.velocity.z *= 0.95;
+    this.velocity.x *= 0.95;
 
     this.updateControls();
     this.updateForce();
@@ -64,10 +64,24 @@ class EntityController {
     // Move entity
     this.move(this.velocity);
 
+    // Check collisions for base collider
+    if (this.controller.computedCollision(0)) {
+      this.allowJump = true;
+    }
+
     // Set vertical velocity to zero if grounded
     if (this.controller.computedGrounded()) {
       this.velocity.y = 0;
     }
+  }
+
+  render(loop) {
+    // TODO: Decouple game camera
+    const camera = game.scene.graphics.camera;
+    camera.position.copy(this.entity.object3D.position);
+    camera.position.z += 20;
+    camera.position.y += 2;
+    camera.lookAt(this.entity.object3D.position);
   }
 
   updateControls() {
@@ -81,7 +95,7 @@ class EntityController {
 
     // Rotate direction vector according to gravity angle
     _v.copy({ x: direction, y: 0, z: 0 });
-    this.setForce(_v, 0.0125, 0.1);
+    this.setForce(_v, 0.025, 0.125);
   }
 
   updateForce() {
@@ -100,8 +114,6 @@ class EntityController {
     }
   }
 
-  
-
   setForce(direction = { x: 0, y: 0, z: 0 }, acceleration = 1, max = Infinity) {
     this.forceDirection.copy(direction).normalize(); // Ex: -1.0 to 1.0
     this.forceAcceleration = acceleration;
@@ -111,7 +123,7 @@ class EntityController {
   jump() {
     if (this.allowJump === true) {
       this.allowJump = false;
-      this.velocity.y = 0.25;
+      this.velocity.y = 0.45;
     }
     else {
       // Add jump buffer (ms)

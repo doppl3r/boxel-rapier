@@ -4,7 +4,7 @@
   const canvas = ref(game.scene.graphics.canvas);
 
   // Initialize app and expose to window scope
-  var title = ref('PageHome.vue');
+  var title = ref('Demo');
 
   // Initialize app after canvas has been mounted
   onMounted(() => {

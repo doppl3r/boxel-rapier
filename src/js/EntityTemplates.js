@@ -48,6 +48,11 @@ class EntityTemplates {
         shapeDesc: ['cuboid', 0.5, 0.5, 0.5]
       }
     ],
+    object3d: {
+      userData: {
+        path: '../glb/player.glb'
+      }
+    },
     name: 'teleport'
   }
 
@@ -57,15 +62,19 @@ class EntityTemplates {
     },
     colliders: [
       {
-        shapeDesc: ['cuboid', 0.375, 0.375, 0.375]
+        shapeDesc: ['cuboid', 0.325, 0.325, 0.325]
       },
       {
         isSensor: true,
         shapeDesc: ['cuboid', 0.4, 0.4, 0.4]
       }
     ],
+    controller: {
+      offset: 0.01
+    },
     name: 'player',
     object3d: {
+      scale: { x: 0.75, y: 0.75, z: 0.75 },
       userData: {
         path: '../glb/player.glb'
       }

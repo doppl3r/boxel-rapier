@@ -61,13 +61,23 @@ class Scene {
 
       // Assign controller to player type
       if (child.template === 'player') {
-        this.entityController.setController(EntityFactory.createController({}, this.world));
+        this.entityController.setController(EntityFactory.createController(child.controller, this.world));
         this.entityController.setEntity(entity);
       }
     });
 
     // TODO: Replace camera logic
     this.graphics.camera.position.z = 10;
+
+    // TODO: Remove testing entities
+    for (let i = -10; i < 10; i++) {
+      // Create entity from child options
+      const entity = EntityFactory.create({
+        template: 'cube',
+        body: { position: { x: (i * 1.5), y: -4, z: 0 } }
+      }, this.world);
+      this.add(entity);
+    }
   }
 
   add(entity) {
