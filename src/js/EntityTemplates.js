@@ -39,6 +39,12 @@ class EntityTemplates {
     },
     colliders: [
       {
+        events: [
+          {
+            name: 'teleport',
+            value: { x: 0, y: 3, z: 0 }
+          }
+        ],
         shapeDesc: ['cuboid', 0.5, 0.5, 0.5]
       },
       {
@@ -48,6 +54,7 @@ class EntityTemplates {
             value: { x: 0, y: 3, z: 0 }
           }
         ],
+        isSensor: true,
         shapeDesc: ['cuboid', 0.375, 0.125, 0.375],
         translation: { x: 0, y: 0.5, z: 0 }
       }
@@ -89,11 +96,7 @@ class EntityTemplates {
     },
     colliders: [
       {
-        shapeDesc: ['cuboid', 0.325, 0.325, 0.325]
-      },
-      {
-        isSensor: true,
-        shapeDesc: ['cuboid', 0.4, 0.4, 0.4]
+        shapeDesc: ['cuboid', 0.375, 0.375, 0.375]
       }
     ],
     controller: {

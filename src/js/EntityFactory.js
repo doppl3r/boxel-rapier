@@ -29,6 +29,12 @@ class EntityFactory {
       const collider = this.createCollider(colliderDesc, rigidBody, world);
       this.createColliderEvents(colliderOptions.events, collider, entity);
     });
+
+    // Assign optional controller
+    if (options.controller) {
+      const controller = this.createController(options.controller, world);
+      entity.setController(controller);
+    }
     
     // Assign components to entity
     entity.set3DObject(object3D);

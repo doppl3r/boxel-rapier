@@ -2,14 +2,13 @@ import { Vector3 } from 'three';
 import { QueryFilterFlags } from '@dimforge/rapier3d';
 
 /*
-  The EntityController receives user input and performs that can
-  control entity properties (such as position, force, etc.)
+  The EntityInput receives user input that can control
+  entity properties (such as position, force, etc.)
 */
 
-class EntityController {
+class EntityInput {
   constructor() {
     // Declare components
-    this.controller;
     this.entity;
 
     // Initialize force properties
@@ -29,10 +28,6 @@ class EntityController {
     document.addEventListener('keyup', e => this.keyUp(e));
     document.addEventListener('pointerdown', e => this.pointerDown(e));
     document.addEventListener('pointerup', e => this.pointerUp(e));
-  }
-
-  setController(controller) {
-    this.controller = controller;
   }
 
   setEntity(entity) {
@@ -65,7 +60,7 @@ class EntityController {
     this.move(this.velocity);
 
     // Check collisions for base collider
-    const collision = this.controller.computedCollision(0);
+    const collision = this.entity.controller.computedCollision(0);
     if (collision) {
       this.allowJump = true;
       // Check ceiling collision
@@ -75,7 +70,7 @@ class EntityController {
     }
 
     // Set vertical velocity to zero if grounded
-    if (this.controller.computedGrounded()) {
+    if (this.entity.controller.computedGrounded()) {
       this.velocity.y = 0;
     }
   }
@@ -139,9 +134,9 @@ class EntityController {
   move(desiredTranslation) {
     // Set the next kinematic translation
     if (this.entity.rigidBody.collider(0)) {
-      this.controller.computeColliderMovement(this.entity.rigidBody.collider(0), desiredTranslation, QueryFilterFlags['EXCLUDE_SENSORS']);
+      this.entity.controller.computeColliderMovement(this.entity.rigidBody.collider(0), desiredTranslation, QueryFilterFlags['EXCLUDE_SENSORS']);
       _v.copy(this.entity.rigidBody.translation());
-      _v.add(this.controller.computedMovement());
+      _v.add(this.entity.controller.computedMovement());
       this.entity.rigidBody.setNextKinematicTranslation(_v);
     }
   }
@@ -171,4 +166,4 @@ class EntityController {
 
 const _v = new Vector3();
 
-export { EntityController }
+export { EntityInput }

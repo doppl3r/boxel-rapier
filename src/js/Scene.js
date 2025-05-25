@@ -2,7 +2,7 @@ import { EventQueue, World } from '@dimforge/rapier3d';
 import { Graphics } from './Graphics.js';
 import { Debugger } from './Debugger.js';
 import { EntityFactory } from './EntityFactory.js';
-import { EntityController } from './EntityController.js';
+import { EntityInput } from './EntityInput.js';
 
 class Scene {
   constructor() {
@@ -12,7 +12,7 @@ class Scene {
     this.debugger = new Debugger(this.world);
     this.graphics.scene.add(this.debugger);
     this.eventQueue = new EventQueue(true);
-    this.entityController = new EntityController();
+    this.entityInput = new EntityInput();
     this.entities = new Map();
   }
 
@@ -61,8 +61,7 @@ class Scene {
 
       // Assign controller to player type
       if (child.template === 'player') {
-        this.entityController.setController(EntityFactory.createController(child.controller, this.world));
-        this.entityController.setEntity(entity);
+        this.entityInput.setEntity(entity);
       }
     });
 
