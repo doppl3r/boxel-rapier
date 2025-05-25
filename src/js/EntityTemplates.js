@@ -39,12 +39,6 @@ class EntityTemplates {
     },
     colliders: [
       {
-        events: [
-          {
-            name: 'teleport',
-            value: { x: 0, y: 3, z: 0 }
-          }
-        ],
         shapeDesc: ['cuboid', 0.5, 0.5, 0.5]
       },
       {
@@ -100,7 +94,7 @@ class EntityTemplates {
       }
     ],
     controller: {
-      offset: 0.01
+      offset: 0
     },
     name: 'player',
     object3d: {

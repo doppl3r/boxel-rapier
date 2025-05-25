@@ -50,8 +50,6 @@ class EntityInput {
 
     // Apply constant gravity force (and horizontal damping)
     this.velocity.y -= 0.025;
-    this.velocity.z *= 0.95;
-    this.velocity.x *= 0.95;
 
     this.updateControls();
     this.updateForce();
@@ -95,7 +93,7 @@ class EntityInput {
 
     // Rotate direction vector according to gravity angle
     _v.copy({ x: direction, y: 0, z: 0 });
-    this.setForce(_v, 0.025, 0.125);
+    this.setForce(_v, 0.025, 0.15);
   }
 
   updateForce() {
@@ -123,7 +121,7 @@ class EntityInput {
   jump() {
     if (this.allowJump === true) {
       this.allowJump = false;
-      this.velocity.y = 0.45;
+      this.velocity.y = 0.475;
     }
     else {
       // Add jump buffer (ms)

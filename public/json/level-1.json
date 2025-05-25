@@ -5,6 +5,9 @@
       "body": {
         "position": { "x": 0, "y": 3, "z": 0 }
       },
+      "controller": {
+        "offset": 0
+      },
       "template": "player"
     },
 
@@ -27,7 +30,7 @@
 
     {
       "body": {
-        "position": { "x": 2, "y": -2, "z": 0 }
+        "position": { "x": 2, "y": -1, "z": 0 }
       },
       "template": "spike"
     }
