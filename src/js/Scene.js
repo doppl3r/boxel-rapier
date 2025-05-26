@@ -73,7 +73,7 @@ class Scene {
       // Create entity from child options
       const entity = EntityFactory.create({
         template: 'cube',
-        body: { position: { x: (i * 1), y: -4 + (i * 0.12), z: 0 } }
+        body: { position: { x: (i * 1), y: -4 + (i * 0), z: 0 } }
       }, this.world);
       this.add(entity);
     }

@@ -94,7 +94,7 @@ class EntityTemplates {
       }
     ],
     controller: {
-      offset: 0
+      offset: 0.01
     },
     name: 'player',
     object3d: {
