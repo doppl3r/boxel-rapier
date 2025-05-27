@@ -19,16 +19,26 @@ class Assets extends EventDispatcher {
     
     // Initialize loaders with manager
     this.audioListener = new AudioListener();
-    this.audioLoader = new AudioLoader(this.manager);
-    this.gltfLoader = new GLTFLoader(this.manager)
-    this.textureLoader = new TextureLoader(this.manager);
-
-    // Acceptable file types
-    this.types = {
-      audio: ['mp3', 'ogg', 'wav'],
-      models: ['glb', 'gltf'],
-      textures: ['jpg', 'jpeg', 'png']
-    }
+    this.loaderOptions = [
+      {
+        fileTypes: ['mp3', 'ogg', 'wav'],
+        loader: new AudioLoader(this.manager),
+        onLoad: (fileName, data) => {
+          const audio = new Audio(this.audioListener);
+          this.assign(fileName, audio.setBuffer(data))
+        }
+      },
+      {
+        fileTypes: ['glb', 'gltf'],
+        loader: new GLTFLoader(this.manager),
+        onLoad: (fileName, data) => this.assign(fileName, data.scene)
+      },
+      {
+        fileTypes: ['jpg', 'jpeg', 'png'],
+        loader: new TextureLoader(this.manager),
+        onLoad: (fileName, data) => this.assign(fileName, data)
+      }
+    ];
   }
 
   load(url, callback = a => a) {
@@ -43,25 +53,18 @@ class Assets extends EventDispatcher {
       this.queue.push({ name: fileName, callback });
     }
     else {
-      // Return existing asset
+      // Run callback with existing asset
       callback(asset);
     }
 
     // Start loading if asset is not queued
     if (queued === false) {
-      // Conditionally load file types
-      if (this.types.audio.includes(fileType)) {
-        // Load Audio type
-        const audio = new Audio(this.audioListener);
-        this.audioLoader.load(url, buffer => this.assign(fileName, audio.setBuffer(buffer)));
-      }
-      else if (this.types.models.includes(fileType)) {
-        // Load GLTF type
-        this.gltfLoader.load(url, gltf => this.assign(fileName, gltf.scene));
-      }
-      else if (this.types.textures.includes(fileType)) {
-        // Load Texture type
-        this.textureLoader.load(url, texture => this.assign(fileName, texture));
+      // Get loader option by file type (ex: 'mp3')
+      const loaderOption = this.loaderOptions.find(option => option.fileTypes.includes(fileType));
+
+      // Load asset if loader option exists
+      if (loaderOption !== undefined) {
+        loaderOption.loader.load(url, data => loaderOption.onLoad(fileName, data));
       }
       else {
         console.error(`File type ".${ fileType }" not supported`);
