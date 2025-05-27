@@ -94,7 +94,7 @@ class EntityTemplates {
       }
     ],
     controller: {
-      offset: 0.01
+      offset: 0
     },
     name: 'player',
     object3d: {
@@ -103,6 +103,25 @@ class EntityTemplates {
         path: '../glb/player.glb'
       }
     }
+  }
+
+  static voxels = {
+    body: {
+      position: { x: 0, y: -2, z: 0 },
+      status: 1
+    },
+    colliders: [
+      {
+        shapeDesc: ['voxels', 
+          [
+            0, 0, 0,
+            2, 0, 0,
+            0, 2, 0,
+            2, 2, 0
+          ],
+        { x: 1, y: 1, z: 1 }]
+      }
+    ]
   }
 }
 
