@@ -32,7 +32,7 @@ class EntityInput {
 
   setEntity(entity) {
     this.entity = entity;
-    this.entity.addEventListener('updated', e => this.update(e.loop));
+    this.entity.addEventListener('beforeUpdate', e => this.update(e.loop));
     this.entity.addEventListener('rendered', e => this.render(e.loop));
   }
 
@@ -75,7 +75,7 @@ class EntityInput {
 
   render(loop) {
     // TODO: Decouple game camera
-    const camera = game.scene.graphics.camera;
+    const camera = game.stage.graphics.camera;
     camera.position.copy(this.entity.object3D.position);
     camera.position.z += 20;
     camera.position.y += 2;
@@ -92,6 +92,7 @@ class EntityInput {
     else if (this.keys['ArrowRight'] == true) direction = 1;
 
     // Rotate direction vector according to gravity angle
+    direction = 1;
     _v.copy({ x: direction, y: 0, z: 0 });
     this.setForce(_v, 0.025, 0.15);
   }

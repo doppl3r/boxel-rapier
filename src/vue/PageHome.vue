@@ -1,14 +1,14 @@
 <script setup>
   import { onMounted, ref } from 'vue';
 
-  const canvas = ref(game.scene.graphics.canvas);
+  const canvas = ref(game.stage.graphics.canvas);
 
   // Initialize app and expose to window scope
   var title = ref('Demo');
 
   // Initialize app after canvas has been mounted
   onMounted(() => {
-    canvas.value.replaceWith(game.scene.graphics.canvas);
+    canvas.value.replaceWith(game.stage.graphics.canvas);
   });
 </script>
 
