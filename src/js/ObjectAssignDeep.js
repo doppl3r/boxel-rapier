@@ -13,11 +13,11 @@ function cloneValue(value) {
   return value;
 }
 
-function quickCloneArray (input) {
+function quickCloneArray(input) {
   return input.map(cloneValue);
 }
 
-function quickCloneObject (input) {
+function quickCloneObject(input) {
   const output = {};
   for (const key in input) {
     if (!input.hasOwnProperty(key)) { continue; }

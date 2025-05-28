@@ -17,8 +17,8 @@
 
   // Load batch of assets
   game.assets.loadBatch([
-      '../png/icon.png',
-      '../ogg/click.ogg'
+      'png/icon.png',
+      'ogg/click.ogg'
     ]
   );
 

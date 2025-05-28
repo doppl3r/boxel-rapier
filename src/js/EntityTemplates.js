@@ -15,7 +15,7 @@ class EntityTemplates {
     name: 'cube',
     object3d: {
       userData: {
-        path: '../glb/cube.glb'
+        path: 'glb/cube.glb'
       }
     }
   }
@@ -55,7 +55,7 @@ class EntityTemplates {
     ],
     object3d: {
       userData: {
-        path: '../glb/spike.glb'
+        path: 'glb/spike.glb'
       }
     },
     name: 'teleport'
@@ -78,7 +78,7 @@ class EntityTemplates {
     ],
     object3d: {
       userData: {
-        path: '../glb/player.glb'
+        path: 'glb/player.glb'
       }
     },
     name: 'teleport'
@@ -101,7 +101,7 @@ class EntityTemplates {
     object3d: {
       scale: { x: 0.75, y: 0.75, z: 0.75 },
       userData: {
-        path: '../glb/player.glb'
+        path: 'glb/player.glb'
       }
     }
   }
