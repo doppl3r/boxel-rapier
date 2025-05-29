@@ -6,7 +6,7 @@ import { QueryFilterFlags } from '@dimforge/rapier3d';
   entity properties (such as position, force, etc.)
 */
 
-class EntityInput {
+class EntityInput2D {
   constructor() {
     // Declare components
     this.entity;
@@ -32,7 +32,7 @@ class EntityInput {
 
   setEntity(entity) {
     this.entity = entity;
-    this.entity.addEventListener('beforeUpdate', e => this.update(e.loop));
+    this.entity.addEventListener('updated', e => this.update(e.loop));
     this.entity.addEventListener('rendered', e => this.render(e.loop));
   }
 
@@ -51,24 +51,19 @@ class EntityInput {
     // Apply constant gravity force (and horizontal damping)
     this.velocity.y -= 0.025;
 
+    // Add movement damping (air resistance)
+    this.velocity.x *= 0.9;
+
+    // Check user input and update force
     this.updateControls();
     this.updateForce();
 
     // Move entity
     this.move(this.velocity);
-
-    // Check collisions for base collider
-    const collision = this.entity.controller.computedCollision(0);
-    if (collision) {
-      this.allowJump = true;
-      // Check ceiling collision
-      if (collision.normal1.y < -0.5) {
-        this.velocity.y = 0;
-      }
-    }
-
+    
     // Set vertical velocity to zero if grounded
     if (this.entity.controller.computedGrounded()) {
+      this.allowJump = true;
       this.velocity.y = 0;
     }
   }
@@ -92,7 +87,6 @@ class EntityInput {
     else if (this.keys['ArrowRight'] == true) direction = 1;
 
     // Rotate direction vector according to gravity angle
-    direction = 1;
     _v.copy({ x: direction, y: 0, z: 0 });
     this.setForce(_v, 0.025, 0.15);
   }
@@ -136,6 +130,7 @@ class EntityInput {
       this.entity.controller.computeColliderMovement(this.entity.rigidBody.collider(0), desiredTranslation, QueryFilterFlags['EXCLUDE_SENSORS']);
       _v.copy(this.entity.rigidBody.translation());
       _v.add(this.entity.controller.computedMovement());
+      _v.z = 0; // Force z-axis lock
       this.entity.rigidBody.setNextKinematicTranslation(_v);
     }
   }
@@ -165,4 +160,4 @@ class EntityInput {
 
 const _v = new Vector3();
 
-export { EntityInput }
+export { EntityInput2D }

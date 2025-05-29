@@ -8,11 +8,9 @@ class Game {
     this.interval = new Interval();
     this.stage = new Stage();
 
-    // TODO: Remove tests
-    this.assets.load('./glb/level-1.glb', asset => {
-      this.stage.load(asset);
-      this.start();
-    })
+    // Load stage from JSON
+    this.stage.load('json/level-1.json')
+    this.start();
   }
 
   update(loop) {

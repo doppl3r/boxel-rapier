@@ -2,7 +2,7 @@ import { EventQueue, World } from '@dimforge/rapier3d';
 import { Graphics } from './Graphics.js';
 import { Debugger } from './Debugger.js';
 import { EntityFactory } from './EntityFactory.js';
-import { EntityInput } from './EntityInput.js';
+import { EntityInput2D } from './EntityInput2D.js';
 
 class Stage {
   constructor() {
@@ -12,7 +12,7 @@ class Stage {
     this.debugger = new Debugger(this.world);
     this.graphics.scene.add(this.debugger);
     this.eventQueue = new EventQueue(true);
-    this.entityInput = new EntityInput();
+    this.entityInput2D = new EntityInput2D();
     this.entities = new Map();
   }
 
@@ -63,11 +63,11 @@ class Stage {
         json.children.push({
           body: {
             position: child.position,
+            rotation: { x: child.rotation._x, y: child.rotation._y, z: child.rotation._z },
             status: child.userData.status ?? 1
           },
           template: child.userData.name.split('.')[0]
         });
-        
       });
 
       // Add global light
@@ -97,7 +97,7 @@ class Stage {
 
       // Assign controller to player type
       if (child.template === 'player') {
-        this.entityInput.setEntity(entity);
+        this.entityInput2D.setEntity(entity);
       }
     });
   }

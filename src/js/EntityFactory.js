@@ -4,7 +4,7 @@ import { LightFactory } from './LightFactory.js';
 import { Entity } from './Entity.js';
 import { EntityTemplates } from './EntityTemplates.js';
 import { EntityEvents } from './EntityEvents.js';
-import { ObjectAssign } from './ObjectAssignDeep.js';
+import { ObjectAssign } from './ObjectAssign.js';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 
 class EntityFactory {

@@ -45,7 +45,7 @@ class EntityTemplates {
         events: [
           {
             name: 'teleport',
-            value: { x: 0, y: 3, z: 0 }
+            value: { x: 0, y: 1, z: 0 }
           }
         ],
         isSensor: true,
@@ -70,7 +70,7 @@ class EntityTemplates {
         events: [
           {
             name: 'teleport',
-            value: { x: 0, y: 3, z: 0 }
+            value: { x: 0, y: 0, z: 0 }
           }
         ],
         shapeDesc: ['cuboid', 0.5, 0.5, 0.5]
