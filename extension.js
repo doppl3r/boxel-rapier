@@ -10,7 +10,7 @@ function zipBuildFiles(platform = 'chrome', callback = () => {}) {
   // Build Chrome file
   gulp
     .src(['./build/**/*'], { encoding: false })
-    .pipe(zip(`boxel-arcade-${ version }-${ platform }.zip`, { buffer: true }))
+    .pipe(zip(`boxel-rapier-${ version }-${ platform }.zip`, { buffer: true }))
     .pipe(gulp.dest('./dist'))
     .on('end', callback); // Execute callback
 }

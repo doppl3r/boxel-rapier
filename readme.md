@@ -1,4 +1,4 @@
-# Boxel Arcade
+# Boxel Rapier
 
 ## Local Development
 

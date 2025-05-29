@@ -1,7 +1,7 @@
 {
-  "name": "boxel-arcade",
+  "name": "boxel-rapier",
   "version": "0.0.1",
-  "description": "Speedrunning arcade game.",
+  "description": "Physics-based game demo.",
   "author": "Jacob DeBenedetto",
   "type": "module",
   "scripts": {

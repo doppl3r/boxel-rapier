@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "Boxel Arcade",
-  "description": "Boxel Arcade is a speedrunning arcade game.",
+  "name": "Boxel Rapier",
+  "description": "Physics-based game demo.",
   "version": "0.0.1",
   "action": {
     "default_popup": "index.html",
-    "default_title": "Boxel Arcade"
+    "default_title": "Boxel Rapier"
   },
   "icons": { 
     "16": "png/icon16.png", 

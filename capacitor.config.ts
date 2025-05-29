@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.boxelarcade.app',
-  appName: 'boxel-arcade',
+  appId: 'com.boxelrapier.app',
+  appName: 'boxel-rapier',
   webDir: 'build'
 };
 
