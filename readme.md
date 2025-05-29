@@ -1,5 +1,64 @@
 # Boxel Rapier
 
+Boxel Rapier uses the Rapier.js physics engine and Three.js 3D library to demonstrate gameplay. This example shows how to create a **Kinematic Character Controller** (aka "KCC").
+
+## Key Classes
+ - [Entity.js](src/js/Entity.js) - The base class for all entities.
+ - [EntityInput2D.js](src/js/EntityInput2D.js) - A input controller class for Kinematic Character Controllers. Can be used for players, conveyors, doors, etc.
+ - [Stage.js](src/js/Stage.js) - Handles all game states, entities, and resources.
+
+![Screenshot](files/png/boxel-rapier-screenshot.png)
+
+## Other Features
+
+### Interpolation
+
+To improve visual performance, this example separates the `physics` engine and the `graphics` engine into 2 separate [Interval.js](src/js/Interval.js) loops. The `physics` engine loop runs at 60hz, while the `graphics` loop runs at the refresh rate of your monitor (ex: 240hz).
+
+The `alpha` value (between 0.0 and 1.0) is calculated by adding the sum of time that has changed between these two loops. The alpha value is then applied to the 3D objects position/rotation each time the graphics loop is called.
+
+Here is a `slow motion` example that demonstrates the interpolation between the physics engine and the graphical rendering. Without interpolation, the game would appear as choppy as the wireframes.
+
+![Interpolation](files/gif/interpolation.gif)
+
+### Custom Events
+
+The physics entity system is designed to dispatch events to observers by event type (ex: `collision`, `added`, `removed` etc). The following example shows how you can prescribe a `collider` event to a specific entity using object data (see [EntityTemplates.js](src/js/EntityTemplates.js)):
+```
+static teleport = {
+  colliders: [
+    {
+      events: [
+        {
+          name: 'teleport',
+          value: { x: 0, y: 0, z: 0 }
+        }
+      ],
+      shapeDesc: ['cuboid', 0.5, 0.5, 0.5]
+    }
+  ]
+}
+```
+
+This is where the logic of the "teleport" function exists (see [EntityEvents.js](src/js/EntityEvents.js)):
+```
+static teleport = event => {
+  event.pair.setPosition(event.value);
+}
+```
+
+## Vite
+
+This example uses [Vite](https://vitejs.dev) for **hosting** a local environment and includes commands to **package** for web (similar to Webpack).
+
+## Vue.js
+
+[Vue.js](https://vuejs.org/) is used for the game UI, and leverages the latest **Composition API** introduced in version 3. This JavaScript framework is *"An approachable, performant and versatile framework for building web user interfaces"*.
+
+**Example Component**
+
+ - [PageHome.vue](src/vue/PageHome.vue) - A simple Vue.js component you can modify.
+
 ## Local Development
 
 - Install NodeJS package libraries: `npm install`
@@ -13,25 +72,4 @@
 
 ## Build for release
 
-- Run `npm run dist-extension` to create zipped files
-- Upload to Chrome Webstore
-
-## Test Chrome Extension
-
-- Rebuild extension and open Google Chrome
-- Click Extensions > Manage Extensions
-- Enable Developer mode (top right)
-- Click `Load unpacked` and navigate to the `/build` folder
-- Open extension within Chrome
-
-## Build on Android/iOS
-
-- Increment `versionCode` and `versionName` in `/android/app/build.gradle`
-- Run build & sync with `npm run dist-android`
-- Open Android Studio: `npx cap open android`
-- Select Build > Generate Signed App Bundle or APK...
-
-## Update App Icon/Splash
-
-- Update the assets within the `/files/png/assets` directory
-- Run asset plugin with `npm run generate-assets`
+- Run `npm run dist` to create zipped files

@@ -1,10 +1,12 @@
 <script setup>
   import { onMounted, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
   const canvas = ref(game.stage.graphics.canvas);
 
   // Initialize app and expose to window scope
-  var title = ref('Demo');
+  const i18n = useI18n();
+  const title = ref(i18n.t('home.title'));
 
   // Initialize app after canvas has been mounted
   onMounted(() => {
