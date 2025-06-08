@@ -1,5 +1,6 @@
 import { Vector3 } from 'three';
 import { QueryFilterFlags } from '@dimforge/rapier3d';
+import JoystickController from "joystick-controller";
 
 /*
   The EntityInput receives user input that can control
@@ -16,6 +17,21 @@ class EntityInput2D {
     this.forceDirection = new Vector3();
     this.forceAcceleration = 1;
     this.forceSpeedMax = Infinity;
+    this.joystick = new JoystickController({
+      maxRange: 50,
+      level: 10,
+      radius: 50,
+      joystickRadius: 25,
+      opacity: 1,
+      distortion: true,
+      x: '50%',
+      y: '25%',
+      dynamicPosition: true,
+      dynamicPositionTarget: document.getElementById('app'),
+      hideContextMenu: true
+    }, e => this.joystickMove(e));
+
+    this.joystick.onMove = (e, a) => console.log(e, a);
 
     // Initialize input properties
     this.keys = {};
@@ -80,12 +96,16 @@ class EntityInput2D {
   updateControls() {
     let direction = 0;
 
-    // Conditionally assign direction from keyboard input
-    if (this.keys['KeyA'] == true) direction = -1;
-    else if (this.keys['KeyD'] == true) direction = 1;
-    else if (this.keys['ArrowLeft'] == true) direction = -1;
-    else if (this.keys['ArrowRight'] == true) direction = 1;
-
+    if (this.joystick.started) {
+      direction = this.joystick.leveledX * 0.1;
+      if (this.joystick.leveledY > 7) this.jump();
+    }
+    else {
+      // Conditionally assign direction from keyboard input
+      if (this.keys['KeyA'] == true || this.keys['ArrowLeft'] == true) direction = -1;
+      else if (this.keys['KeyD'] == true || this.keys['ArrowRight'] == true) direction = 1;
+    }
+    
     // Rotate direction vector according to gravity angle
     _v.copy({ x: direction, y: 0, z: 0 });
     this.setForce(_v, 0.025, 0.15);
@@ -108,7 +128,7 @@ class EntityInput2D {
   }
 
   setForce(direction = { x: 0, y: 0, z: 0 }, acceleration = 1, max = Infinity) {
-    this.forceDirection.copy(direction).normalize(); // Ex: -1.0 to 1.0
+    this.forceDirection.copy(direction); // Ex: -1.0 to 1.0
     this.forceAcceleration = acceleration;
     this.forceSpeedMax = max;
   }
@@ -150,11 +170,15 @@ class EntityInput2D {
   }
 
   pointerDown(e) {
-    this.jump();
+    
   }
 
   pointerUp(e) {
     
+  }
+
+  joystickMove(e) {
+    //console.log(e);
   }
 }
 
