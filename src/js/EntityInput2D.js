@@ -8,9 +8,35 @@ import JoystickController from "joystick-controller";
 */
 
 class EntityInput2D {
-  constructor() {
+  constructor(options, world) {
     // Declare components
     this.entity;
+
+    // Set base options
+    options = Object.assign({
+      applyImpulsesMass: 1,
+      applyImpulsesToDynamicBodies: true,
+      autostepMaxHeight: 0.125, // 0.5
+      autostepMinWidth: 0.5, // 0.2
+      autostepIncludeDynamicBodies: true,
+      maxSlopeClimbAngle: 45 * Math.PI / 180,
+      minSlopeClimbAngle: 30 * Math.PI / 180,
+      offset: 0.01,
+      slideEnabled: true,
+      snapToGroundDistance: 0
+    }, options);
+
+    // Create character controller from world
+    this.controller = world.createCharacterController(options.offset); // Spacing
+
+    // Update controller settings
+    this.controller.setSlideEnabled(options.slideEnabled); // Allow sliding down hill
+    this.controller.setMaxSlopeClimbAngle(options.maxSlopeClimbAngle); // Don’t allow climbing slopes larger than 45 degrees.
+    this.controller.setMinSlopeSlideAngle(options.minSlopeClimbAngle); // Automatically slide down on slopes smaller than 30 degrees.
+    this.controller.enableAutostep(options.autostepMaxHeight, options.autostepMinWidth, options.autostepIncludeDynamicBodies); // (maxHeight, minWidth, includeDynamicBodies) Stair behavior
+    this.controller.enableSnapToGround(options.snapToGroundDistance); // (distance) Set ground snap behavior
+    this.controller.setApplyImpulsesToDynamicBodies(options.applyImpulsesToDynamicBodies); // Add push behavior
+    this.controller.setCharacterMass(options.applyImpulsesMass); // (mass) Set character mass
 
     // Initialize force properties
     this.velocity = new Vector3();
@@ -78,7 +104,7 @@ class EntityInput2D {
     this.move(this.velocity);
     
     // Set vertical velocity to zero if grounded
-    if (this.entity.controller.computedGrounded()) {
+    if (this.controller.computedGrounded()) {
       this.allowJump = true;
       this.velocity.y = 0;
     }
@@ -147,9 +173,9 @@ class EntityInput2D {
   move(desiredTranslation) {
     // Set the next kinematic translation
     if (this.entity.rigidBody.collider(0)) {
-      this.entity.controller.computeColliderMovement(this.entity.rigidBody.collider(0), desiredTranslation, QueryFilterFlags['EXCLUDE_SENSORS']);
+      this.controller.computeColliderMovement(this.entity.rigidBody.collider(0), desiredTranslation, QueryFilterFlags['EXCLUDE_SENSORS']);
       _v.copy(this.entity.rigidBody.translation());
-      _v.add(this.entity.controller.computedMovement());
+      _v.add(this.controller.computedMovement());
       _v.z = 0; // Force z-axis lock
       this.entity.rigidBody.setNextKinematicTranslation(_v);
     }

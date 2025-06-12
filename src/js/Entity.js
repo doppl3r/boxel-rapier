@@ -62,10 +62,6 @@ class Entity extends EventDispatcher {
     this.object3D = object3D;
   }
 
-  setController(controller) {
-    this.controller = controller;
-  }
-  
   takeSnapshot(copy = false) {
     if (this.rigidBody) {
       this.snapshot.positionPrev.copy(copy ? this.getPosition() : this.snapshot.position);

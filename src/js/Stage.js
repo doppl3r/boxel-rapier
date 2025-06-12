@@ -12,8 +12,8 @@ class Stage {
     this.debugger = new Debugger(this.world);
     this.graphics.scene.add(this.debugger);
     this.eventQueue = new EventQueue(true);
-    this.entityInput2D = new EntityInput2D();
     this.entities = new Map();
+    this.entityInput2D;
   }
 
   update(loop) {
@@ -95,8 +95,10 @@ class Stage {
       const entity = EntityFactory.create(child, this.world);
       this.add(entity);
 
-      // Assign controller to player type
+      // Initialize 2D controller
       if (child.template === 'player') {
+        this.player = entity;
+        this.entityInput2D = new EntityInput2D(child.controller, this.world);
         this.entityInput2D.setEntity(entity);
       }
     });
@@ -113,8 +115,10 @@ class Stage {
   }
 
   remove(entity) {
-    this.entities.delete(entity.id);
+    this.entities.delete(entity.rigidBody.handle);
     this.graphics.scene.remove(entity.object3D);
+
+    // Deconstruct entity
     EntityFactory.destroy(entity, this.world);
 
     // Dispatch 'removed' event to observers
