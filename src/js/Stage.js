@@ -2,7 +2,6 @@ import { EventQueue, World } from '@dimforge/rapier3d';
 import { Graphics } from './Graphics.js';
 import { Debugger } from './Debugger.js';
 import { EntityFactory } from './EntityFactory.js';
-import { EntityInput2D } from './EntityInput2D.js';
 
 class Stage {
   constructor() {
@@ -43,7 +42,7 @@ class Stage {
 
   render(loop) {
     // Update all 3D object rendering properties
-    this.entities.forEach(function(entity) {
+    this.entities.forEach(entity => {
       entity.render(loop);
     });
 
@@ -51,56 +50,24 @@ class Stage {
     this.graphics.render();
   }
 
-  async load(data) {
+  async load(url) {
     let json = {
       children: []
     };
 
-    // Populate json from scene object
-    if (typeof data === 'object') {
-      // Loop through data
-      data.children.forEach(child => {
-        json.children.push({
-          body: {
-            position: child.position,
-            rotation: { x: child.rotation._x, y: child.rotation._y, z: child.rotation._z },
-            status: child.userData.status ?? 1
-          },
-          template: child.userData.name.split('.')[0]
-        });
-      });
-
-      // Add global light
-      json.children.push({
-        body: {
-          position: { x: 0, y: 0, z: 4 }
-        },
-        template: 'light',
-        object3d: {
-          userData: {
-            type: 'HemisphereLight',
-            skyColor: '#ffffff',
-            groundColor: '#aaaaaa'
-          }
-        }
-      });
-    }
-    else {
-      // Load stage from JSON file
-      json = await (await fetch(data)).json();
-    }
+    // Load stage from JSON file
+    json = await (await fetch(url)).json();
 
     // Create entities from children
     json.children.forEach(child => {
       const entity = EntityFactory.create(child, this.world);
       this.add(entity);
+    });
+  }
 
-      // Initialize 2D controller
-      if (child.template === 'player') {
-        this.player = entity;
-        this.entityInput2D = new EntityInput2D(child.controller, this.world);
-        this.entityInput2D.setEntity(entity);
-      }
+  unload() {
+    this.entities.forEach(entity => {
+      this.remove(entity);
     });
   }
 

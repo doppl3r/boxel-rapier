@@ -3,40 +3,14 @@ import { QueryFilterFlags } from '@dimforge/rapier3d';
 import JoystickController from "joystick-controller";
 
 /*
-  The EntityInput receives user input that can control
+  The following controller receives user input that can control
   entity properties (such as position, force, etc.)
 */
 
-class EntityInput2D {
-  constructor(options, world) {
+class EntityJoystick2D {
+  constructor() {
     // Declare components
     this.entity;
-
-    // Set base options
-    options = Object.assign({
-      applyImpulsesMass: 1,
-      applyImpulsesToDynamicBodies: true,
-      autostepMaxHeight: 0.125, // 0.5
-      autostepMinWidth: 0.5, // 0.2
-      autostepIncludeDynamicBodies: true,
-      maxSlopeClimbAngle: 45 * Math.PI / 180,
-      minSlopeClimbAngle: 30 * Math.PI / 180,
-      offset: 0.01,
-      slideEnabled: true,
-      snapToGroundDistance: 0
-    }, options);
-
-    // Create character controller from world
-    this.controller = world.createCharacterController(options.offset); // Spacing
-
-    // Update controller settings
-    this.controller.setSlideEnabled(options.slideEnabled); // Allow sliding down hill
-    this.controller.setMaxSlopeClimbAngle(options.maxSlopeClimbAngle); // Don’t allow climbing slopes larger than 45 degrees.
-    this.controller.setMinSlopeSlideAngle(options.minSlopeClimbAngle); // Automatically slide down on slopes smaller than 30 degrees.
-    this.controller.enableAutostep(options.autostepMaxHeight, options.autostepMinWidth, options.autostepIncludeDynamicBodies); // (maxHeight, minWidth, includeDynamicBodies) Stair behavior
-    this.controller.enableSnapToGround(options.snapToGroundDistance); // (distance) Set ground snap behavior
-    this.controller.setApplyImpulsesToDynamicBodies(options.applyImpulsesToDynamicBodies); // Add push behavior
-    this.controller.setCharacterMass(options.applyImpulsesMass); // (mass) Set character mass
 
     // Initialize force properties
     this.velocity = new Vector3();
@@ -56,8 +30,6 @@ class EntityInput2D {
       dynamicPositionTarget: document.getElementById('app'),
       hideContextMenu: true
     }, e => this.joystickMove(e));
-
-    this.joystick.onMove = (e, a) => console.log(e, a);
 
     // Initialize input properties
     this.keys = {};
@@ -104,7 +76,7 @@ class EntityInput2D {
     this.move(this.velocity);
     
     // Set vertical velocity to zero if grounded
-    if (this.controller.computedGrounded()) {
+    if (this.entity.controller.computedGrounded()) {
       this.allowJump = true;
       this.velocity.y = 0;
     }
@@ -173,9 +145,9 @@ class EntityInput2D {
   move(desiredTranslation) {
     // Set the next kinematic translation
     if (this.entity.rigidBody.collider(0)) {
-      this.controller.computeColliderMovement(this.entity.rigidBody.collider(0), desiredTranslation, QueryFilterFlags['EXCLUDE_SENSORS']);
+      this.entity.controller.computeColliderMovement(this.entity.rigidBody.collider(0), desiredTranslation, QueryFilterFlags['EXCLUDE_SENSORS']);
       _v.copy(this.entity.rigidBody.translation());
-      _v.add(this.controller.computedMovement());
+      _v.add(this.entity.controller.computedMovement());
       _v.z = 0; // Force z-axis lock
       this.entity.rigidBody.setNextKinematicTranslation(_v);
     }
@@ -210,4 +182,4 @@ class EntityInput2D {
 
 const _v = new Vector3();
 
-export { EntityInput2D }
+export { EntityJoystick2D }

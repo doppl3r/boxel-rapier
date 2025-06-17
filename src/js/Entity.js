@@ -61,6 +61,15 @@ class Entity extends EventDispatcher {
   set3DObject(object3D) {
     this.object3D = object3D;
   }
+  
+  setRigidBody(rigidBody) {
+    this.rigidBody = rigidBody;
+    this.takeSnapshot(true);
+  }
+
+  setController(controller) {
+    this.controller = controller;
+  }
 
   takeSnapshot(copy = false) {
     if (this.rigidBody) {
@@ -74,11 +83,6 @@ class Entity extends EventDispatcher {
   lerp3DObject(alpha = 0) {
     this.object3D?.position.lerpVectors(this.snapshot.positionPrev, this.snapshot.position, alpha);
     this.object3D?.quaternion.slerpQuaternions(this.snapshot.rotationPrev, this.snapshot.rotation, alpha);
-  }
-
-  setRigidBody(rigidBody) {
-    this.rigidBody = rigidBody;
-    this.takeSnapshot(true);
   }
 
   getPosition() {

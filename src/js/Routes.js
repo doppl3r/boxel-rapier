@@ -1,4 +1,4 @@
-import PageHome from '../vue/PageHome.vue'
+import PageJoystick2D from '../vue/PageJoystick2D.vue'
 
 /*
   Vue Router is used to change page components using URL paths. This solution 
@@ -11,6 +11,14 @@ export default [
   {
     name: 'home',
     path: '/',
-    component: PageHome
+    redirect: '/joystick-2d'
+  },
+  {
+    name: 'joystick-2d',
+    path: '/joystick-2d',
+    component: PageJoystick2D,
+    meta: {
+      title: 'Joystick 2D'
+    }
   }
 ];
