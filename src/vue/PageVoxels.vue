@@ -3,24 +3,18 @@
   import { useI18n } from 'vue-i18n';
   import { useRoute } from 'vue-router';
   import { Game } from '../js/Game.js';
-  import { EntityJoystick2D } from '../js/EntityJoystick2D.js';
+  import { EntityController2D } from '../js/EntityController2D.js';
 
   // Initialize Vue components
   const route = useRoute();
   const canvas = ref();
   const i18n = useI18n();
-  const entityController2D = new EntityJoystick2D();
+  const entityController2D = new EntityController2D();
 
   // Initialize app after canvas has been mounted
   onMounted(async () => {
     const game = window.game = new Game();
-    // Load batch of assets
-    game.assets.loadBatch([
-        'png/icon.png',
-        'ogg/click.ogg'
-      ]
-    );
-    await game.stage.load('json/level-1.json');
+    await game.stage.load('json/level-2.json');
     game.start();
 
     // Initialize 2D controller

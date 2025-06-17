@@ -142,7 +142,7 @@
         },
         "status": 2
       },
-      "template": "player"
+      "template": "player_controller_2d"
     },
     {
       "body": {

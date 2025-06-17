@@ -1,0 +1,85 @@
+{
+  "children": [
+    {
+      "body": {
+        "position": {
+          "x": 0,
+          "y": 2,
+          "z": 0
+        }
+      },
+      "template": "player"
+    },
+
+
+    {
+      "body": {
+        "position": {
+          "x": -2,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "template": "cube"
+    },
+    {
+      "body": {
+        "position": {
+          "x": -1,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "template": "cube"
+    },
+    {
+      "body": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "template": "cube"
+    },
+    {
+      "body": {
+        "position": {
+          "x": 1,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "template": "cube"
+    },
+    {
+      "body": {
+        "position": {
+          "x": 2,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "template": "cube"
+    },
+
+    
+    {
+      "body": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 4
+        }
+      },
+      "template": "light",
+      "object3d": {
+        "userData": {
+          "type": "HemisphereLight",
+          "skyColor": "#ffffff",
+          "groundColor": "#aaaaaa"
+        }
+      }
+    }
+  ]
+}

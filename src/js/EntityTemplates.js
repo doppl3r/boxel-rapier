@@ -86,6 +86,26 @@ class EntityTemplates {
 
   static player = {
     body: {
+      ccd: true,
+      enabledTranslations: { x: true, y: true, z: false },
+      status: 0
+    },
+    colliders: [
+      {
+        shapeDesc: ['cuboid', 0.375, 0.375, 0.375]
+      }
+    ],
+    name: 'player',
+    object3d: {
+      scale: { x: 0.75, y: 0.75, z: 0.75 },
+      userData: {
+        path: 'glb/player.glb'
+      }
+    }
+  }
+
+  static player_controller_2d = {
+    body: {
       enabledTranslations: { x: true, y: true, z: false },
       status: 2 // 2 = KinematicPositionBased
     },
