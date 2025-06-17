@@ -7,7 +7,7 @@ import JoystickController from "joystick-controller";
   entity properties (such as position, force, etc.)
 */
 
-class EntityJoystick2D {
+class EntityControllerJoystick2D {
   constructor() {
     // Declare components
     this.entity;
@@ -192,4 +192,4 @@ class EntityJoystick2D {
 
 const _v = new Vector3();
 
-export { EntityJoystick2D }
+export { EntityControllerJoystick2D }

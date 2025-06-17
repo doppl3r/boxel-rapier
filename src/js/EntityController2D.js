@@ -1,5 +1,4 @@
 import { Vector3 } from 'three';
-import { QueryFilterFlags } from '@dimforge/rapier3d';
 
 /*
   The following controller receives user input that can control
@@ -49,22 +48,23 @@ class EntityController2D {
     
     // Rotate direction vector according to gravity angle
     _v.copy({ x: direction, y: 0, z: 0 });
-    this.setForce(_v, 0.025, 0.15);
+    this.setForce(_v, 2, 14);
   }
 
   updateForce() {
     // Check if force exists
     if (this.forceDirection.length() > 0) {
-      _v.copy(this.velocity);
+      _v.copy(this.entity.rigidBody.linvel());
       const speed = _v.dot(this.forceDirection);
       const speedNext = speed + this.forceAcceleration; // Ex: 0.5 to 4.5
       const speedClamped = Math.max(speed, Math.min(speedNext, this.forceSpeedMax));
       const acceleration = speedClamped - speed; // Ex: 0.5 (or 0 at max speed)
       
       // Update velocity using new force
-      this.velocity.x += this.forceDirection.x * acceleration;
-      this.velocity.y += this.forceDirection.y * acceleration;
-      this.velocity.z += this.forceDirection.z * acceleration;
+      _v.x += this.forceDirection.x * acceleration;
+      _v.y += this.forceDirection.y * acceleration;
+      _v.z += this.forceDirection.z * acceleration;
+      this.entity.rigidBody.setLinvel(_v);
     }
   }
 
@@ -86,7 +86,7 @@ class EntityController2D {
       this.setAngularVelocityAtAngle({ x: 0, y: 0, z: 8 }, angle); // Set angular velocity
       this.applyVelocityAtAxisAngle({ x: 1, y: 0, z: 1 }, { x: 0, y: 0, z: 1 }, angle); // Cancel y-velocity
       this.applyImpulseAtAngle(force, angle); // Jump
-      this.allowJump = false;
+      //this.allowJump = false;
     }
     else {
       // Add jump buffer (ms)
