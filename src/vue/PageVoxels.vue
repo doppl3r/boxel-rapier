@@ -32,6 +32,7 @@
     game.stop();
     game.stage.unload();
     game.stage.world.free();
+    entityController2D.destroy();
   });
 </script>
 

@@ -9,11 +9,15 @@
   const route = useRoute();
   const canvas = ref();
   const i18n = useI18n();
-  const entityController2D = new EntityJoystick2D();
+  let entityController2D;
+  let game;
 
   // Initialize app after canvas has been mounted
   onMounted(async () => {
-    const game = window.game = new Game();
+    // Create new instances of game components
+    entityController2D = new EntityJoystick2D();
+    game = window.game = new Game();
+
     // Load batch of assets
     game.assets.loadBatch([
         'png/icon.png',
@@ -38,6 +42,7 @@
     game.stop();
     game.stage.unload();
     game.stage.world.free();
+    entityController2D.destroy();
   });
 </script>
 

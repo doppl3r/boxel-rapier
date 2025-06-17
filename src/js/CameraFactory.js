@@ -21,15 +21,16 @@ class CameraFactory {
     options = Object.assign({
       far: 100,
       fov: 45,
+      helper: false,
       near: 0.05,
       zoom: 1
     }, options);
 
     // Conditionally create camera
-    if (type == 'PerspectiveCamera') {
+    if (type === 'PerspectiveCamera') {
       camera = new PerspectiveCamera(options.fov, ratio, options.near, options.far);
     }
-    else if (type == 'OrthographicCamera') {
+    else if (type === 'OrthographicCamera') {
       camera = new OrthographicCamera(-ratio, ratio, 1, -1, options.near, options.far);
     }
 
@@ -39,10 +40,10 @@ class CameraFactory {
     camera.updateProjectionMatrix();
 
     // Add helper after camera has been added
-    if (options.helper == true) {
+    if (options.helper === true) {
       helper = new CameraHelper(camera);
-      camera.addEventListener('added', function(e) { camera.parent.add(helper); });
-      camera.addEventListener('removed', function(e) { helper.removeFromParent(); });
+      camera.addEventListener('added', e => { camera.parent.add(helper); });
+      camera.addEventListener('removed', e => { helper.removeFromParent(); });
     }
 
     // Return new camera

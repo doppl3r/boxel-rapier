@@ -88,6 +88,7 @@ class EntityTemplates {
     body: {
       ccd: true,
       enabledTranslations: { x: true, y: true, z: false },
+      enabledRotations: { x: false, y: false, z: true },
       status: 0
     },
     colliders: [

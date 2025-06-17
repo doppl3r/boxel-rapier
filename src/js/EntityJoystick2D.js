@@ -38,19 +38,19 @@ class EntityJoystick2D {
     this.allowJump = true;
 
     // Add input event listeners
-    document.addEventListener('keydown', e => this.keyDown(e));
-    document.addEventListener('keyup', e => this.keyUp(e));
-    document.addEventListener('pointerdown', e => this.pointerDown(e));
-    document.addEventListener('pointerup', e => this.pointerUp(e));
+    document.addEventListener('keydown', this.onKeyDown);
+    document.addEventListener('keyup', this.onKeyUp);
+    document.addEventListener('pointerdown', this.onPointerDown);
+    document.addEventListener('pointerup', this.onPointerUp);
   }
 
   setEntity(entity) {
     this.entity = entity;
-    this.entity.addEventListener('updated', e => this.update(e.loop));
-    this.entity.addEventListener('rendered', e => this.render(e.loop));
+    this.entity.addEventListener('updated', this.onUpdated);
+    this.entity.addEventListener('rendered', this.onRendered);
   }
 
-  update(loop) {
+  onUpdated = ({ loop }) => {
     // Calculate input buffer
     if (this.jumpBuffer > 0) {
       this.jumpBuffer -= loop.delta; // ms
@@ -82,7 +82,7 @@ class EntityJoystick2D {
     }
   }
 
-  render(loop) {
+  onRendered = ({ loop }) => {
     // TODO: Decouple game camera
     const camera = game.stage.graphics.camera;
     camera.position.copy(this.entity.object3D.position);
@@ -153,7 +153,7 @@ class EntityJoystick2D {
     }
   }
 
-  keyDown({ code, repeat }) {
+  onKeyDown = ({ code, repeat }) => {
     // Assign key inputs to true (once)
     if (repeat) return;
     this.keys[code] = true;
@@ -162,21 +162,31 @@ class EntityJoystick2D {
     if (this.keys['Space'] == true || this.keys['ArrowUp'] == true) this.jump();
   }
 
-  keyUp({ code }) {
+  onKeyUp = ({ code }) => {
     // Set key values to false
     this.keys[code] = false;
   }
 
-  pointerDown(e) {
+  onPointerDown = (e) => {
     
   }
 
-  pointerUp(e) {
+  onPointerUp = (e) => {
     
   }
 
   joystickMove(e) {
     //console.log(e);
+  }
+
+  destroy() {
+    this.joystick.destroy();
+    this.entity.addEventListener('updated', this.update);
+    this.entity.addEventListener('rendered', this.render);
+    document.removeEventListener('keydown', this.onKeyDown);
+    document.removeEventListener('keyup', this.onKeyUp);
+    document.removeEventListener('pointerdown', this.onPointerDown);
+    document.removeEventListener('pointerup', this.onPointerUp);
   }
 }
 
