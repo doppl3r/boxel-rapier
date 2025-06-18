@@ -48,7 +48,7 @@ class EntityController2D {
     
     // Rotate direction vector according to gravity angle
     _v.copy({ x: direction, y: 0, z: 0 });
-    this.setForce(_v, 2, 14);
+    this.setForce(_v, 2, 10);
   }
 
   updateForce() {

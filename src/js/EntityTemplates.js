@@ -9,6 +9,7 @@ class EntityTemplates {
     },
     colliders: [
       {
+        friction: 0,
         shapeDesc: ['cuboid', 0.5, 0.5, 0.5]
       }
     ],
@@ -93,6 +94,7 @@ class EntityTemplates {
     },
     colliders: [
       {
+        friction: 0,
         shapeDesc: ['cuboid', 0.375, 0.375, 0.375]
       }
     ],
@@ -129,17 +131,21 @@ class EntityTemplates {
 
   static voxels = {
     body: {
-      position: { x: 0, y: -2, z: 0 },
+      position: { x: -0.5, y: -0.5, z: -0.5 },
       status: 1
     },
     colliders: [
       {
+        friction: 0,
         shapeDesc: ['voxels', 
           [
+            -3, 0, 0,
+            -2, 0, 0,
+            -1, 0, 0,
             0, 0, 0,
+            1, 0, 0,
             2, 0, 0,
-            0, 2, 0,
-            2, 2, 0
+            3, 0, 0,
           ],
         { x: 1, y: 1, z: 1 }]
       }
