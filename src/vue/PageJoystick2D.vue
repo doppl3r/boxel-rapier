@@ -1,22 +1,24 @@
 <script setup>
   import { onMounted, onUnmounted, ref } from 'vue';
-  import { useI18n } from 'vue-i18n';
   import { useRoute } from 'vue-router';
   import { Game } from '../js/Game.js';
-  import { EntityControllerJoystick2D } from '../js/EntityControllerJoystick2D.js';
+  import { EntityFactory } from '../js/EntityFactory.js';
+  import { EntityController2DKCC } from '../js/EntityController2DKCC.js';
 
   // Initialize Vue components
   const route = useRoute();
   const canvas = ref();
-  const i18n = useI18n();
-  let entityControllerJoystick2D;
+  let entityController;
   let game;
 
   // Initialize app after canvas has been mounted
   onMounted(async () => {
     // Create new instances of game components
-    entityControllerJoystick2D = new EntityControllerJoystick2D();
     game = window.game = new Game();
+
+    // Create controller
+    const controller = EntityFactory.createController({}, game.stage.world);
+    entityController = new EntityController2DKCC(controller);
 
     // Load batch of assets
     game.assets.loadBatch([
@@ -30,7 +32,7 @@
     // Initialize 2D controller
     game.stage.entities.forEach(entity => {
       if (entity.name === 'player') {
-        entityControllerJoystick2D.setEntity(entity);
+        entityController.setEntity(entity);
       }
     });
 
@@ -42,7 +44,7 @@
     game.stop();
     game.stage.unload();
     game.stage.world.free();
-    entityControllerJoystick2D.destroy();
+    entityController.destroy();
   });
 </script>
 

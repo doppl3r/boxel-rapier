@@ -30,13 +30,9 @@ class EntityFactory {
       this.createColliderEvents(colliderOptions.events, collider, entity);
     });
 
-    // Create optional controllers
-    const controller = this.createController(options.controller, world);
-
     // Assign components to entity
     entity.set3DObject(object3D);
     entity.setRigidBody(rigidBody);
-    entity.setController(controller);
     return entity;
   }
 
@@ -190,13 +186,7 @@ class EntityFactory {
   }
 
   static destroy(entity, world) {
-    // Remove colliders
-    for (let i = entity.rigidBody.numColliders() - 1; i >= 0; i--) {
-      const collider = entity.rigidBody.collider(i);
-      world.removeCollider(collider);
-    }
-
-    // Remove rigid body
+    // Remove rigid body (and attached colliders/joints)
     world.removeRigidBody(entity.rigidBody);
   }
 }

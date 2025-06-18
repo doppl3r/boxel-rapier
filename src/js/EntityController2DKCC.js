@@ -7,9 +7,10 @@ import JoystickController from "joystick-controller";
   entity properties (such as position, force, etc.)
 */
 
-class EntityControllerJoystick2D {
-  constructor() {
+class EntityController2DKCC {
+  constructor(controller) {
     // Declare components
+    this.controller = controller;
     this.entity;
 
     // Initialize force properties
@@ -76,7 +77,7 @@ class EntityControllerJoystick2D {
     this.move(this.velocity);
     
     // Set vertical velocity to zero if grounded
-    if (this.entity.controller.computedGrounded()) {
+    if (this.controller.computedGrounded()) {
       this.allowJump = true;
       this.velocity.y = 0;
     }
@@ -145,9 +146,9 @@ class EntityControllerJoystick2D {
   move(desiredTranslation) {
     // Set the next kinematic translation
     if (this.entity.rigidBody.collider(0)) {
-      this.entity.controller.computeColliderMovement(this.entity.rigidBody.collider(0), desiredTranslation, QueryFilterFlags['EXCLUDE_SENSORS']);
+      this.controller.computeColliderMovement(this.entity.rigidBody.collider(0), desiredTranslation, QueryFilterFlags['EXCLUDE_SENSORS']);
       _v.copy(this.entity.rigidBody.translation());
-      _v.add(this.entity.controller.computedMovement());
+      _v.add(this.controller.computedMovement());
       _v.z = 0; // Force z-axis lock
       this.entity.rigidBody.setNextKinematicTranslation(_v);
     }
@@ -192,4 +193,4 @@ class EntityControllerJoystick2D {
 
 const _v = new Vector3();
 
-export { EntityControllerJoystick2D }
+export { EntityController2DKCC }

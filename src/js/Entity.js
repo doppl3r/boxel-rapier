@@ -27,7 +27,6 @@ class Entity extends EventDispatcher {
     this.type = options.type;
     this.object3D;
     this.rigidBody;
-    this.controller;
     this.snapshot = {
       positionPrev: new Vector3(),
       rotationPrev: new Quaternion(),
@@ -65,10 +64,6 @@ class Entity extends EventDispatcher {
   setRigidBody(rigidBody) {
     this.rigidBody = rigidBody;
     this.takeSnapshot(true);
-  }
-
-  setController(controller) {
-    this.controller = controller;
   }
 
   takeSnapshot(copy = false) {

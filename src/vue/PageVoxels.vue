@@ -1,6 +1,5 @@
 <script setup>
   import { onMounted, onUnmounted, ref } from 'vue';
-  import { useI18n } from 'vue-i18n';
   import { useRoute } from 'vue-router';
   import { Game } from '../js/Game.js';
   import { EntityController2D } from '../js/EntityController2D.js';
@@ -8,7 +7,6 @@
   // Initialize Vue components
   const route = useRoute();
   const canvas = ref();
-  const i18n = useI18n();
   const entityController2D = new EntityController2D();
 
   // Initialize app after canvas has been mounted
