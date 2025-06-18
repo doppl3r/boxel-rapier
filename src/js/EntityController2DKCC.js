@@ -45,16 +45,20 @@ class EntityController2DKCC {
     document.addEventListener('pointerup', this.onPointerUp);
   }
 
+  setCamera = camera => {
+    this.camera = camera;
+  }
+
   setEntity(entity) {
     this.entity = entity;
     this.entity.addEventListener('updated', this.onUpdated);
     this.entity.addEventListener('rendered', this.onRendered);
   }
 
-  onUpdated = ({ loop }) => {
+  onUpdated = ({ delta }) => {
     // Calculate input buffer
     if (this.jumpBuffer > 0) {
-      this.jumpBuffer -= loop.delta; // ms
+      this.jumpBuffer -= delta; // ms
 
       // Automatically jump if buffer is set
       if (this.allowJump === true) {
@@ -83,13 +87,11 @@ class EntityController2DKCC {
     }
   }
 
-  onRendered = ({ loop }) => {
-    // TODO: Decouple game camera
-    const camera = game.stage.graphics.camera;
-    camera.position.copy(this.entity.object3D.position);
-    camera.position.z += 20;
-    camera.position.y += 2;
-    camera.lookAt(this.entity.object3D.position);
+  onRendered = () => {
+    this.camera.position.copy(this.entity.object3D.position);
+    this.camera.position.z += 20;
+    this.camera.position.y += 2;
+    this.camera.lookAt(this.entity.object3D.position);
   }
 
   updateControls() {

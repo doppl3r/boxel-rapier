@@ -30,6 +30,10 @@ class EntityController2D {
     document.addEventListener('pointerup', this.onPointerUp);
   }
 
+  setCamera = camera => {
+    this.camera = camera;
+  }
+
   setEntity = entity => {
     this.entity = entity;
 
@@ -79,7 +83,7 @@ class EntityController2D {
       const magnitude = 25;
       const mass = this.entity.rigidBody.mass();
       const force = _v.clone().set(0, magnitude * mass, 0);
-      const gravity = game.stage.world.gravity;
+      const gravity = game.world.gravity;
       const angle = Math.atan2(gravity.y, gravity.x) + (Math.PI / 2);
       
       // Update velocity and apply jump
@@ -134,10 +138,10 @@ class EntityController2D {
     }
   }
 
-  onUpdated = ({ loop }) => {
+  onUpdated = ({ delta }) => {
     // Calculate input buffer
     if (this.jumpBuffer > 0) {
-      this.jumpBuffer -= loop.delta; // ms
+      this.jumpBuffer -= delta; // ms
 
       // Automatically jump if buffer is set
       if (this.allowJump === true) {
@@ -151,13 +155,11 @@ class EntityController2D {
     this.updateForce();
   }
 
-  onRendered = ({ loop }) => {
-    // TODO: Decouple game camera
-    const camera = game.stage.graphics.camera;
-    camera.position.copy(this.entity.object3D.position);
-    camera.position.z += 20;
-    camera.position.y += 2;
-    camera.lookAt(this.entity.object3D.position);
+  onRendered = () => {
+    this.camera.position.copy(this.entity.object3D.position);
+    this.camera.position.z += 20;
+    this.camera.position.y += 2;
+    this.camera.lookAt(this.entity.object3D.position);
   }
 
   onKeyDown = ({ code, repeat }) => {

@@ -17,8 +17,9 @@
     game = window.game = new Game();
 
     // Create controller
-    const controller = EntityFactory.createController({}, game.stage.world);
+    const controller = EntityFactory.createController({}, game.world);
     entityController = new EntityController2DKCC(controller);
+    entityController.setCamera(game.graphics.camera);
 
     // Load batch of assets
     game.assets.loadBatch([
@@ -26,24 +27,24 @@
         'ogg/click.ogg'
       ]
     );
-    await game.stage.load('json/level-1.json');
+    await game.load('json/level-1.json');
     game.start();
 
     // Initialize 2D controller
-    game.stage.entities.forEach(entity => {
+    game.entities.forEach(entity => {
       if (entity.name === 'player') {
         entityController.setEntity(entity);
       }
     });
 
     // Replace canvas element
-    canvas.value.replaceWith(game.stage.graphics.canvas);
+    canvas.value.replaceWith(game.graphics.canvas);
   });
 
   onUnmounted(() => {
     game.stop();
-    game.stage.unload();
-    game.stage.world.free();
+    game.unload();
+    game.world.free();
     entityController.destroy();
   });
 </script>

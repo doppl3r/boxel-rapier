@@ -11,25 +11,31 @@
 
   // Initialize app after canvas has been mounted
   onMounted(async () => {
+    // Initialize singleton game
     const game = window.game = new Game();
-    await game.stage.load('json/level-2.json');
+
+    // Set controller camera
+    entityController2D.setCamera(game.graphics.camera);
+
+    // Load load entities from JSON
+    await game.load('json/level-2.json');
     game.start();
 
     // Initialize 2D controller
-    game.stage.entities.forEach(entity => {
+    game.entities.forEach(entity => {
       if (entity.name === 'player') {
         entityController2D.setEntity(entity);
       }
     });
 
     // Replace canvas element
-    canvas.value.replaceWith(game.stage.graphics.canvas);
+    canvas.value.replaceWith(game.graphics.canvas);
   });
 
   onUnmounted(() => {
     game.stop();
-    game.stage.unload();
-    game.stage.world.free();
+    game.unload();
+    game.world.free();
     entityController2D.destroy();
   });
 </script>
