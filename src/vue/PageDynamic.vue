@@ -2,12 +2,12 @@
   import { onMounted, onUnmounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import { Game } from '../js/Game.js';
-  import { EntityController2D } from '../js/EntityController2D.js';
+  import { EntityControllerDynamic2D } from '../js/EntityControllerDynamic2D.js';
 
   // Initialize Vue components
   const route = useRoute();
   const canvas = ref();
-  const entityController2D = new EntityController2D();
+  const entityController = new EntityControllerDynamic2D();
 
   // Initialize app after canvas has been mounted
   onMounted(async () => {
@@ -15,7 +15,7 @@
     const game = window.game = new Game();
 
     // Set controller camera
-    entityController2D.setCamera(game.graphics.camera);
+    entityController.setCamera(game.graphics.camera);
 
     // Load load entities from JSON
     await game.load('json/level-2.json');
@@ -24,7 +24,7 @@
     // Initialize 2D controller
     game.entities.forEach(entity => {
       if (entity.name === 'player') {
-        entityController2D.setEntity(entity);
+        entityController.setEntity(entity);
       }
     });
 
@@ -36,7 +36,7 @@
     game.stop();
     game.unload();
     game.world.free();
-    entityController2D.destroy();
+    entityController.destroy();
   });
 </script>
 

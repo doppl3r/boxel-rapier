@@ -1,13 +1,12 @@
 import { Vector3 } from 'three';
 import { QueryFilterFlags } from '@dimforge/rapier3d';
-import JoystickController from "joystick-controller";
 
 /*
   The following controller receives user input that can control
   entity properties (such as position, force, etc.)
 */
 
-class EntityController2DKCC {
+class EntityControllerKinematic2D {
   constructor(controller) {
     // Declare components
     this.controller = controller;
@@ -18,22 +17,10 @@ class EntityController2DKCC {
     this.forceDirection = new Vector3();
     this.forceAcceleration = 1;
     this.forceSpeedMax = Infinity;
-    this.joystick = new JoystickController({
-      maxRange: 50,
-      level: 10,
-      radius: 50,
-      joystickRadius: 25,
-      opacity: 1,
-      distortion: true,
-      x: '50%',
-      y: '25%',
-      dynamicPosition: true,
-      dynamicPositionTarget: document.getElementById('app'),
-      hideContextMenu: true
-    }, e => this.joystickMove(e));
 
     // Initialize input properties
     this.keys = {};
+    this.pointer = {};
     this.jumpBuffer = 0; // ms
     this.inputBuffer = 100; // ms
     this.allowJump = true;
@@ -97,15 +84,9 @@ class EntityController2DKCC {
   updateControls() {
     let direction = 0;
 
-    if (this.joystick.started) {
-      direction = this.joystick.leveledX * 0.1;
-      if (this.joystick.leveledY > 7) this.jump();
-    }
-    else {
-      // Conditionally assign direction from keyboard input
-      if (this.keys['KeyA'] == true || this.keys['ArrowLeft'] == true) direction = -1;
-      else if (this.keys['KeyD'] == true || this.keys['ArrowRight'] == true) direction = 1;
-    }
+    // Conditionally assign direction from keyboard input
+    if (this.keys['KeyA'] == true || this.keys['ArrowLeft'] == true) direction = -1;
+    else if (this.keys['KeyD'] == true || this.keys['ArrowRight'] == true) direction = 1;
     
     // Rotate direction vector according to gravity angle
     _v.copy({ x: direction, y: 0, z: 0 });
@@ -170,20 +151,20 @@ class EntityController2DKCC {
     this.keys[code] = false;
   }
 
-  onPointerDown = (e) => {
+  onPointerDown = ({ target, which }) => {
+    // Cancel input for non-canvas elements
+    if (target.nodeName != 'CANVAS') return;
     
+    // Add touch bindings
+    this.pointer[which] = true;
+    if (this.pointer[1] == true) this.jump();
   }
 
   onPointerUp = (e) => {
     
   }
 
-  joystickMove(e) {
-    //console.log(e);
-  }
-
   destroy() {
-    this.joystick.destroy();
     this.entity.addEventListener('updated', this.update);
     this.entity.addEventListener('rendered', this.render);
     document.removeEventListener('keydown', this.onKeyDown);
@@ -195,4 +176,4 @@ class EntityController2DKCC {
 
 const _v = new Vector3();
 
-export { EntityController2DKCC }
+export { EntityControllerKinematic2D }

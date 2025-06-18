@@ -3,7 +3,7 @@
   import { useRoute } from 'vue-router';
   import { Game } from '../js/Game.js';
   import { EntityFactory } from '../js/EntityFactory.js';
-  import { EntityController2DKCC } from '../js/EntityController2DKCC.js';
+  import { EntityControllerKinematic2D } from '../js/EntityControllerKinematic2D.js';
 
   // Initialize Vue components
   const route = useRoute();
@@ -18,7 +18,7 @@
 
     // Create controller
     const controller = EntityFactory.createController({}, game.world);
-    entityController = new EntityController2DKCC(controller);
+    entityController = new EntityControllerKinematic2D(controller);
     entityController.setCamera(game.graphics.camera);
 
     // Load batch of assets

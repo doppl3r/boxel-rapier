@@ -1,5 +1,5 @@
-import PageJoystick2D from '../vue/PageJoystick2D.vue'
-import PageVoxels from '../vue/PageVoxels.vue'
+import PageKinematic from '../vue/PageKinematic.vue'
+import PageDynamic from '../vue/PageDynamic.vue'
 
 /*
   Vue Router is used to change page components using URL paths. This solution 
@@ -12,22 +12,22 @@ export default [
   {
     name: 'home',
     path: '/',
-    redirect: '/joystick-2d'
+    redirect: '/dynamic'
   },
   {
-    name: 'joystick-2d',
-    path: '/joystick-2d',
-    component: PageJoystick2D,
+    name: 'dynamic',
+    path: '/dynamic',
+    component: PageDynamic,
     meta: {
-      title: 'Joystick 2D'
+      title: 'Dynamic Controller (DCC)'
     }
   },
   {
-    name: 'voxels',
-    path: '/voxels',
-    component: PageVoxels,
+    name: 'kinematic',
+    path: '/kinematic',
+    component: PageKinematic,
     meta: {
-      title: 'Voxels'
+      title: 'Kinematic Controller (KCC)'
     }
   }
 ];
