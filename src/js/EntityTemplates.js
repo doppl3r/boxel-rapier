@@ -147,12 +147,15 @@ class EntityTemplates {
             2, 0, 0,
             3, 0, 0,
           ],
-        { x: 1, y: 1, z: 1 }]
+          { x: 1, y: 1, z: 1 }
+        ]
       }
     ],
+    name: 'voxels',
     object3d: {
+      scale: { x: 4, y: 4, z: 4 },
       userData: {
-        path: 'glb/spike.glb'
+        path: 'glb/cube.glb'
       }
     }
   }

@@ -136,10 +136,6 @@ class EntityFactory {
 
     // Create object from options
     const object3D = new Object3D();
-    const rotation = options.rotation.w ? _e.setFromQuaternion(_q.copy(options.rotation)) : _e.setFromVector3(_v.copy(options.rotation));
-    object3D.position.copy(options.position);
-    object3D.rotation.copy(rotation);
-    object3D.scale.copy(options.scale);
 
     // Create optional children
     if (options?.userData?.path) {
@@ -150,60 +146,78 @@ class EntityFactory {
 
         // Check shape type
         if (colliderOptions[0].shapeDesc[0] === 'voxels') {
-          // Combine geometries
-          let geometries = [];
-          let instancedMaterial;
-          obj.traverse(o => {
-            // Merge all geometries
-            if (o.isMesh) {
-              // Translate geometry from mesh origin
-              let geometry = o.geometry;
-              geometry.rotateX(o.rotation.x);
-              geometry.rotateY(o.rotation.y);
-              geometry.rotateZ(o.rotation.z);
-              geometry.scale(o.scale.x, o.scale.y, o.scale.z);
-              geometry.translate(o.position.x, o.position.y, o.position.z);
-      
-              // Push geometry to array for merge
-              geometries.push(geometry);
-
-              // Assign material
-              instancedMaterial = o.material;
-            }
-          });
-          
-          // Create instanced mesh
-          const instancedGeometry = mergeGeometries(geometries);
-          const instancedLength = colliderOptions[0].shapeDesc[1].length / 3; // x + y + z = 3
-          const instancedMesh = new InstancedMesh(instancedGeometry, instancedMaterial, instancedLength);
-
-          // Update matrixes
-          const dummy = new Object3D();
-          const point = colliderOptions[0].shapeDesc[1];
-          for (let i = 0; i < instancedLength; i++) {
-            dummy.position.set(
-              point[(i * 3)] + 0.5,
-              point[(i * 3) + 1] + 0.5,
-              point[(i * 3) + 2] + 0.5
-            );
-            dummy.updateMatrix();
-            instancedMesh.setMatrixAt(i, dummy.matrix);
-          }
+          const instancedMesh = this.createInstancedMesh(colliderOptions, obj);
 
           // Add instanced mesh
           object3D.add(instancedMesh);
         }
         else {
-          // Add generic 3D object
+          // Set object properties
+          options.rotation = options.rotation.w ? _e.setFromQuaternion(_q.copy(options.rotation)) : _e.setFromVector3(_v.copy(options.rotation));
+          object3D.position.copy(options.position);
+          object3D.rotation.copy(options.rotation);
+          object3D.scale.copy(options.scale);
+
+          // Add cloned asset to 3D object
           object3D.add(obj);
         }
       });
     }
     else if (options?.userData?.type?.includes('Light')) {
       // Create 3D light
-      object3D.add(LightFactory.create(options.userData.type, options.userData))
+      const light = this.createLight(options);
+      object3D.add(light);
     }
     return object3D;
+  }
+
+  static createInstancedMesh(options, object3D) {
+    // Combine geometries
+    let geometries = [];
+    let instancedMaterials = [];
+    let shape = options[0].shapeDesc;
+    object3D.traverse(obj => {
+      // Merge all geometries
+      if (obj.isMesh) {
+        // Translate geometry from mesh origin
+        obj.geometry.rotateX(obj.rotation.x);
+        obj.geometry.rotateY(obj.rotation.y);
+        obj.geometry.rotateZ(obj.rotation.z);
+        obj.geometry.scale(obj.scale.x, obj.scale.y, obj.scale.z);
+        obj.geometry.translate(obj.position.x, obj.position.y, obj.position.z);
+
+        // Push geometry to array for merge
+        geometries.push(obj.geometry);
+
+        // Assign material
+        instancedMaterials.push(obj.material);
+      }
+    });
+    
+    // Create instanced mesh
+    const instancedGeometry = mergeGeometries(geometries, true);
+    const instancedLength = shape[1].length / 3; // x + y + z = 3
+    const instancedMesh = new InstancedMesh(instancedGeometry, instancedMaterials, instancedLength);
+
+    // Update matrixes
+    const dummy = new Object3D();
+    const point = shape[1];
+    for (let i = 0; i < instancedLength; i++) {
+      dummy.position.set(
+        point[(i * 3)] + 0.5,
+        point[(i * 3) + 1] + 0.5,
+        point[(i * 3) + 2] + 0.5
+      );
+      dummy.updateMatrix();
+      instancedMesh.setMatrixAt(i, dummy.matrix);
+    }
+
+    // Return object 3D instanced mesh
+    return instancedMesh;
+  }
+
+  static createLight(options) {
+    return LightFactory.create(options.userData.type, options.userData);
   }
 
   static createController(options, world) {
