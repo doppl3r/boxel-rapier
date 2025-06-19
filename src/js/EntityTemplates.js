@@ -149,7 +149,12 @@ class EntityTemplates {
           ],
         { x: 1, y: 1, z: 1 }]
       }
-    ]
+    ],
+    object3d: {
+      userData: {
+        path: 'glb/spike.glb'
+      }
+    }
   }
 }
 

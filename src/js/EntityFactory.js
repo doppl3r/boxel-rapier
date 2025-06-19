@@ -1,4 +1,5 @@
-import { Euler, Object3D, Quaternion, Vector3 } from 'three';
+import { Euler, InstancedMesh, Object3D, Quaternion, Vector3 } from 'three';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidBodyType } from '@dimforge/rapier3d';
 import { LightFactory } from './LightFactory.js';
 import { Entity } from './Entity.js';
@@ -18,7 +19,7 @@ class EntityFactory {
 
     // Initialize entity
     const entity = new Entity(options);
-    const object3D = this.createObject3D(options.object3d);
+    const object3D = this.createObject3D(options.object3d, options.colliders);
     const rigidBodyDesc = this.createRigidBodyDesc(options.body, entity);
     const rigidBody = this.createRigidBody(rigidBodyDesc, world);
 
@@ -126,7 +127,7 @@ class EntityFactory {
     });
   }
 
-  static createObject3D(options) {
+  static createObject3D(options, colliderOptions) {
     options = Object.assign({
       position: { x: 0, y: 0, z: 0 },
       rotation: { x: 0, y: 0, z: 0 },
@@ -144,7 +145,58 @@ class EntityFactory {
     if (options?.userData?.path) {
       // Load asset from singleton assets
       game.assets.load(options.userData.path, asset => {
-        object3D.add(clone(asset));
+        // Clone asset before transforming
+        const obj = clone(asset);
+
+        // Check shape type
+        if (colliderOptions[0].shapeDesc[0] === 'voxels') {
+          // Combine geometries
+          let geometries = [];
+          let instancedMaterial;
+          obj.traverse(o => {
+            // Merge all geometries
+            if (o.isMesh) {
+              // Translate geometry from mesh origin
+              let geometry = o.geometry;
+              geometry.rotateX(o.rotation.x);
+              geometry.rotateY(o.rotation.y);
+              geometry.rotateZ(o.rotation.z);
+              geometry.scale(o.scale.x, o.scale.y, o.scale.z);
+              geometry.translate(o.position.x, o.position.y, o.position.z);
+      
+              // Push geometry to array for merge
+              geometries.push(geometry);
+
+              // Assign material
+              instancedMaterial = o.material;
+            }
+          });
+          
+          // Create instanced mesh
+          const instancedGeometry = mergeGeometries(geometries);
+          const instancedLength = colliderOptions[0].shapeDesc[1].length / 3; // x + y + z = 3
+          const instancedMesh = new InstancedMesh(instancedGeometry, instancedMaterial, instancedLength);
+
+          // Update matrixes
+          const dummy = new Object3D();
+          const point = colliderOptions[0].shapeDesc[1];
+          for (let i = 0; i < instancedLength; i++) {
+            dummy.position.set(
+              point[(i * 3)] + 0.5,
+              point[(i * 3) + 1] + 0.5,
+              point[(i * 3) + 2] + 0.5
+            );
+            dummy.updateMatrix();
+            instancedMesh.setMatrixAt(i, dummy.matrix);
+          }
+
+          // Add instanced mesh
+          object3D.add(instancedMesh);
+        }
+        else {
+          // Add generic 3D object
+          object3D.add(obj);
+        }
       });
     }
     else if (options?.userData?.type?.includes('Light')) {
