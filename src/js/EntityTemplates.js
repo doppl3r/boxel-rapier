@@ -102,7 +102,7 @@ class EntityTemplates {
     object3d: {
       scale: { x: 0.75, y: 0.75, z: 0.75 },
       userData: {
-        path: 'glb/character.glb'
+        path: 'glb/player.glb'
       }
     }
   }
@@ -131,12 +131,10 @@ class EntityTemplates {
 
   static voxels = {
     body: {
-      position: { x: -0.5, y: -0.5, z: -0.5 },
       status: 1
     },
     colliders: [
       {
-        friction: 0,
         shapeDesc: ['voxels', 
           [
             -3, 0, 0,

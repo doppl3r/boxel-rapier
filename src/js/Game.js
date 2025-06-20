@@ -73,7 +73,7 @@ class Game {
     json = await (await fetch(url)).json();
 
     // TODO: Remove test voxels
-    const voxels = {
+    /* const voxels = {
       body: {
         position: { x: 3.5, y: -0.5, z: -0.5 },
         status: 1
@@ -92,13 +92,12 @@ class Game {
         }
       }
     };
-
     for (let row = 0; row < 100; row++) {
       for (let col = 0; col < 100; col++) {
         voxels.colliders[0].shapeDesc[1].push(col, -row, 0);
       }
     }
-    json.children.push(voxels);
+    json.children.push(voxels); */
 
     // Create entities from children
     json.children.forEach(child => {
