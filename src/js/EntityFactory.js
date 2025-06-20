@@ -20,6 +20,7 @@ class EntityFactory {
     // Initialize entity
     const entity = new Entity(options);
     const object3D = this.createObject3D(options.object3d, options.colliders);
+    const mixer = this.createMixer(object3D);
     const rigidBodyDesc = this.createRigidBodyDesc(options.body);
     const rigidBody = this.createRigidBody(rigidBodyDesc, world);
 
@@ -33,6 +34,7 @@ class EntityFactory {
 
     // Assign components to entity
     entity.set3DObject(object3D);
+    entity.setMixer(mixer);
     entity.setRigidBody(rigidBody);
     return entity;
   }
@@ -158,16 +160,6 @@ class EntityFactory {
           object3D.add(instancedMesh);
         }
         else {
-          // Create animation mixer (optional)
-          const mixer = this.createMixer(obj)
-          if (mixer) {
-            // Assign mixer and add render event listener
-            object3D.mixer = mixer;
-            object3D.addEventListener('rendered', ({ loop }) => {
-              mixer.update(loop.delta / 1000);
-            });
-          }
-
           // Add cloned asset to 3D object
           object3D.add(obj);
         }
@@ -229,10 +221,15 @@ class EntityFactory {
   }
 
   static createMixer(object3D) {
+    const mixer = new AnimationMixer(object3D);
+    object3D.addEventListener('childadded', e => this.createAnimations(e.child, mixer));
+    return mixer;
+  }
+
+  static createAnimations(object3D, mixer) {
     // Add mixer if animations exist
     if (object3D.animations.length > 0) {
       const loopType = object3D.userData.loop || 2201; // 2201 = LoopRepeat, 2200 = LoopOnce
-      const mixer = new AnimationMixer(object3D);
       mixer.actions = {};
       
       // Add all animations (for nested objects)

@@ -26,6 +26,7 @@ class Entity extends EventDispatcher {
     this.name = options.name;
     this.type = options.type;
     this.object3D;
+    this.mixer;
     this.rigidBody;
     this.snapshot = {
       positionPrev: new Vector3(),
@@ -52,14 +53,18 @@ class Entity extends EventDispatcher {
 
     // Interpolate (lerp/slerp) object3D
     this.lerp3DObject(loop.alpha);
+    this.updateMixer(loop.delta);
 
-    // Dispatch events after updating
+    // Dispatch 'rendered' events after updating
     this.dispatchEvent({ type: 'rendered', loop });
-    this.object3D?.dispatchEvent({ type: 'rendered', loop })
   }
   
   set3DObject(object3D) {
     this.object3D = object3D;
+  }
+
+  setMixer(mixer) {
+    this.mixer = mixer;
   }
   
   setRigidBody(rigidBody) {
@@ -79,6 +84,10 @@ class Entity extends EventDispatcher {
   lerp3DObject(alpha = 0) {
     this.object3D?.position.lerpVectors(this.snapshot.positionPrev, this.snapshot.position, alpha);
     this.object3D?.quaternion.slerpQuaternions(this.snapshot.rotationPrev, this.snapshot.rotation, alpha);
+  }
+
+  updateMixer(delta) {
+    this.mixer?.update(delta / 1000);
   }
 
   getPosition() {
