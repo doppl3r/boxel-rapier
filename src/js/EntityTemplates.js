@@ -147,6 +147,24 @@ class EntityTemplates {
       }
     }
   }
+
+  static trimesh = {
+    body: {
+      status: 1
+    },
+    colliders: [
+      {
+        shapeDesc: ['trimesh']
+      }
+    ],
+    name: 'trimesh',
+    object3d: {
+      scale: { x: 1, y: 1, z: 1 },
+      userData: {
+        path: 'glb/ramps.glb'
+      }
+    }
+  }
 }
 
 export { EntityTemplates }

@@ -1,6 +1,6 @@
 import { AnimationMixer, Euler, InstancedMesh, Object3D, Quaternion, Vector3 } from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidBodyType } from '@dimforge/rapier3d';
+import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidBodyType, TriMeshFlags } from '@dimforge/rapier3d';
 import { LightFactory } from './LightFactory.js';
 import { Entity } from './Entity.js';
 import { EntityTemplates } from './EntityTemplates.js';
@@ -26,10 +26,13 @@ class EntityFactory {
 
     // Create colliders from array
     options.colliders?.forEach(colliderOptions => {
-      // Create the collider and attach to the rigidBody
-      const colliderDesc = this.createColliderDesc(colliderOptions);
-      const collider = this.createCollider(colliderDesc, rigidBody, world);
-      this.createColliderEvents(colliderOptions.events, collider, entity);
+      // Listen for object to add mesh before creating collider
+      object3D.addEventListener('childadded', () => {
+        // Create the collider and attach to the rigidBody
+        const colliderDesc = this.createColliderDesc(colliderOptions);
+        const collider = this.createCollider(colliderDesc, rigidBody, world);
+        this.createColliderEvents(colliderOptions.events, collider, entity);
+      });
     });
 
     // Assign components to entity
@@ -158,6 +161,11 @@ class EntityFactory {
           const instancedMesh = this.createInstancedMesh(obj, colliderOptions[0].shapeDesc[1]);
           object3D.add(instancedMesh);
         }
+        else if (colliderOptions[0].shapeDesc[0] === 'trimesh') {
+          // Create and add TriMesh from 3D object
+          const triMesh = this.createTrimesh(obj, colliderOptions[0].shapeDesc);
+          object3D.add(triMesh);
+        }
         else {
           // Add cloned asset to 3D object
           object3D.add(obj);
@@ -172,12 +180,13 @@ class EntityFactory {
     return object3D;
   }
 
-  static createInstancedMesh(object3D, vertices) {
+  static mergeObjectMeshes(object3D) {
     // Combine geometries
+    let geometry;
     let geometries = [];
-    let instancedMaterials = [];
+    let materials = [];
 
-    // Traverse and merge all geometries
+    // Traverse and add geometries/materials to array
     object3D.traverse(obj => {
       if (obj.isMesh) {
         // Translate geometry from mesh origin
@@ -191,18 +200,23 @@ class EntityFactory {
         geometries.push(obj.geometry);
 
         // Assign material
-        instancedMaterials.push(obj.material);
+        materials.push(obj.material);
       }
     });
     
+    // Return singular geometry and materials array
+    geometry = mergeGeometries(geometries, true);
+    return { geometry, materials };
+  }
+
+  static createInstancedMesh(object3D, vertices) {
     // Create instanced mesh
-    const instancedGeometry = mergeGeometries(geometries, true);
-    const instancedLength = vertices.length / 3; // x + y + z = 3
-    const instancedMesh = new InstancedMesh(instancedGeometry, instancedMaterials, instancedLength);
+    const { geometry, materials } = this.mergeObjectMeshes(object3D);
+    const instancedMesh = new InstancedMesh(geometry, materials, vertices.length / 3);
 
     // Update matrixes
     const dummy = new Object3D();
-    for (let i = 0; i < instancedLength; i++) {
+    for (let i = 0; i < vertices.length / 3; i++) {
       dummy.position.set(
         vertices[(i * 3)] + 0.5,
         vertices[(i * 3) + 1] + 0.5,
@@ -276,6 +290,14 @@ class EntityFactory {
 
     // Return animation mixer
     return mixer;
+  }
+
+  static createTrimesh(object3D, shapeDesc) {
+    const { geometry } = this.mergeObjectMeshes(object3D);
+    shapeDesc.push(geometry.attributes.position.array);
+    shapeDesc.push(geometry.index.array);
+    shapeDesc.push(TriMeshFlags['FIX_INTERNAL_EDGES']);
+    return object3D;
   }
 
   static createLight(options) {

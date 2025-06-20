@@ -14,7 +14,7 @@ function cloneValue(value) {
 }
 
 function quickCloneArray(input) {
-  return input.map(cloneValue);
+  return [...input];
 }
 
 function quickCloneObject(input) {
