@@ -137,7 +137,13 @@ class EntityFactory {
     // Create object from options
     const object3D = new Object3D();
 
-    // Create optional children
+    // Set object properties
+    options.rotation = options.rotation.w ? _e.setFromQuaternion(_q.copy(options.rotation)) : _e.setFromVector3(_v.copy(options.rotation));
+    object3D.position.copy(options.position);
+    object3D.rotation.copy(options.rotation);
+    object3D.scale.copy(options.scale);
+
+    // Create and add children
     if (options?.userData?.path) {
       // Load asset from singleton assets
       game.assets.load(options.userData.path, asset => {
@@ -152,12 +158,6 @@ class EntityFactory {
           object3D.add(instancedMesh);
         }
         else {
-          // Set object properties
-          options.rotation = options.rotation.w ? _e.setFromQuaternion(_q.copy(options.rotation)) : _e.setFromVector3(_v.copy(options.rotation));
-          object3D.position.copy(options.position);
-          object3D.rotation.copy(options.rotation);
-          object3D.scale.copy(options.scale);
-
           // Add cloned asset to 3D object
           object3D.add(obj);
         }
@@ -176,8 +176,9 @@ class EntityFactory {
     let geometries = [];
     let instancedMaterials = [];
     let shape = options[0].shapeDesc;
+
+    // Traverse and merge all geometries
     object3D.traverse(obj => {
-      // Merge all geometries
       if (obj.isMesh) {
         // Translate geometry from mesh origin
         obj.geometry.rotateX(obj.rotation.x);

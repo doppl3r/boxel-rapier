@@ -131,7 +131,6 @@ class EntityTemplates {
 
   static voxels = {
     body: {
-      position: { x: -0.5, y: -0.5, z: -0.5 },
       status: 1
     },
     colliders: [
@@ -153,7 +152,7 @@ class EntityTemplates {
     ],
     name: 'voxels',
     object3d: {
-      scale: { x: 4, y: 4, z: 4 },
+      scale: { x: 1, y: 1, z: 1 },
       userData: {
         path: 'glb/cube.glb'
       }
