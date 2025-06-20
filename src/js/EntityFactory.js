@@ -221,64 +221,64 @@ class EntityFactory {
   }
 
   static createMixer(object3D) {
+    // Create animation mixer
     const mixer = new AnimationMixer(object3D);
-    object3D.addEventListener('childadded', e => this.createAnimations(e.child, mixer));
-    return mixer;
-  }
 
-  static createAnimations(object3D, mixer) {
-    // Add mixer if animations exist
-    if (object3D.animations.length > 0) {
-      const loopType = object3D.userData.loop || 2201; // 2201 = LoopRepeat, 2200 = LoopOnce
-      mixer.actions = {};
-      
-      // Add all animations (for nested objects)
-      for (let i = 0; i < object3D.animations.length; i++) {
-        const animation = object3D.animations[i];
-        const action = mixer.clipAction(animation);
-        if (loopType == 2200) {
-          action.setLoop(loopType);
-          action.clampWhenFinished = true;
-        }
-        action.play(); // Activate action by default
-        action.setEffectiveWeight(0); // Clear action influence
-        mixer.actions[animation.name] = action;
-
-        // Set active action to first action
-        if (i == 0) {
-          mixer.actions['active'] = action;
-          action.setEffectiveWeight(1);
-        }
-      }
-
-      // Add action helper function
-      mixer.play = function(name, duration = 1) {
-        var startAction = mixer.actions['active'];
-        var endAction = mixer.actions[name];
+    // Check newly added children for animations
+    object3D.addEventListener('childadded', ({ child }) => {
+      // Add animations to mixer if animations exists
+      if (child.animations.length > 0) {
+        const loopType = child.userData.loop || 2201; // 2201 = LoopRepeat, 2200 = LoopOnce
+        mixer.actions = {};
         
-        // Check if action exists
-        if (endAction && endAction != startAction) {
-          // Fade in from no animation
-          if (startAction == null) {
-            endAction.setEffectiveWeight(1);
-            endAction.reset().fadeIn(duration);
+        // Add all animations (for nested objects)
+        for (let i = 0; i < child.animations.length; i++) {
+          const animation = child.animations[i];
+          const action = mixer.clipAction(animation);
+          if (loopType == 2200) {
+            action.setLoop(loopType);
+            action.clampWhenFinished = true;
           }
-          else {
-            // Cross fade animation with duration
-            startAction.setEffectiveWeight(1);
-            endAction.setEffectiveWeight(1);
-            endAction.reset().crossFadeFrom(startAction, duration);
-          }
+          action.play(); // Activate action by default
+          action.setEffectiveWeight(0); // Clear action influence
+          mixer.actions[animation.name] = action;
 
-          // Store action data for cross fade
-          endAction['duration'] = duration;
-          mixer.actions['active'] = endAction;
+          // Set active action to first action
+          if (i == 0) {
+            mixer.actions['active'] = action;
+            action.setEffectiveWeight(1);
+          }
+        }
+
+        // Add mixer helper function
+        mixer.play = function(name, duration = 1) {
+          var startAction = mixer.actions['active'];
+          var endAction = mixer.actions[name];
+          
+          // Check if action exists
+          if (endAction && endAction != startAction) {
+            // Fade in from no animation
+            if (startAction == null) {
+              endAction.setEffectiveWeight(1);
+              endAction.reset().fadeIn(duration);
+            }
+            else {
+              // Cross fade animation with duration
+              startAction.setEffectiveWeight(1);
+              endAction.setEffectiveWeight(1);
+              endAction.reset().crossFadeFrom(startAction, duration);
+            }
+
+            // Store action data for cross fade
+            endAction['duration'] = duration;
+            mixer.actions['active'] = endAction;
+          }
         }
       }
+    });
 
-      // Return newly created mixer
-      return mixer;
-    }
+    // Return animation mixer
+    return mixer;
   }
 
   static createLight(options) {
