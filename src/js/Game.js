@@ -72,6 +72,34 @@ class Game {
     // Load stage from JSON file
     json = await (await fetch(url)).json();
 
+    // TODO: Remove test voxels
+    const voxels = {
+      body: {
+        position: { x: 3.5, y: -0.5, z: -0.5 },
+        status: 1
+      },
+      colliders: [
+        {
+          friction: 0,
+          shapeDesc: ['voxels', [], { x: 1, y: 1, z: 1 }]
+        }
+      ],
+      name: 'voxels',
+      object3d: {
+        scale: { x: 1, y: 1, z: 1 },
+        userData: {
+          path: 'glb/character.glb'
+        }
+      }
+    };
+
+    for (let row = 0; row < 100; row++) {
+      for (let col = 0; col < 100; col++) {
+        voxels.colliders[0].shapeDesc[1].push(col, -row, 0);
+      }
+    }
+    json.children.push(voxels);
+
     // Create entities from children
     json.children.forEach(child => {
       const entity = EntityFactory.create(child, this.world);

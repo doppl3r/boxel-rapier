@@ -1,4 +1,4 @@
-import { Euler, InstancedMesh, Object3D, Quaternion, Vector3 } from 'three';
+import { AnimationMixer, Euler, InstancedMesh, Object3D, Quaternion, Vector3 } from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidBodyType } from '@dimforge/rapier3d';
 import { LightFactory } from './LightFactory.js';
@@ -19,7 +19,7 @@ class EntityFactory {
 
     // Initialize entity
     const entity = new Entity(options);
-    const object3D = this.createObject3D(options.object3d, options.colliders);
+    const object3D = this.createObject3D(options.object3d, options.colliders, entity);
     const rigidBodyDesc = this.createRigidBodyDesc(options.body, entity);
     const rigidBody = this.createRigidBody(rigidBodyDesc, world);
 
@@ -127,7 +127,7 @@ class EntityFactory {
     });
   }
 
-  static createObject3D(options, colliderOptions) {
+  static createObject3D(options, colliderOptions, entity) {
     options = Object.assign({
       position: { x: 0, y: 0, z: 0 },
       rotation: { x: 0, y: 0, z: 0 },
@@ -158,6 +158,10 @@ class EntityFactory {
           object3D.add(instancedMesh);
         }
         else {
+          // Create animation mixer (optional)
+          const mixer = this.createMixer(obj, entity)
+          if (mixer) obj.mixer = mixer;
+
           // Add cloned asset to 3D object
           object3D.add(obj);
         }
@@ -211,10 +215,72 @@ class EntityFactory {
       );
       dummy.updateMatrix();
       instancedMesh.setMatrixAt(i, dummy.matrix);
+      instancedMesh.instanceMatrix.needsUpdate = true;
     }
 
     // Return object 3D instanced mesh
     return instancedMesh;
+  }
+
+  static createMixer(object3D, entity) {
+    // Add mixer if animations exist
+    if (object3D.animations.length > 0) {
+      const loopType = object3D.userData.loop || 2201; // 2201 = LoopRepeat, 2200 = LoopOnce
+      const mixer = new AnimationMixer(object3D);
+      mixer.actions = {};
+
+      // Rerender mixer
+      entity.addEventListener('rendered', ({ loop }) => {
+        mixer.update(loop.delta / 1000);
+      });
+      
+      // Add all animations (for nested objects)
+      for (let i = 0; i < object3D.animations.length; i++) {
+        const animation = object3D.animations[i];
+        const action = mixer.clipAction(animation);
+        if (loopType == 2200) {
+          action.setLoop(loopType);
+          action.clampWhenFinished = true;
+        }
+        action.play(); // Activate action by default
+        action.setEffectiveWeight(0); // Clear action influence
+        mixer.actions[animation.name] = action;
+
+        // Set active action to first action
+        if (i == 0) {
+          mixer.actions['active'] = action;
+          action.setEffectiveWeight(1);
+        }
+      }
+
+      // Add action helper function
+      mixer.play = function(name, duration = 1) {
+        var startAction = mixer.actions['active'];
+        var endAction = mixer.actions[name];
+        
+        // Check if action exists
+        if (endAction && endAction != startAction) {
+          // Fade in from no animation
+          if (startAction == null) {
+            endAction.setEffectiveWeight(1);
+            endAction.reset().fadeIn(duration);
+          }
+          else {
+            // Cross fade animation with duration
+            startAction.setEffectiveWeight(1);
+            endAction.setEffectiveWeight(1);
+            endAction.reset().crossFadeFrom(startAction, duration);
+          }
+
+          // Store action data for cross fade
+          endAction['duration'] = duration;
+          mixer.actions['active'] = endAction;
+        }
+      }
+
+      // Return newly created mixer
+      return mixer;
+    }
   }
 
   static createLight(options) {

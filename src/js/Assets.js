@@ -31,7 +31,10 @@ class Assets extends EventDispatcher {
       {
         fileTypes: ['glb', 'gltf'],
         loader: new GLTFLoader(this.manager),
-        onLoad: (fileName, data) => this.assign(fileName, data.scene)
+        onLoad: (fileName, data) => {
+          Object.assign(data.scene, { ...data });
+          this.assign(fileName, data.scene);
+        }
       },
       {
         fileTypes: ['jpg', 'jpeg', 'png'],
