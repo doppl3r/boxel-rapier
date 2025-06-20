@@ -154,9 +154,8 @@ class EntityFactory {
 
         // Check shape type
         if (colliderOptions[0].shapeDesc[0] === 'voxels') {
-          const instancedMesh = this.createInstancedMesh(colliderOptions, obj);
-
-          // Add instanced mesh
+          // Create and add instanced mesh from voxel vertices array
+          const instancedMesh = this.createInstancedMesh(obj, colliderOptions[0].shapeDesc[1]);
           object3D.add(instancedMesh);
         }
         else {
@@ -173,11 +172,10 @@ class EntityFactory {
     return object3D;
   }
 
-  static createInstancedMesh(options, object3D) {
+  static createInstancedMesh(object3D, vertices) {
     // Combine geometries
     let geometries = [];
     let instancedMaterials = [];
-    let shape = options[0].shapeDesc;
 
     // Traverse and merge all geometries
     object3D.traverse(obj => {
@@ -199,17 +197,16 @@ class EntityFactory {
     
     // Create instanced mesh
     const instancedGeometry = mergeGeometries(geometries, true);
-    const instancedLength = shape[1].length / 3; // x + y + z = 3
+    const instancedLength = vertices.length / 3; // x + y + z = 3
     const instancedMesh = new InstancedMesh(instancedGeometry, instancedMaterials, instancedLength);
 
     // Update matrixes
     const dummy = new Object3D();
-    const point = shape[1];
     for (let i = 0; i < instancedLength; i++) {
       dummy.position.set(
-        point[(i * 3)] + 0.5,
-        point[(i * 3) + 1] + 0.5,
-        point[(i * 3) + 2] + 0.5
+        vertices[(i * 3)] + 0.5,
+        vertices[(i * 3) + 1] + 0.5,
+        vertices[(i * 3) + 2] + 0.5
       );
       dummy.updateMatrix();
       instancedMesh.setMatrixAt(i, dummy.matrix);
@@ -224,7 +221,7 @@ class EntityFactory {
     // Create animation mixer
     const mixer = new AnimationMixer(object3D);
 
-    // Check newly added children for animations
+    // Listen for newly added children
     object3D.addEventListener('childadded', ({ child }) => {
       // Add animations to mixer if animations exists
       if (child.animations.length > 0) {
