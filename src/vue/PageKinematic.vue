@@ -28,6 +28,7 @@
       ]
     );
     await game.load('json/level-1.json');
+    game.debugger.enable();
     game.start();
 
     // Initialize 2D controller

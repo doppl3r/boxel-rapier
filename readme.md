@@ -4,8 +4,9 @@ Boxel Rapier uses the Rapier.js physics engine and Three.js 3D library to demons
 
 ## Key Classes
  - [Entity.js](src/js/Entity.js) - The base class for all entities.
- - [EntityInput2D.js](src/js/EntityInput2D.js) - A input controller class for Kinematic Character Controllers. Can be used for players, conveyors, doors, etc.
- - [Stage.js](src/js/Stage.js) - Handles all game states, entities, and resources.
+ - [EntityControllerDynamic2D.js](src/js/EntityControllerDynamic2D.js) - A 2D input controller class for Dynamic Rigid Bodies.
+ - [EntityControllerKinematic2D.js](src/js/EntityControllerKinematic2D.js) - A 2D input controller class for Kinematic Rigid Bodies. Can be used for players, conveyors, doors, etc.
+ - [Game.js](src/js/Game.js) - Handles all game states, entities, and resources.
 
 ![Screenshot](files/png/boxel-rapier-screenshot.png)
 
