@@ -41,7 +41,7 @@ class EntityFactory {
 
   static createRigidBodyDesc(options) {
     // Define default options
-    options = Object.assign({
+    options = ObjectAssign({
       angularDamping: 0,
       ccd: false,
       enabledRotations: { x: true, y: true, z: true },
@@ -77,7 +77,7 @@ class EntityFactory {
   }
 
   static createColliderDesc(options) {
-    options = Object.assign({
+    options = ObjectAssign({
       activeCollisionTypes: 'ALL', // 1: DYNAMIC_DYNAMIC, 2: DYNAMIC_FIXED, 12: DYNAMIC_KINEMATIC, 15: DEFAULT, 32: FIXED_FIXED, 8704: KINEMATIC_FIXED, 52224: KINEMATIC_KINEMATIC, 60943: ALL
       activeEvents: 'COLLISION_EVENTS', // 0: NONE, 1: COLLISION_EVENTS, 2: CONTACT_FORCE_EVENTS
       collisionGroups: 0xFFFFFFFF,
@@ -130,7 +130,7 @@ class EntityFactory {
   }
 
   static createObject3D(options, colliderOptions) {
-    options = Object.assign({
+    options = ObjectAssign({
       position: { x: 0, y: 0, z: 0 },
       rotation: { x: 0, y: 0, z: 0 },
       scale: { x: 1, y: 1, z: 1 }
@@ -288,7 +288,7 @@ class EntityFactory {
   static createController(options, world) {
     if (options) {
       // Set base options
-      options = Object.assign({
+      options = ObjectAssign({
         applyImpulsesMass: 1,
         applyImpulsesToDynamicBodies: true,
         autostepMaxHeight: 0.125, // 0.5
