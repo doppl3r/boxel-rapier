@@ -102,7 +102,7 @@ class EntityTemplates {
     object3d: {
       scale: { x: 0.75, y: 0.75, z: 0.75 },
       userData: {
-        path: 'glb/player.glb'
+        path: 'glb/character.glb'
       }
     }
   }

@@ -53,8 +53,9 @@ class Entity extends EventDispatcher {
     // Interpolate (lerp/slerp) object3D
     this.lerp3DObject(loop.alpha);
 
-    // Dispatch event after updating
+    // Dispatch events after updating
     this.dispatchEvent({ type: 'rendered', loop });
+    this.object3D?.dispatchEvent({ type: 'rendered', loop })
   }
   
   set3DObject(object3D) {

@@ -19,8 +19,8 @@ class EntityFactory {
 
     // Initialize entity
     const entity = new Entity(options);
-    const object3D = this.createObject3D(options.object3d, options.colliders, entity);
-    const rigidBodyDesc = this.createRigidBodyDesc(options.body, entity);
+    const object3D = this.createObject3D(options.object3d, options.colliders);
+    const rigidBodyDesc = this.createRigidBodyDesc(options.body);
     const rigidBody = this.createRigidBody(rigidBodyDesc, world);
 
     // Create colliders from array
@@ -127,7 +127,7 @@ class EntityFactory {
     });
   }
 
-  static createObject3D(options, colliderOptions, entity) {
+  static createObject3D(options, colliderOptions) {
     options = Object.assign({
       position: { x: 0, y: 0, z: 0 },
       rotation: { x: 0, y: 0, z: 0 },
@@ -159,8 +159,14 @@ class EntityFactory {
         }
         else {
           // Create animation mixer (optional)
-          const mixer = this.createMixer(obj, entity)
-          if (mixer) obj.mixer = mixer;
+          const mixer = this.createMixer(obj)
+          if (mixer) {
+            // Assign mixer and add render event listener
+            object3D.mixer = mixer;
+            object3D.addEventListener('rendered', ({ loop }) => {
+              mixer.update(loop.delta / 1000);
+            });
+          }
 
           // Add cloned asset to 3D object
           object3D.add(obj);
@@ -222,17 +228,12 @@ class EntityFactory {
     return instancedMesh;
   }
 
-  static createMixer(object3D, entity) {
+  static createMixer(object3D) {
     // Add mixer if animations exist
     if (object3D.animations.length > 0) {
       const loopType = object3D.userData.loop || 2201; // 2201 = LoopRepeat, 2200 = LoopOnce
       const mixer = new AnimationMixer(object3D);
       mixer.actions = {};
-
-      // Rerender mixer
-      entity.addEventListener('rendered', ({ loop }) => {
-        mixer.update(loop.delta / 1000);
-      });
       
       // Add all animations (for nested objects)
       for (let i = 0; i < object3D.animations.length; i++) {
