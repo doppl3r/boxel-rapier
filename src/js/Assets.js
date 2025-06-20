@@ -48,7 +48,7 @@ class Assets extends EventDispatcher {
     // Get file details
     const fileType = url.substring(url.lastIndexOf('.') + 1);
     const fileName = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.'));
-    const queued = this.queue.find(item => item.name === fileName) !== undefined;
+    const isQueued = this.queue.find(item => item.name === fileName) !== undefined;
     const asset = this.get(fileName); // Default = undefined
 
     // Add item to the queue
@@ -61,7 +61,7 @@ class Assets extends EventDispatcher {
     }
 
     // Start loading if asset is not queued
-    if (queued === false) {
+    if (isQueued === false) {
       // Get loader option by file type (ex: 'mp3')
       const loaderOption = this.loaderOptions.find(option => option.fileTypes.includes(fileType));
 
