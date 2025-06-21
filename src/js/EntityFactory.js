@@ -169,12 +169,12 @@ class EntityFactory {
         const obj = clone(asset);
 
         // Check shape type
-        if (colliderOptions[0].shapeDesc[0] === 'voxels') {
+        if (colliderOptions?.[0].shapeDesc[0] === 'voxels') {
           // Create and add instanced mesh from voxel vertices array
           const instancedMesh = this.createInstancedMesh(obj, colliderOptions[0].shapeDesc[1]);
           object3D.add(instancedMesh);
         }
-        else if (colliderOptions[0].shapeDesc[0] === 'trimesh') {
+        else if (colliderOptions?.[0].shapeDesc[0] === 'trimesh') {
           // Create and add TriMesh from 3D object
           const triMesh = this.createTrimesh(obj, colliderOptions[0].shapeDesc);
           object3D.add(triMesh);

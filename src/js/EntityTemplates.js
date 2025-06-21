@@ -161,6 +161,13 @@ class EntityTemplates {
     ],
     name: 'trimesh'
   }
+
+  static empty = {
+    body: {
+      status: 1 // Fixed
+    },
+    name: 'empty'
+  }
 }
 
 export { EntityTemplates }

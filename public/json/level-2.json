@@ -15,6 +15,7 @@
     {
       "colliders": [
         {
+          "children": [1, 0, 0, 0, 0, 0, 1],
           "shapeDesc": ["voxels", 
             [
               -3, 0, 0,
@@ -29,6 +30,12 @@
           ]
         }
       ],
+      "object3d": {
+        "children": [
+          "glb/cube.glb",
+          "glb/spike.glb"
+        ]
+      },
       "template": "voxels"
     },
 
