@@ -55,7 +55,7 @@ class EntityControllerDynamic2D {
 
   onRendered = () => {
     this.camera.position.copy(this.entity.object3D.position);
-    this.camera.position.z += 20;
+    this.camera.position.z += 10;
     this.camera.position.y += 2;
     this.camera.lookAt(this.entity.object3D.position);
   }

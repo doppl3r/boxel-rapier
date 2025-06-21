@@ -24,16 +24,8 @@ class EntityFactory {
     const rigidBodyDesc = this.createRigidBodyDesc(options.body);
     const rigidBody = this.createRigidBody(rigidBodyDesc, world);
 
-    // Create colliders from array
-    options.colliders?.forEach(colliderOptions => {
-      // Listen for object to add mesh before creating collider
-      object3D.addEventListener('childadded', () => {
-        // Create the collider and attach to the rigidBody
-        const colliderDesc = this.createColliderDesc(colliderOptions);
-        const collider = this.createCollider(colliderDesc, rigidBody, world);
-        this.createColliderEvents(colliderOptions.events, collider, entity);
-      });
-    });
+    // Create and assign colliders using entity components
+    this.createColliders({ options: options.colliders, rigidBody, object3D, entity, world });
 
     // Assign components to entity
     entity.set3DObject(object3D);
@@ -77,6 +69,27 @@ class EntityFactory {
 
   static createRigidBody(rigidBodyDesc, world) {
     return world.createRigidBody(rigidBodyDesc);
+  }
+
+  static createColliders({ options, rigidBody, object3D, entity, world }) {
+    // Loop through each collider option
+    options?.forEach(colliderOptions => {
+      const assignCollider = () => {
+        // Create the collider and attach to the rigidBody
+        const colliderDesc = this.createColliderDesc(colliderOptions);
+        const collider = this.createCollider(colliderDesc, rigidBody, world);
+        this.createColliderEvents(colliderOptions.events, collider, entity);
+      }
+
+      // Wait for asset to load before assigning the shape data (ex: trimesh vertices & indices)
+      if (colliderOptions.shapeDesc[1] === undefined) {
+        object3D.addEventListener('childadded', assignCollider);
+      }
+      else {
+        // Assign collider
+        assignCollider();
+      }
+    });
   }
 
   static createColliderDesc(options) {
@@ -262,7 +275,7 @@ class EntityFactory {
         }
 
         // Add mixer helper function
-        mixer.play = function(name, duration = 1) {
+        mixer.play = (name, duration = 1) => {
           var startAction = mixer.actions['active'];
           var endAction = mixer.actions[name];
           
