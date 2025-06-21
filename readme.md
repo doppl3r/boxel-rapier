@@ -10,6 +10,15 @@ Boxel Rapier uses the Rapier.js physics engine and Three.js 3D library to demons
 
 ![Screenshot](files/png/boxel-rapier-screenshot.png)
 
+## Features
+
+- **Asset loader**: Dynamically load and cache 3D models, audio, images etc.
+- **Entity factory**: Create entities that include rigid bodies, colliders and 3D models using JSON properties
+- **Entity templates**: Predefined instructions for creating entities
+- **Entity controllers**: Provides user controls for entities
+- **Collision event system**: Dispatch collision events between entities
+- **Game rendering pipeline**: Renders and smoothly interpolates 3D entity meshes in sync with the world rigid body coordinates
+
 ## Other Features
 
 ### Interpolation

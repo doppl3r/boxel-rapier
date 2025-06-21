@@ -154,16 +154,10 @@ class EntityTemplates {
     },
     colliders: [
       {
-        shapeDesc: ['trimesh']
+        shapeDesc: ['trimesh'] // Needs vertices and indices
       }
     ],
-    name: 'trimesh',
-    object3d: {
-      scale: { x: 1, y: 1, z: 1 },
-      userData: {
-        path: 'glb/ramps.glb'
-      }
-    }
+    name: 'trimesh'
   }
 }
 
