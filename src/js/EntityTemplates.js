@@ -90,6 +90,7 @@ class EntityTemplates {
       ccd: true,
       enabledTranslations: { x: true, y: true, z: false },
       enabledRotations: { x: false, y: false, z: true },
+      softCcdPrediction: 0.5,
       status: 0
     },
     colliders: [
@@ -154,7 +155,7 @@ class EntityTemplates {
     },
     colliders: [
       {
-        friction: 0.1,
+        friction: 0.5,
         shapeDesc: ['trimesh'] // Needs vertices and indices
       }
     ],

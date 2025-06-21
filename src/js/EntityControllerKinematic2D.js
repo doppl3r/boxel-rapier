@@ -25,6 +25,11 @@ class EntityControllerKinematic2D {
     this.inputBuffer = 100; // ms
     this.allowJump = true;
 
+    // Set camera properties
+    this.camera;
+    this.cameraSpeed = 100; // ms
+    this.cameraOffset = new Vector3(0, 2, 10);
+
     // Add input event listeners
     document.addEventListener('keydown', this.onKeyDown);
     document.addEventListener('keyup', this.onKeyUp);
@@ -74,11 +79,8 @@ class EntityControllerKinematic2D {
     }
   }
 
-  onRendered = () => {
-    this.camera.position.copy(this.entity.object3D.position);
-    this.camera.position.z += 20;
-    this.camera.position.y += 2;
-    this.camera.lookAt(this.entity.object3D.position);
+  onRendered = e => {
+    this.lerpCamera(e.loop.delta);
   }
 
   updateControls() {
@@ -113,6 +115,13 @@ class EntityControllerKinematic2D {
     this.forceDirection.copy(direction); // Ex: -1.0 to 1.0
     this.forceAcceleration = acceleration;
     this.forceSpeedMax = max;
+  }
+
+  lerpCamera(delta) {
+    this.camera.position.x = this.camera.position.x * (1 - delta / this.cameraSpeed) + (this.entity.snapshot.position.x + this.cameraOffset.x) * delta / this.cameraSpeed;
+    this.camera.position.y = this.camera.position.y * (1 - delta / this.cameraSpeed) + (this.entity.snapshot.position.y + this.cameraOffset.y) * delta / this.cameraSpeed;
+    this.camera.position.z = this.cameraOffset.z;
+    this.camera.lookAt(this.entity.object3D.position);
   }
 
   jump() {
