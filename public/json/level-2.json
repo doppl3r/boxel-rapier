@@ -13,12 +13,23 @@
 
 
     {
-      "template": "trimesh",
-      "object3d": {
-        "userData": {
-          "path": "glb/ramps.glb"
+      "colliders": [
+        {
+          "shapeDesc": ["voxels", 
+            [
+              -3, 0, 0,
+              -2, 0, 0,
+              -1, 0, 0,
+              0, 0, 0,
+              1, 0, 0,
+              2, 0, 0,
+              3, 0, 0
+            ],
+            { "x": 1, "y": 1, "z": 1 }
+          ]
         }
-      }
+      ],
+      "template": "voxels"
     },
 
     

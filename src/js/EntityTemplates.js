@@ -154,7 +154,7 @@ class EntityTemplates {
     },
     colliders: [
       {
-        friction: 0.5,
+        friction: 0.1,
         shapeDesc: ['trimesh'] // Needs vertices and indices
       }
     ],
