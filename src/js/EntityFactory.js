@@ -2,6 +2,7 @@ import { AnimationMixer, Euler, InstancedMesh, Object3D, Quaternion, Vector3 } f
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidBodyType, TriMeshFlags } from '@dimforge/rapier3d';
 import { LightFactory } from './LightFactory.js';
+import { MeshFactory } from './MeshFactory.js';
 import { Entity } from './Entity.js';
 import { EntityTemplates } from './EntityTemplates.js';
 import { EntityEvents } from './EntityEvents.js';
@@ -161,36 +162,47 @@ class EntityFactory {
     object3D.rotation.copy(options.rotation);
     object3D.scale.copy(options.scale);
 
+    const onLoad = obj => {
+      // Check shape type
+      if (colliderOptions?.[0].shapeDesc[0] === 'voxels') {
+        // Create and add instanced mesh from voxel vertices array
+        const instancedMesh = this.createInstancedMesh(obj, colliderOptions[0].shapeDesc[1]);
+        object3D.add(instancedMesh);
+      }
+      else if (colliderOptions?.[0].shapeDesc[0] === 'trimesh') {
+        // Create and add TriMesh from 3D object
+        const triMesh = this.createTrimesh(obj, colliderOptions[0].shapeDesc);
+        object3D.add(triMesh);
+      }
+      else {
+        // Add cloned asset to 3D object
+        object3D.add(obj);
+      }
+    }
+
     // Create and add children
     if (options?.userData?.path) {
       // Load asset from singleton assets
       game.assets.load(options.userData.path, asset => {
         // Clone asset before transforming
         const obj = clone(asset);
-
-        // Check shape type
-        if (colliderOptions?.[0].shapeDesc[0] === 'voxels') {
-          // Create and add instanced mesh from voxel vertices array
-          const instancedMesh = this.createInstancedMesh(obj, colliderOptions[0].shapeDesc[1]);
-          object3D.add(instancedMesh);
-        }
-        else if (colliderOptions?.[0].shapeDesc[0] === 'trimesh') {
-          // Create and add TriMesh from 3D object
-          const triMesh = this.createTrimesh(obj, colliderOptions[0].shapeDesc);
-          object3D.add(triMesh);
-        }
-        else {
-          // Add cloned asset to 3D object
-          object3D.add(obj);
-        }
+        onLoad(obj);
       });
+    }
+    else if (options?.userData?.mesh) {
+      const mesh = this.createMesh(options.userData.mesh);
+      onLoad(mesh);
     }
     else if (options?.userData?.type?.includes('Light')) {
       // Create 3D light
       const light = this.createLight(options);
-      object3D.add(light);
+      onLoad(light);
     }
     return object3D;
+  }
+
+  static createMesh(options) {
+    return MeshFactory.create(options);
   }
 
   static mergeObjectMeshes(object3D) {

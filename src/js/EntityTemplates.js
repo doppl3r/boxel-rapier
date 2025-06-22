@@ -1,3 +1,7 @@
+/*
+  An EntityTemplate provides predefined properties for the EntityFactory
+*/
+
 class EntityTemplates {
   constructor() {
 
@@ -167,6 +171,29 @@ class EntityTemplates {
       status: 1 // Fixed
     },
     name: 'empty'
+  }
+
+  static plane = {
+    body: {
+      position: { x: 0, y: 0, z: 0 },
+      rotation: { x: -Math.PI / 2, y: 0, z: 0 },
+      status: 1
+    },
+    colliders: [
+      {
+        friction: 0.5,
+        shapeDesc: ['trimesh'] // Needs vertices and indices
+      }
+    ],
+    name: 'plane',
+    object3d: {
+      userData: {
+        mesh: {
+          geometry: ['PlaneGeometry', 9, 9, 9, 9],
+          material: ['MeshBasicMaterial', { color: '#0287ef' }]
+        }
+      }
+    }
   }
 }
 

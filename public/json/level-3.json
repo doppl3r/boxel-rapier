@@ -13,12 +13,7 @@
 
 
     {
-      "template": "trimesh",
-      "object3d": {
-        "userData": {
-          "path": "glb/dungeon.glb"
-        }
-      }
+      "template": "plane"
     },
 
     
