@@ -10,45 +10,19 @@ class CameraFactory {
 
   }
 
-  static create(type = 'PerspectiveCamera', options) {
-    var camera;
-    var helper;
-    var width = window.innerWidth;
-    var height = window.innerHeight;
-    var ratio = width / height;
-
-    // Set options with default values
-    options = Object.assign({
-      far: 100,
-      fov: 45,
-      helper: false,
-      near: 0.05,
-      zoom: 1
-    }, options);
-
-    // Conditionally create camera
-    if (type === 'PerspectiveCamera') {
-      camera = new PerspectiveCamera(options.fov, ratio, options.near, options.far);
-    }
-    else if (type === 'OrthographicCamera') {
-      camera = new OrthographicCamera(-ratio, ratio, 1, -1, options.near, options.far);
-    }
-
-    // Set camera options
-    camera.fov = options.fov;
-    camera.zoom = options.zoom;
-    camera.updateProjectionMatrix();
-
-    // Add helper after camera has been added
-    if (options.helper === true) {
-      helper = new CameraHelper(camera);
-      camera.addEventListener('added', e => { camera.parent.add(helper); });
-      camera.addEventListener('removed', e => { helper.removeFromParent(); });
-    }
-
-    // Return new camera
+  static create(options) {
+    const camera = new CameraFactory[options[0]](...options.slice(1));
     return camera;
   }
+
+  static createHelper(camera) {
+    const helper = new CameraHelper(camera);
+    camera.addEventListener('added', () => { camera.parent.add(helper); });
+    camera.addEventListener('removed', () => { helper.removeFromParent(); });
+  }
+
+  static PerspectiveCamera = PerspectiveCamera;
+  static OrthographicCamera = OrthographicCamera;
 }
 
 export { CameraFactory };

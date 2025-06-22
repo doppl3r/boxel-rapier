@@ -1,12 +1,13 @@
 import { AnimationMixer, Euler, InstancedMesh, Object3D, Quaternion, Vector3 } from 'three';
-import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidBodyType, TriMeshFlags } from '@dimforge/rapier3d';
+import { CameraFactory } from './CameraFactory.js';
+import { Entity } from './Entity.js';
+import { EntityEvents } from './EntityEvents.js';
+import { EntityTemplates } from './EntityTemplates.js';
 import { LightFactory } from './LightFactory.js';
 import { MeshFactory } from './MeshFactory.js';
-import { Entity } from './Entity.js';
-import { EntityTemplates } from './EntityTemplates.js';
-import { EntityEvents } from './EntityEvents.js';
 import { ObjectAssign } from './ObjectAssign.js';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 
 class EntityFactory {
@@ -187,6 +188,10 @@ class EntityFactory {
         const obj = clone(asset);
         addObject(obj);
       });
+    }
+    else if (options?.userData?.camera) {
+      const camera = CameraFactory.create(options.userData.camera);
+      addObject(camera);
     }
     else if (options?.userData?.mesh) {
       const mesh = MeshFactory.create(options.userData.mesh);

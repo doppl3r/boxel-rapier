@@ -25,7 +25,7 @@ class EntityTemplates {
     }
   }
 
-  static light = {
+  static light_hemisphere = {
     body: {
       status: 1
     },
@@ -191,6 +191,24 @@ class EntityTemplates {
           geometry: ['PlaneGeometry', 9, 9, 9, 9],
           material: ['MeshBasicMaterial', { color: '#0287ef' }]
         }
+      }
+    }
+  }
+
+  static camera_perspective = {
+    name: 'camera',
+    object3d: {
+      userData: {
+        camera: ['PerspectiveCamera', 45, window.innerWidth / window.innerHeight, 0.05, 100]
+      }
+    }
+  }
+
+  static camera_orthographic = {
+    name: 'camera',
+    object3d: {
+      userData: {
+        camera: ['OrthographicCamera', -window.innerWidth / window.innerHeight, window.innerWidth / window.innerHeight, 1, -1, 0.05, 100]
       }
     }
   }
