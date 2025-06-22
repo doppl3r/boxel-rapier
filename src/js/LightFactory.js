@@ -10,60 +10,25 @@ class LightFactory {
     
   }
 
-  static create(type = 'PointLight', options) {
-    var light;
-    var helper;
-    
-    // Set options with default values
-    options = Object.assign({
-      color: '#ffffff',
-      decay: 2,
-      distance: 0,
-      helper: false,
-      groundColor: '#000000',
-      intensity: Math.PI,
-      castShadow: false,
-      skyColor: '#ffffff'
-    }, options);
-    
-    // Conditionally create camera
-    if (type === 'AmbientLight') {
-      light = new AmbientLight(options.color, options.intensity);
-    }
-    else if (type === 'DirectionalLight') {
-      light = new DirectionalLight(options.color, options.intensity);
-      helper = new DirectionalLightHelper(light);
-    }
-    else if (type === 'HemisphereLight') {
-      light = new HemisphereLight(options.skyColor, options.groundColor, options.intensity);
-      helper = new HemisphereLightHelper(light);
-    }
-    else if (type === 'PointLight') {
-      light = new PointLight(options.color, options.intensity, options.distance, options.decay);
-      helper = new PointLightHelper(light);
-    }
-
-    // Return error message
-    if (light === null) {
-      console.error(`Error: Light type "${ type }" does not exists.`);
-      return;
-    }
-
-    // Add shadow option
-    if (options.castShadow) {
-      light.castShadow = true;
-    }
-
-    // Add helper after light has been added
-    if (options.helper === true) {
-      if (helper) {
-        light.addEventListener('added', e => { light.parent.add(helper); });
-        light.addEventListener('removed', e => { helper.removeFromParent(); })
-      }
-    }
-
+  static create(options) {
+    const light = new LightFactory[options[0]](...options.slice(1));
     return light;
   }
+
+  static createHelper(light) {
+    const helper = new LightFactory[light.type + 'Helper'](light);
+    light.addEventListener('added', () => { light.parent.add(helper); });
+    light.addEventListener('removed', () => { helper.removeFromParent(); });
+    return helper;
+  }
+
+  static AmbientLight = AmbientLight;
+  static DirectionalLight = DirectionalLight;
+  static DirectionalLightHelper = DirectionalLightHelper;
+  static HemisphereLight = HemisphereLight;
+  static HemisphereLightHelper = HemisphereLightHelper;
+  static PointLight = PointLight;
+  static PointLightHelper = PointLightHelper;
 }
 
 export { LightFactory }

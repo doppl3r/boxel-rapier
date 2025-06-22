@@ -32,8 +32,7 @@ class EntityTemplates {
     name: 'light',
     object3d: {
       userData: {
-        type: 'PointLight',
-        color: '#ffffff'
+        light: ['HemisphereLight', '#ffffff', '#aaaaaa', Math.PI]
       }
     }
   }

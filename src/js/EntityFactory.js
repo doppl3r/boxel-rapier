@@ -153,56 +153,51 @@ class EntityFactory {
       scale: { x: 1, y: 1, z: 1 }
     }, options);
 
-    // Create object from options
+    // Create 3D object from options
     const object3D = new Object3D();
 
-    // Set object properties
+    // Set 3D object properties
     options.rotation = options.rotation.w ? _e.setFromQuaternion(_q.copy(options.rotation)) : _e.setFromVector3(_v.copy(options.rotation));
     object3D.position.copy(options.position);
     object3D.rotation.copy(options.rotation);
     object3D.scale.copy(options.scale);
 
-    const onLoad = obj => {
+    // Handle shapes before adding 3D object
+    const addObject = obj => {
       // Check shape type
       if (colliderOptions?.[0].shapeDesc[0] === 'voxels') {
-        // Create and add instanced mesh from voxel vertices array
-        const instancedMesh = this.createInstancedMesh(obj, colliderOptions[0].shapeDesc[1]);
-        object3D.add(instancedMesh);
+        // Create instanced mesh from voxel vertices array
+        obj = this.createInstancedMesh(obj, colliderOptions[0].shapeDesc[1]);
       }
       else if (colliderOptions?.[0].shapeDesc[0] === 'trimesh') {
-        // Create and add TriMesh from 3D object
-        const triMesh = this.createTrimesh(obj, colliderOptions[0].shapeDesc);
-        object3D.add(triMesh);
+        // Update shape description using geometry from the 3D object
+        const { geometry } = this.mergeObjectMeshes(obj);
+        colliderOptions[0].shapeDesc.push(geometry.attributes.position.array, geometry.index.array, TriMeshFlags['FIX_INTERNAL_EDGES']);
       }
-      else {
-        // Add cloned asset to 3D object
-        object3D.add(obj);
-      }
+
+      // Add newly created 3D object
+      object3D.add(obj);
     }
 
-    // Create and add children
+    // Load or create 3D objects from options
     if (options?.userData?.path) {
-      // Load asset from singleton assets
+      // Load asset from game assets
       game.assets.load(options.userData.path, asset => {
-        // Clone asset before transforming
+        // Clone loaded asset
         const obj = clone(asset);
-        onLoad(obj);
+        addObject(obj);
       });
     }
     else if (options?.userData?.mesh) {
-      const mesh = this.createMesh(options.userData.mesh);
-      onLoad(mesh);
+      const mesh = MeshFactory.create(options.userData.mesh);
+      addObject(mesh);
     }
-    else if (options?.userData?.type?.includes('Light')) {
+    else if (options?.userData?.light) {
       // Create 3D light
-      const light = this.createLight(options);
-      onLoad(light);
+      const light = LightFactory.create(options.userData.light);
+      addObject(light);
     }
     return object3D;
-  }
-
-  static createMesh(options) {
-    return MeshFactory.create(options);
   }
 
   static mergeObjectMeshes(object3D) {
@@ -315,18 +310,6 @@ class EntityFactory {
 
     // Return animation mixer
     return mixer;
-  }
-
-  static createTrimesh(object3D, shapeDesc) {
-    const { geometry } = this.mergeObjectMeshes(object3D);
-    shapeDesc.push(geometry.attributes.position.array);
-    shapeDesc.push(geometry.index.array);
-    shapeDesc.push(TriMeshFlags['FIX_INTERNAL_EDGES']);
-    return object3D;
-  }
-
-  static createLight(options) {
-    return LightFactory.create(options.userData.type, options.userData);
   }
 
   static createController(options, world) {

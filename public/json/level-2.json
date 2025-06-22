@@ -48,14 +48,7 @@
           "z": 4
         }
       },
-      "template": "light",
-      "object3d": {
-        "userData": {
-          "type": "HemisphereLight",
-          "skyColor": "#ffffff",
-          "groundColor": "#aaaaaa"
-        }
-      }
+      "template": "light"
     }
   ]
 }
