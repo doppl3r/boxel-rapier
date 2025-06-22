@@ -1,4 +1,4 @@
-import { AnimationMixer, Euler, InstancedMesh, Object3D, Quaternion, Vector3 } from 'three';
+import { AnimationMixer, Euler, Object3D, Quaternion, Vector3 } from 'three';
 import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidBodyType, TriMeshFlags } from '@dimforge/rapier3d';
 import { CameraFactory } from './CameraFactory.js';
 import { Entity } from './Entity.js';
@@ -7,7 +7,6 @@ import { EntityTemplates } from './EntityTemplates.js';
 import { LightFactory } from './LightFactory.js';
 import { MeshFactory } from './MeshFactory.js';
 import { ObjectAssign } from './ObjectAssign.js';
-import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 
 class EntityFactory {
@@ -163,16 +162,21 @@ class EntityFactory {
     object3D.rotation.copy(options.rotation);
     object3D.scale.copy(options.scale);
 
+    // Create 3D objects from options
+    const factoryType = Object.keys(options?.userData)[0];
+    const factories = { camera: CameraFactory, mesh: MeshFactory, light: LightFactory };
+    const obj = factories[factoryType]?.create(options?.userData?.[factoryType]);
+
     // Handle shapes before adding 3D object
-    const addObject = obj => {
+    const addChildObject = obj => {
       // Check shape type
       if (colliderOptions?.[0].shapeDesc[0] === 'voxels') {
         // Create instanced mesh from voxel vertices array
-        obj = this.createInstancedMesh(obj, colliderOptions[0].shapeDesc[1]);
+        obj = MeshFactory.createInstancedMesh(obj, colliderOptions[0].shapeDesc[1]);
       }
       else if (colliderOptions?.[0].shapeDesc[0] === 'trimesh') {
         // Update shape description using geometry from the 3D object
-        const { geometry } = this.mergeObjectMeshes(obj);
+        const { geometry } = MeshFactory.mergeObjectMeshes(obj);
         colliderOptions[0].shapeDesc.push(geometry.attributes.position.array, geometry.index.array, TriMeshFlags['FIX_INTERNAL_EDGES']);
       }
 
@@ -180,80 +184,20 @@ class EntityFactory {
       object3D.add(obj);
     }
 
-    // Load or create 3D objects from options
-    if (options?.userData?.path) {
+    if (obj) {
+      // Add newly created object
+      addChildObject(obj);
+    }
+    else if (factoryType === 'path') {
       // Load asset from game assets
       game.assets.load(options.userData.path, asset => {
-        // Clone loaded asset
-        const obj = clone(asset);
-        addObject(obj);
+        // Add cloned object
+        addChildObject(clone(asset));
       });
     }
-    else if (options?.userData?.camera) {
-      const camera = CameraFactory.create(options.userData.camera);
-      addObject(camera);
-    }
-    else if (options?.userData?.mesh) {
-      const mesh = MeshFactory.create(options.userData.mesh);
-      addObject(mesh);
-    }
-    else if (options?.userData?.light) {
-      // Create 3D light
-      const light = LightFactory.create(options.userData.light);
-      addObject(light);
-    }
+
+    // Return newly created 3D object
     return object3D;
-  }
-
-  static mergeObjectMeshes(object3D) {
-    // Combine geometries
-    let geometry;
-    let geometries = [];
-    let materials = [];
-
-    // Traverse and add geometries/materials to array
-    object3D.traverse(obj => {
-      if (obj.isMesh) {
-        // Translate geometry from mesh origin
-        obj.geometry.rotateX(obj.rotation.x);
-        obj.geometry.rotateY(obj.rotation.y);
-        obj.geometry.rotateZ(obj.rotation.z);
-        obj.geometry.scale(obj.scale.x, obj.scale.y, obj.scale.z);
-        obj.geometry.translate(obj.position.x, obj.position.y, obj.position.z);
-
-        // Push geometry to array for merge
-        geometries.push(obj.geometry);
-
-        // Assign material
-        materials.push(obj.material);
-      }
-    });
-    
-    // Return singular geometry and materials array
-    geometry = mergeGeometries(geometries, true);
-    return { geometry, materials };
-  }
-
-  static createInstancedMesh(object3D, vertices) {
-    // Create instanced mesh
-    const { geometry, materials } = this.mergeObjectMeshes(object3D);
-    const instancedMesh = new InstancedMesh(geometry, materials, vertices.length / 3);
-
-    // Update matrixes
-    const dummy = new Object3D();
-    for (let i = 0; i < vertices.length / 3; i++) {
-      dummy.position.set(
-        vertices[(i * 3)] + 0.5,
-        vertices[(i * 3) + 1] + 0.5,
-        vertices[(i * 3) + 2] + 0.5
-      );
-      dummy.updateMatrix();
-      instancedMesh.setMatrixAt(i, dummy.matrix);
-      instancedMesh.instanceMatrix.needsUpdate = true;
-    }
-
-    // Return object 3D instanced mesh
-    return instancedMesh;
   }
 
   static createMixer(object3D) {

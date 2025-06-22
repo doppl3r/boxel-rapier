@@ -2,9 +2,10 @@
   The MeshFactory creates any Three.js mesh using basic JSON instructions
 */
 
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import {
   BoxGeometry, CapsuleGeometry, CircleGeometry, ConeGeometry, CylinderGeometry,
-  DodecahedronGeometry, EdgesGeometry, ExtrudeGeometry, IcosahedronGeometry,
+  DodecahedronGeometry, EdgesGeometry, ExtrudeGeometry, IcosahedronGeometry, InstancedMesh,
   LatheGeometry, LineBasicMaterial, LineDashedMaterial, Material, Mesh, MeshBasicMaterial,
   MeshDepthMaterial, MeshDistanceMaterial, MeshLambertMaterial, MeshMatcapMaterial,
   MeshNormalMaterial, MeshPhongMaterial, MeshPhysicalMaterial, MeshStandardMaterial,
@@ -20,6 +21,57 @@ class MeshFactory {
     const material = new MeshFactory[options.material[0]](...options.material.slice(1));
     const mesh = new Mesh(geometry, material);
     return mesh;
+  }
+
+  static createInstancedMesh(object3D, vertices) {
+    // Create instanced mesh
+    const { geometry, materials } = this.mergeObjectMeshes(object3D);
+    const instancedMesh = new InstancedMesh(geometry, materials, vertices.length / 3);
+
+    // Update matrixes
+    const dummy = new Object3D();
+    for (let i = 0; i < vertices.length / 3; i++) {
+      dummy.position.set(
+        vertices[(i * 3)] + 0.5,
+        vertices[(i * 3) + 1] + 0.5,
+        vertices[(i * 3) + 2] + 0.5
+      );
+      dummy.updateMatrix();
+      instancedMesh.setMatrixAt(i, dummy.matrix);
+      instancedMesh.instanceMatrix.needsUpdate = true;
+    }
+
+    // Return object 3D instanced mesh
+    return instancedMesh;
+  }
+
+  static mergeObjectMeshes(object3D) {
+    // Combine geometries
+    let geometry;
+    let geometries = [];
+    let materials = [];
+
+    // Traverse and add geometries/materials to array
+    object3D.traverse(obj => {
+      if (obj.isMesh) {
+        // Translate geometry from mesh origin
+        obj.geometry.rotateX(obj.rotation.x);
+        obj.geometry.rotateY(obj.rotation.y);
+        obj.geometry.rotateZ(obj.rotation.z);
+        obj.geometry.scale(obj.scale.x, obj.scale.y, obj.scale.z);
+        obj.geometry.translate(obj.position.x, obj.position.y, obj.position.z);
+
+        // Push geometry to array for merge
+        geometries.push(obj.geometry);
+
+        // Assign material
+        materials.push(obj.material);
+      }
+    });
+    
+    // Return singular geometry and materials array
+    geometry = mergeGeometries(geometries, true);
+    return { geometry, materials };
   }
 
   // Assign all Three.js Mesh classes as static fields
