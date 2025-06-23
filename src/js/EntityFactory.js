@@ -20,7 +20,7 @@ class EntityFactory {
 
     // Initialize entity
     const entity = new Entity(options);
-    const object3D = this.createObject3D(options.object3d, options.colliders);
+    const object3D = this.createObject3D(options.object3d);
     const mixer = this.createMixer(object3D);
     const rigidBodyDesc = this.createRigidBodyDesc(options.body);
     const rigidBody = this.createRigidBody(rigidBodyDesc, world);
@@ -73,24 +73,36 @@ class EntityFactory {
   }
 
   static createColliders({ options, rigidBody, object3D, entity, world }) {
-    // Loop through each collider option
-    options?.forEach(colliderOptions => {
-      const assignCollider = () => {
-        // Create the collider and attach to the rigidBody
-        const colliderDesc = this.createColliderDesc(colliderOptions);
-        const collider = this.createCollider(colliderDesc, rigidBody, world);
-        this.createColliderEvents(colliderOptions.events, collider, entity);
+    const createCollider = (colliderOptions) => {
+      // Wait for child mesh to get loaded before creating collider
+      if (object3D.children.length === 0 && Object.keys(object3D.userData).length > 0) {
+        object3D.addEventListener('loaded', () => createCollider(colliderOptions));
+        return;
       }
 
-      // Wait for asset to load before assigning the shape data (ex: trimesh vertices & indices)
-      if (colliderOptions.shapeDesc[1] === undefined) {
-        object3D.addEventListener('childadded', assignCollider);
+      // Check shape type
+      if (colliderOptions.shapeDesc[0] === 'trimesh') {
+        // Update shape description using geometry from the 3D object
+        const { geometry } = MeshFactory.mergeObjectMeshes(object3D);
+        colliderOptions.shapeDesc.push(geometry.attributes.position.array, geometry.index.array, TriMeshFlags['FIX_INTERNAL_EDGES']);
       }
-      else {
-        // Assign collider
-        assignCollider();
+
+      // Replace 3D object with instanced mesh
+      if (colliderOptions.shapeDesc[0] === 'voxels') {
+        // Create instanced mesh from voxel coordinates array
+        const child = MeshFactory.createInstancedMesh(object3D, colliderOptions.shapeDesc[1]);
+        object3D.clear();
+        object3D.add(child);
       }
-    });
+
+      // Create the collider and attach to the rigidBody with entity events
+      const colliderDesc = this.createColliderDesc(colliderOptions);
+      const collider = this.createColliderFromDesc(colliderDesc, rigidBody, world);
+      this.createColliderEvents(colliderOptions.events, collider, entity);
+    }
+
+    // Loop through each collider option
+    options?.forEach(colliderOptions => createCollider(colliderOptions));
   }
 
   static createColliderDesc(options) {
@@ -126,7 +138,7 @@ class EntityFactory {
     return colliderDesc;
   }
 
-  static createCollider(colliderDesc, rigidBody, world) {
+  static createColliderFromDesc(colliderDesc, rigidBody, world) {
     return world.createCollider(colliderDesc, rigidBody);
   }
 
@@ -146,7 +158,7 @@ class EntityFactory {
     });
   }
 
-  static createObject3D(options, colliderOptions) {
+  static createObject3D(options) {
     options = ObjectAssign({
       position: { x: 0, y: 0, z: 0 },
       rotation: { x: 0, y: 0, z: 0 },
@@ -156,51 +168,27 @@ class EntityFactory {
     // Create 3D object from options
     const object3D = new Object3D();
 
-    // Set 3D object properties
+    // Copy 3D object properties
+    ObjectAssign(object3D.userData, options.userData);
     options.rotation = options.rotation.w ? _e.setFromQuaternion(_q.copy(options.rotation)) : _e.setFromVector3(_v.copy(options.rotation));
     object3D.position.copy(options.position);
     object3D.rotation.copy(options.rotation);
     object3D.scale.copy(options.scale);
 
-    // Create 3D objects from options
-    const factoryType = Object.keys(options?.userData)[0];
-    const factories = { camera: CameraFactory, mesh: MeshFactory, light: LightFactory };
-    const obj = factories[factoryType]?.create(options?.userData?.[factoryType]);
-
-    // Handle shapes before adding 3D object
-    const loadObject3D = obj => {
-      // Check shape type
-      if (colliderOptions?.[0].shapeDesc[0] === 'trimesh') {
-        // Update shape description using geometry from the 3D object
-        const { geometry } = MeshFactory.mergeObjectMeshes(obj);
-        colliderOptions[0].shapeDesc.push(geometry.attributes.position.array, geometry.index.array, TriMeshFlags['FIX_INTERNAL_EDGES']);
-      }
-
-      // Add newly created 3D object
-      object3D.add(obj);
-    }
-
-    if (obj) {
-      // Add newly created object
-      loadObject3D(obj);
+    // Load asset using path
+    if (options.userData.path) {
+      game.assets.load(options.userData.path, asset => {
+        let child = clone(asset);
+        object3D.add(child);
+        object3D.dispatchEvent({ type: 'loaded', child });
+      });
     }
     else {
-      // Load asset from game assets
-      if (options.userData.path) {
-        game.assets.load(options.userData.path, asset => {
-          // Assign object from assets
-          let obj = clone(asset);
-  
-          // Replace 3D object with instanced mesh
-          if (colliderOptions?.[0].shapeDesc[0] === 'voxels') {
-            // Create instanced mesh from voxel vertices array
-            obj = MeshFactory.createInstancedMesh(obj, colliderOptions[0].shapeDesc[1]);
-          }
-  
-          // Add cloned object
-          loadObject3D(obj);
-        });
-      }
+      // Create 3D objects using a specific factory
+      const factoryType = Object.keys(options?.userData)[0];
+      const factories = { camera: CameraFactory, mesh: MeshFactory, light: LightFactory };
+      const child = factories[factoryType]?.create(options?.userData?.[factoryType]);
+      object3D.add(child);
     }
 
     // Return newly created 3D object

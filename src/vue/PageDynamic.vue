@@ -18,7 +18,7 @@
     entityController.setCamera(game.graphics.camera);
 
     // Load load entities from JSON
-    await game.load('json/test-3.json');
+    await game.load('json/test-4.json');
     game.debugger.enable();
     game.start();
 

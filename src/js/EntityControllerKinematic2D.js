@@ -137,7 +137,7 @@ class EntityControllerKinematic2D {
 
   move(desiredTranslation) {
     // Set the next kinematic translation
-    if (this.entity.rigidBody.collider(0)) {
+    if (this.entity.rigidBody.numColliders() > 0) {
       this.controller.computeColliderMovement(this.entity.rigidBody.collider(0), desiredTranslation, QueryFilterFlags['EXCLUDE_SENSORS']);
       _v.copy(this.entity.rigidBody.translation());
       _v.add(this.controller.computedMovement());
