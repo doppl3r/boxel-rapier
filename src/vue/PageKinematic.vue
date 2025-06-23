@@ -27,7 +27,7 @@
         'ogg/click.ogg'
       ]
     );
-    await game.load('json/level-1.json');
+    await game.load('json/test-1.json');
     game.debugger.enable();
     game.start();
 

@@ -9,7 +9,7 @@ import {
   LatheGeometry, LineBasicMaterial, LineDashedMaterial, Material, Mesh, MeshBasicMaterial,
   MeshDepthMaterial, MeshDistanceMaterial, MeshLambertMaterial, MeshMatcapMaterial,
   MeshNormalMaterial, MeshPhongMaterial, MeshPhysicalMaterial, MeshStandardMaterial,
-  MeshToonMaterial, OctahedronGeometry, PlaneGeometry, PointsMaterial, PolyhedronGeometry,
+  MeshToonMaterial, Object3D, OctahedronGeometry, PlaneGeometry, PointsMaterial, PolyhedronGeometry,
   RawShaderMaterial, RingGeometry, ShaderMaterial, ShadowMaterial, ShapeGeometry,
   SphereGeometry, SpriteMaterial, TetrahedronGeometry, TorusGeometry, TorusKnotGeometry,
   TubeGeometry, WireframeGeometry
@@ -23,18 +23,19 @@ class MeshFactory {
     return mesh;
   }
 
-  static createInstancedMesh(object3D, vertices) {
+  static createInstancedMesh(object3D, coordinates) {
     // Create instanced mesh
     const { geometry, materials } = this.mergeObjectMeshes(object3D);
-    const instancedMesh = new InstancedMesh(geometry, materials, vertices.length / 3);
+    const count = coordinates.length / 3;
+    const instancedMesh = new InstancedMesh(geometry, materials, count);
 
-    // Update matrixes
+    // Update each instance matrix
     const dummy = new Object3D();
-    for (let i = 0; i < vertices.length / 3; i++) {
+    for (let i = 0; i < count; i++) {
       dummy.position.set(
-        vertices[(i * 3)] + 0.5,
-        vertices[(i * 3) + 1] + 0.5,
-        vertices[(i * 3) + 2] + 0.5
+        coordinates[(i * 3)] + 0.5,
+        coordinates[(i * 3) + 1] + 0.5,
+        coordinates[(i * 3) + 2] + 0.5
       );
       dummy.updateMatrix();
       instancedMesh.setMatrixAt(i, dummy.matrix);

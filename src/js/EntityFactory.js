@@ -168,13 +168,9 @@ class EntityFactory {
     const obj = factories[factoryType]?.create(options?.userData?.[factoryType]);
 
     // Handle shapes before adding 3D object
-    const addChildObject = obj => {
+    const loadObject3D = obj => {
       // Check shape type
-      if (colliderOptions?.[0].shapeDesc[0] === 'voxels') {
-        // Create instanced mesh from voxel vertices array
-        obj = MeshFactory.createInstancedMesh(obj, colliderOptions[0].shapeDesc[1]);
-      }
-      else if (colliderOptions?.[0].shapeDesc[0] === 'trimesh') {
+      if (colliderOptions?.[0].shapeDesc[0] === 'trimesh') {
         // Update shape description using geometry from the 3D object
         const { geometry } = MeshFactory.mergeObjectMeshes(obj);
         colliderOptions[0].shapeDesc.push(geometry.attributes.position.array, geometry.index.array, TriMeshFlags['FIX_INTERNAL_EDGES']);
@@ -186,14 +182,25 @@ class EntityFactory {
 
     if (obj) {
       // Add newly created object
-      addChildObject(obj);
+      loadObject3D(obj);
     }
-    else if (factoryType === 'path') {
+    else {
       // Load asset from game assets
-      game.assets.load(options.userData.path, asset => {
-        // Add cloned object
-        addChildObject(clone(asset));
-      });
+      if (options.userData.path) {
+        game.assets.load(options.userData.path, asset => {
+          // Assign object from assets
+          let obj = clone(asset);
+  
+          // Replace 3D object with instanced mesh
+          if (colliderOptions?.[0].shapeDesc[0] === 'voxels') {
+            // Create instanced mesh from voxel vertices array
+            obj = MeshFactory.createInstancedMesh(obj, colliderOptions[0].shapeDesc[1]);
+          }
+  
+          // Add cloned object
+          loadObject3D(obj);
+        });
+      }
     }
 
     // Return newly created 3D object
