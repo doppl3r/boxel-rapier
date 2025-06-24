@@ -73,36 +73,42 @@ class EntityFactory {
   }
 
   static createColliders({ options, rigidBody, object3D, entity, world }) {
-    const createCollider = (colliderOptions) => {
-      // Wait for child mesh to get loaded before creating collider
+    const buildCollider = (colliderOptions) => {
+      // Wait for child mesh to load before creating collider
       if (object3D.children.length === 0 && Object.keys(object3D.userData).length > 0) {
-        object3D.addEventListener('loaded', () => createCollider(colliderOptions));
+        object3D.addEventListener('loaded', () => buildCollider(colliderOptions));
         return;
       }
 
-      // Check shape type
-      if (colliderOptions.shapeDesc[0] === 'trimesh') {
-        // Update shape description using geometry from the 3D object
-        const { geometry } = MeshFactory.mergeObjectMeshes(object3D);
-        colliderOptions.shapeDesc.push(geometry.attributes.position.array, geometry.index.array, TriMeshFlags['FIX_INTERNAL_EDGES']);
-      }
-
-      // Replace 3D object with instanced mesh
-      if (colliderOptions.shapeDesc[0] === 'voxels') {
-        // Create instanced mesh from voxel coordinates array
-        const child = MeshFactory.createInstancedMesh(object3D, colliderOptions.shapeDesc[1]);
-        object3D.clear();
-        object3D.add(child);
-      }
+      // Update object3D and shapeDesc
+      this.updateShapeDescFromObject3D(colliderOptions.shapeDesc, object3D);
+      this.updateObject3DFromShapeDesc(object3D, colliderOptions.shapeDesc);
 
       // Create the collider and attach to the rigidBody with entity events
       const colliderDesc = this.createColliderDesc(colliderOptions);
-      const collider = this.createColliderFromDesc(colliderDesc, rigidBody, world);
+      const collider = this.createCollider(colliderDesc, rigidBody, world);
       this.createColliderEvents(colliderOptions.events, collider, entity);
     }
 
     // Loop through each collider option
-    options?.forEach(colliderOptions => createCollider(colliderOptions));
+    options?.forEach(colliderOptions => buildCollider(colliderOptions));
+  }
+
+  static updateShapeDescFromObject3D(shapeDesc, object3D) {
+    if (shapeDesc[0] === 'trimesh') {
+      // Add vertices & indices from the 3D object to shapeDesc
+      const { geometry } = MeshFactory.mergeObjectMeshes(object3D);
+      shapeDesc.push(geometry.attributes.position.array, geometry.index.array, TriMeshFlags['FIX_INTERNAL_EDGES']);
+    }
+  }
+
+  static updateObject3DFromShapeDesc(object3D, shapeDesc) {
+    if (shapeDesc[0] === 'voxels') {
+      // Replace 3D object with instanced mesh (better performance)
+      const child = MeshFactory.createInstancedMesh(object3D, shapeDesc[1]);
+      object3D.clear();
+      object3D.add(child);
+    }
   }
 
   static createColliderDesc(options) {
@@ -138,7 +144,7 @@ class EntityFactory {
     return colliderDesc;
   }
 
-  static createColliderFromDesc(colliderDesc, rigidBody, world) {
+  static createCollider(colliderDesc, rigidBody, world) {
     return world.createCollider(colliderDesc, rigidBody);
   }
 
