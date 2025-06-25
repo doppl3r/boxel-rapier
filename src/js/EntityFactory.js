@@ -184,9 +184,24 @@ class EntityFactory {
     // Load asset using path
     if (options.userData.path) {
       game.assets.load(options.userData.path, asset => {
-        let child = clone(asset);
-        object3D.add(child);
-        object3D.dispatchEvent({ type: 'loaded', child });
+        let child;
+        if (asset.isObject3D) {
+          child = clone(asset);
+        }
+        else {
+          // Create mesh and assign material map
+          child = MeshFactory.create(options.userData.mesh);
+          child.material.transparent = true;
+          child.material.map = asset;
+          child.material.map.magFilter = 1003; // Nearest neighbor
+          child.material.map.colorSpace = 'srgb'; // Correct color
+        }
+
+        // Add child
+        if (child) {
+          object3D.add(child);
+          object3D.dispatchEvent({ type: 'loaded', child });
+        }
       });
     }
     else {

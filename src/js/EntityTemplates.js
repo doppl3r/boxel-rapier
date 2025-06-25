@@ -111,6 +111,33 @@ class EntityTemplates {
     }
   }
 
+  static player_sprite = {
+    body: {
+      ccd: true,
+      enabledTranslations: { x: true, y: true, z: false },
+      enabledRotations: { x: false, y: false, z: true },
+      softCcdPrediction: 0.5,
+      status: 0
+    },
+    colliders: [
+      {
+        friction: 0,
+        shapeDesc: ['cuboid', 0.375, 0.375, 0.375]
+      }
+    ],
+    name: 'player',
+    object3d: {
+      scale: { x: 0.75, y: 0.75, z: 0.75 },
+      userData: {
+        path: 'png/character.png',
+        mesh: {
+          geometry: ['PlaneGeometry', 1, 1, 1, 1],
+          material: ['MeshBasicMaterial']
+        }
+      }
+    }
+  }
+
   static player_controller_2d = {
     body: {
       enabledTranslations: { x: true, y: true, z: false },
