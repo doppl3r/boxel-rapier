@@ -173,6 +173,8 @@ class EntityFactory {
 
     // Create 3D object from options
     const object3D = new Object3D();
+    const factories = [CameraFactory, MeshFactory, LightFactory];
+    let child;
 
     // Copy 3D object properties
     ObjectAssign(object3D.userData, options.userData);
@@ -181,49 +183,41 @@ class EntityFactory {
     object3D.rotation.copy(options.rotation);
     object3D.scale.copy(options.scale);
 
-    // Load and create child 3D objects
-    if (options.children) {
-      const factories = [CameraFactory, MeshFactory, LightFactory];
-      let child;
+    // Loop through children options
+    options.children.forEach(childOptions => {
+      // Find the factory by child type
+      const factory = factories.find(f => f[childOptions.type]);
 
-      // Loop through object3D children options
-      options.children.forEach(childOptions => {
-        const factory = factories.find(f => f[childOptions.type]);
+      // Loop through all assets
+      if (childOptions.assets) {
+        childOptions.assets.forEach(assetOptions => {
+          // Load asset from URL
+          game.assets.load(assetOptions.url, asset => {
+            if (factory) {
+              // Recursively replace asset string(s) with loaded asset
+              this.replaceAsset(childOptions, assetOptions.url, asset, () => {
+                // Assign options to asset and create child
+                ObjectAssign(asset, assetOptions);
+                child = factory.create(childOptions);
+              });
+            }
+            else {
+              // Clone asset if no factory exists
+              child = clone(asset);
+            }
 
-        // Check child options asset URL
-        if (childOptions.assets) {
-          // Loop through all assets
-          childOptions.assets.forEach(assetOptions => {
-            // Load asset from URL
-            game.assets.load(assetOptions.url, asset => {
-              if (factory) {
-                // Replace asset string(s) with loaded asset
-                this.replaceAsset(childOptions, assetOptions.url, asset, () => {
-                  // Assign assetValue to asset
-                  ObjectAssign(asset, assetOptions);
-  
-                  // Create 3D object after replacing asset
-                  child = factory.create(childOptions);
-                });
-              }
-              else {
-                // Clone asset if no factory exists
-                child = clone(asset);
-              }
-
-              // Add child to 3D object
-              object3D.add(child);
-              object3D.dispatchEvent({ type: 'loaded', child });
-            });
+            // Add child to 3D object
+            object3D.add(child);
+            object3D.dispatchEvent({ type: 'loaded', child });
           });
-        }
-        else {
-          // Create child immediately
-          child = factory.create(childOptions);
-          object3D.add(child);
-        }
-      });
-    }
+        });
+      }
+      else {
+        // Create child immediately
+        child = factory.create(childOptions);
+        object3D.add(child);
+      }
+    });
 
     // Return newly created 3D object
     return object3D;
