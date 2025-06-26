@@ -192,24 +192,13 @@ class EntityFactory {
 
         // Check child options asset URL
         if (childOptions.assets) {
-          // Replace asset string value with the asset object
-          const replaceAsset = (obj, key, asset, callback) => {
-            if (obj && typeof obj === 'object') {
-              // Loop through object keys (exclude 'assets')
-              Object.keys(obj).filter(k => k !== 'assets').forEach(k => {
-                if (obj[k] !== key) replaceAsset(obj[k], key, asset, callback)
-                else callback(obj[k] = asset)
-              });
-            }
-          }
-
           // Loop through all assets
           childOptions.assets.forEach(assetOptions => {
             // Load asset from URL
             game.assets.load(assetOptions.url, asset => {
               if (factory) {
-                // Replace asset string with loaded asset
-                replaceAsset(childOptions, assetOptions.url, asset, () => {
+                // Replace asset string(s) with loaded asset
+                this.replaceAsset(childOptions, assetOptions.url, asset, () => {
                   // Assign assetValue to asset
                   ObjectAssign(asset, assetOptions);
   
@@ -218,7 +207,7 @@ class EntityFactory {
                 });
               }
               else {
-                // Add cloned asset
+                // Clone asset if no factory exists
                 child = clone(asset);
               }
 
@@ -238,6 +227,17 @@ class EntityFactory {
 
     // Return newly created 3D object
     return object3D;
+  }
+
+  // Replace asset string value with the asset object
+  static replaceAsset(obj, key, asset, callback) {
+    if (obj && typeof obj === 'object') {
+      // Loop through object keys
+      Object.keys(obj).forEach(k => {
+        if (obj[k] !== key) this.replaceAsset(obj[k], key, asset, callback)
+        else callback(obj[k] = asset)
+      });
+    }
   }
 
   static createMixer(object3D) {
