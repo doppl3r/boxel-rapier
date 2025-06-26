@@ -181,8 +181,52 @@ class EntityFactory {
     object3D.rotation.copy(options.rotation);
     object3D.scale.copy(options.scale);
 
-    // Load asset using path
-    if (options.userData.path) {
+    // Load and create child 3D objects
+    if (options.children) {
+      const factories = [CameraFactory, MeshFactory, LightFactory];
+
+      // Loop through object3D children options
+      options.children.forEach(childOptions => {
+        const factory = factories.find(f => f[childOptions.type]);
+
+        // Check child options asset URL
+        if (childOptions.assets) {
+          // Replace asset string value with the asset object
+          const replaceAsset = (obj, key, asset, callback) => {
+            if (obj && typeof obj === 'object') {
+              // Loop through object keys (exclude 'assets')
+              Object.keys(obj).filter(k => k !== 'assets').forEach(k => {
+                if (obj[k] !== key) replaceAsset(obj[k], key, asset, callback)
+                else callback(obj[k] = asset)
+              });
+            }
+          }
+
+          // Loop through all assets
+          childOptions.assets.forEach(assetOptions => {
+            // Load asset from URL
+            game.assets.load(assetOptions.url, asset => {
+              // Replace asset string with loaded asset
+              replaceAsset(childOptions, assetOptions.url, asset, () => {
+                // Assign assetValue to asset
+                ObjectAssign(asset, assetOptions);
+
+                // Create 3D object after replacing asset
+                const child = factory.create(childOptions);
+                object3D.add(child);
+                object3D.dispatchEvent({ type: 'loaded', child });
+              });
+            });
+          });
+        }
+        else {
+          // Create child immediately
+          child = factory.create(childOptions);
+          object3D.add(obj);
+        }
+      });
+    }
+    else if (options.userData.path) {
       game.assets.load(options.userData.path, asset => {
         let child;
         if (asset.isObject3D) {

@@ -127,14 +127,21 @@ class EntityTemplates {
     ],
     name: 'player',
     object3d: {
-      scale: { x: 0.75, y: 0.75, z: 0.75 },
-      userData: {
-        path: 'png/character.png',
-        mesh: {
+      children: [
+        {
+          type: 'Mesh',
+          assets: [
+            {
+              url: 'png/character.png',
+              colorSpace: 'srgb',
+              magFilter: 1003,
+            }
+          ],
           geometry: ['PlaneGeometry', 1, 1, 1, 1],
-          material: ['MeshBasicMaterial']
+          material: ['MeshBasicMaterial', { map: 'png/character.png', transparent: true }]
         }
-      }
+      ],
+      scale: { x: 0.75, y: 0.75, z: 0.75 }
     }
   }
 

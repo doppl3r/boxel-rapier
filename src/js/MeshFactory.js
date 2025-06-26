@@ -89,6 +89,7 @@ class MeshFactory {
   static LineBasicMaterial = LineBasicMaterial;
   static LineDashedMaterial = LineDashedMaterial;
   static Material = Material;
+  static Mesh = Mesh;
   static MeshBasicMaterial = MeshBasicMaterial;
   static MeshDepthMaterial = MeshDepthMaterial;
   static MeshDistanceMaterial = MeshDistanceMaterial;
