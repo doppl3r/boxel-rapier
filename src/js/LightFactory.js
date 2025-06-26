@@ -11,7 +11,7 @@ class LightFactory {
   }
 
   static create(options) {
-    const light = new LightFactory[options[0]](...options.slice(1));
+    const light = new LightFactory[options.light[0]](...options.light.slice(1));
     return light;
   }
 

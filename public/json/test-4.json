@@ -8,16 +8,22 @@
           "z": 0
         }
       },
-      "template": "player_sprite"
+      "template": "player"
     },
 
 
     {
       "template": "trimesh",
       "object3d": {
-        "userData": {
-          "path": "glb/dungeon.glb"
-        }
+        "children": [
+          {
+            "assets": [
+              {
+                "url": "glb/dungeon.glb"
+              }
+            ]
+          }
+        ]
       }
     },
 

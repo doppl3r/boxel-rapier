@@ -75,7 +75,7 @@ class EntityFactory {
   static createColliders({ options, rigidBody, object3D, entity, world }) {
     const buildCollider = (colliderOptions) => {
       // Wait for child mesh to load before creating collider
-      if (object3D.children.length === 0 && Object.keys(object3D.userData).length > 0) {
+      if (object3D.children.length === 0) {
         object3D.addEventListener('loaded', () => buildCollider(colliderOptions));
         return;
       }
@@ -184,6 +184,7 @@ class EntityFactory {
     // Load and create child 3D objects
     if (options.children) {
       const factories = [CameraFactory, MeshFactory, LightFactory];
+      let child;
 
       // Loop through object3D children options
       options.children.forEach(childOptions => {
@@ -206,54 +207,33 @@ class EntityFactory {
           childOptions.assets.forEach(assetOptions => {
             // Load asset from URL
             game.assets.load(assetOptions.url, asset => {
-              // Replace asset string with loaded asset
-              replaceAsset(childOptions, assetOptions.url, asset, () => {
-                // Assign assetValue to asset
-                ObjectAssign(asset, assetOptions);
+              if (factory) {
+                // Replace asset string with loaded asset
+                replaceAsset(childOptions, assetOptions.url, asset, () => {
+                  // Assign assetValue to asset
+                  ObjectAssign(asset, assetOptions);
+  
+                  // Create 3D object after replacing asset
+                  child = factory.create(childOptions);
+                });
+              }
+              else {
+                // Add cloned asset
+                child = clone(asset);
+              }
 
-                // Create 3D object after replacing asset
-                const child = factory.create(childOptions);
-                object3D.add(child);
-                object3D.dispatchEvent({ type: 'loaded', child });
-              });
+              // Add child to 3D object
+              object3D.add(child);
+              object3D.dispatchEvent({ type: 'loaded', child });
             });
           });
         }
         else {
           // Create child immediately
           child = factory.create(childOptions);
-          object3D.add(obj);
-        }
-      });
-    }
-    else if (options.userData.path) {
-      game.assets.load(options.userData.path, asset => {
-        let child;
-        if (asset.isObject3D) {
-          child = clone(asset);
-        }
-        else {
-          // Create mesh and assign material map
-          child = MeshFactory.create(options.userData.mesh);
-          child.material.transparent = true;
-          child.material.map = asset;
-          child.material.map.magFilter = 1003; // Nearest neighbor
-          child.material.map.colorSpace = 'srgb'; // Correct color
-        }
-
-        // Add child
-        if (child) {
           object3D.add(child);
-          object3D.dispatchEvent({ type: 'loaded', child });
         }
       });
-    }
-    else {
-      // Create 3D objects using a specific factory
-      const factoryType = Object.keys(options?.userData)[0];
-      const factories = { camera: CameraFactory, mesh: MeshFactory, light: LightFactory };
-      const child = factories[factoryType]?.create(options?.userData?.[factoryType]);
-      object3D.add(child);
     }
 
     // Return newly created 3D object

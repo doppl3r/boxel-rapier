@@ -19,9 +19,15 @@ class EntityTemplates {
     ],
     name: 'cube',
     object3d: {
-      userData: {
-        path: 'glb/cube.glb'
-      }
+      children: [
+        {
+          assets: [
+            {
+              url: 'glb/cube.glb'
+            }
+          ]
+        }
+      ]
     }
   }
 
@@ -31,9 +37,12 @@ class EntityTemplates {
     },
     name: 'light',
     object3d: {
-      userData: {
-        light: ['HemisphereLight', '#ffffff', '#aaaaaa', Math.PI]
-      }
+      children: [
+        {
+          type: 'HemisphereLight',
+          light: ['HemisphereLight', '#ffffff', '#aaaaaa', Math.PI]
+        }
+      ]
     }
   }
 
@@ -58,9 +67,15 @@ class EntityTemplates {
       }
     ],
     object3d: {
-      userData: {
-        path: 'glb/spike.glb'
-      }
+      children: [
+        {
+          assets: [
+            {
+              url: 'glb/spike.glb'
+            }
+          ]
+        }
+      ]
     },
     name: 'teleport'
   }
@@ -81,9 +96,15 @@ class EntityTemplates {
       }
     ],
     object3d: {
-      userData: {
-        path: 'glb/player.glb'
-      }
+      children: [
+        {
+          assets: [
+            {
+              url: 'glb/player.glb'
+            }
+          ]
+        }
+      ]
     },
     name: 'teleport'
   }
@@ -104,10 +125,16 @@ class EntityTemplates {
     ],
     name: 'player',
     object3d: {
-      scale: { x: 0.75, y: 0.75, z: 0.75 },
-      userData: {
-        path: 'glb/player.glb'
-      }
+      children: [
+        {
+          assets: [
+            {
+              url: 'glb/player.glb'
+            }
+          ]
+        }
+      ],
+      scale: { x: 0.75, y: 0.75, z: 0.75 }
     }
   }
 
@@ -160,10 +187,16 @@ class EntityTemplates {
     },
     name: 'player',
     object3d: {
-      scale: { x: 0.75, y: 0.75, z: 0.75 },
-      userData: {
-        path: 'glb/player.glb'
-      }
+      children: [
+        {
+          assets: [
+            {
+              url: 'glb/player.glb'
+            }
+          ]
+        }
+      ],
+      scale: { x: 0.75, y: 0.75, z: 0.75 }
     }
   }
 
@@ -180,9 +213,15 @@ class EntityTemplates {
     name: 'voxels',
     object3d: {
       scale: { x: 1, y: 1, z: 1 },
-      userData: {
-        path: 'glb/cube.glb'
-      }
+      children: [
+        {
+          assets: [
+            {
+              url: 'glb/cube.glb'
+            }
+          ]
+        }
+      ]
     }
   }
 
@@ -220,30 +259,35 @@ class EntityTemplates {
     ],
     name: 'plane',
     object3d: {
-      userData: {
-        mesh: {
+      children: [
+        {
+          type: 'Mesh',
           geometry: ['PlaneGeometry', 9, 9, 9, 9],
           material: ['MeshBasicMaterial', { color: '#0287ef' }]
         }
-      }
+      ]
     }
   }
 
   static camera_perspective = {
     name: 'camera',
     object3d: {
-      userData: {
-        camera: ['PerspectiveCamera', 45, window.innerWidth / window.innerHeight, 0.05, 100]
-      }
+      children: [
+        {
+          camera: ['PerspectiveCamera', 45, window.innerWidth / window.innerHeight, 0.05, 100]
+        }
+      ]
     }
   }
 
   static camera_orthographic = {
     name: 'camera',
     object3d: {
-      userData: {
-        camera: ['OrthographicCamera', -window.innerWidth / window.innerHeight, window.innerWidth / window.innerHeight, 1, -1, 0.05, 100]
-      }
+      children: [
+        {
+          camera: ['OrthographicCamera', -window.innerWidth / window.innerHeight, window.innerWidth / window.innerHeight, 1, -1, 0.05, 100]
+        }
+      ]
     }
   }
 }

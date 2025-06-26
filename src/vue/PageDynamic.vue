@@ -19,7 +19,7 @@
 
     // Load load entities from JSON
     await game.load('json/test-4.json');
-    //game.debugger.enable();
+    game.debugger.enable();
     game.start();
 
     // Initialize 2D controller
