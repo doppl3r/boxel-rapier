@@ -17,9 +17,9 @@ import {
 
 class MeshFactory {
   static create(options) {
-    const geometry = new MeshFactory[options.geometry[0]](...options.geometry.slice(1));
-    const material = new MeshFactory[options.material[0]](...options.material.slice(1));
-    const mesh = new Mesh(geometry, material);
+    const geometry = new MeshFactory[options.geometry.type](...options.geometry.arguments);
+    const material = new MeshFactory[options.material.type](...options.material.arguments);
+    const mesh = new MeshFactory[options.type](geometry, material)
     return mesh;
   }
 

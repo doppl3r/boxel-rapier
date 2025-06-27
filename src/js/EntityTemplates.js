@@ -182,8 +182,14 @@ class EntityTemplates {
               magFilter: 1003,
             }
           ],
-          geometry: ['PlaneGeometry', 1, 1, 1, 1],
-          material: ['MeshBasicMaterial', { map: 'png/character.png', transparent: true }]
+          geometry: {
+            type: 'PlaneGeometry',
+            arguments: [1, 1, 1, 1]
+          },
+          material: {
+            type: 'MeshBasicMaterial',
+            arguments: [{ map: 'png/character.png', transparent: true }]
+          }
         }
       ],
       scale: { x: 0.75, y: 0.75, z: 0.75 }
@@ -290,8 +296,14 @@ class EntityTemplates {
       children: [
         {
           type: 'Mesh',
-          geometry: ['PlaneGeometry', 9, 9, 9, 9],
-          material: ['MeshBasicMaterial', { color: '#0287ef' }]
+          geometry: {
+            type: 'PlaneGeometry',
+            arguments: [9, 9, 9, 9]
+          },
+          material: {
+            type: 'MeshBasicMaterial',
+            arguments: [{ color: '#0287ef' }]
+          }
         }
       ]
     }
