@@ -26,7 +26,7 @@ class EntityControllerDynamic2D {
     // Set camera properties
     this.camera;
     this.cameraSpeed = 100; // ms
-    this.cameraOffset = new Vector3(0, 3, 8);
+    this.cameraOffset = new Vector3(0, 2, 10);
 
     // Add DOM event listeners
     document.addEventListener('keydown', this.onKeyDown);

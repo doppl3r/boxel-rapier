@@ -14,7 +14,10 @@ class EntityTemplates {
     colliders: [
       {
         friction: 0,
-        shapeDesc: ['cuboid', 0.5, 0.5, 0.5]
+        shapeDesc: {
+          type: 'cuboid',
+          arguments: [0.5, 0.5, 0.5]
+        }
       }
     ],
     name: 'cube',
@@ -40,7 +43,7 @@ class EntityTemplates {
       children: [
         {
           type: 'HemisphereLight',
-          light: ['HemisphereLight', '#ffffff', '#aaaaaa', Math.PI]
+          arguments: ['#ffffff', '#aaaaaa', Math.PI]
         }
       ]
     }
@@ -52,7 +55,10 @@ class EntityTemplates {
     },
     colliders: [
       {
-        shapeDesc: ['cuboid', 0.5, 0.5, 0.5]
+        shapeDesc: {
+          type: 'cuboid',
+          arguments: [0.5, 0.5, 0.5]
+        }
       },
       {
         events: [
@@ -62,7 +68,10 @@ class EntityTemplates {
           }
         ],
         isSensor: true,
-        shapeDesc: ['cuboid', 0.375, 0.125, 0.375],
+        shapeDesc: {
+          type: 'cuboid',
+          arguments: [0.375, 0.125, 0.375]
+        },
         translation: { x: 0, y: 0.5, z: 0 }
       }
     ],
@@ -92,7 +101,10 @@ class EntityTemplates {
             value: { x: 0, y: 0, z: 0 }
           }
         ],
-        shapeDesc: ['cuboid', 0.5, 0.5, 0.5]
+        shapeDesc: {
+          type: 'cuboid',
+          arguments: [0.5, 0.5, 0.5]
+        }
       }
     ],
     object3d: {
@@ -120,7 +132,10 @@ class EntityTemplates {
     colliders: [
       {
         friction: 0,
-        shapeDesc: ['cuboid', 0.375, 0.375, 0.375]
+        shapeDesc: {
+          type: 'cuboid',
+          arguments: [0.375, 0.375, 0.375]
+        }
       }
     ],
     name: 'player',
@@ -149,7 +164,10 @@ class EntityTemplates {
     colliders: [
       {
         friction: 0,
-        shapeDesc: ['cuboid', 0.375, 0.375, 0.375]
+        shapeDesc: {
+          type: 'cuboid',
+          arguments: [0.375, 0.375, 0.375]
+        }
       }
     ],
     name: 'player',
@@ -179,7 +197,10 @@ class EntityTemplates {
     },
     colliders: [
       {
-        shapeDesc: ['cuboid', 0.375, 0.375, 0.375]
+        shapeDesc: {
+          type: 'cuboid',
+          arguments: [0.375, 0.375, 0.375]
+        }
       }
     ],
     controller: {
@@ -207,7 +228,10 @@ class EntityTemplates {
     },
     colliders: [
       {
-        shapeDesc: ['voxels', [0, 0, 0], { x: 1, y: 1, z: 1 }]
+        shapeDesc: {
+          type: 'voxels',
+          arguments: [0, 0, 0, { x: 1, y: 1, z: 1 }]
+        }
       }
     ],
     name: 'voxels',
@@ -232,7 +256,9 @@ class EntityTemplates {
     colliders: [
       {
         friction: 0.5,
-        shapeDesc: ['trimesh'] // Needs vertices and indices
+        shapeDesc: {
+          type: 'trimesh'
+        }
       }
     ],
     name: 'trimesh'
@@ -254,7 +280,9 @@ class EntityTemplates {
     colliders: [
       {
         friction: 0.5,
-        shapeDesc: ['trimesh'] // Needs vertices and indices
+        shapeDesc: {
+          type: 'trimesh'
+        }
       }
     ],
     name: 'plane',
@@ -274,7 +302,8 @@ class EntityTemplates {
     object3d: {
       children: [
         {
-          camera: ['PerspectiveCamera', 45, window.innerWidth / window.innerHeight, 0.05, 100]
+          type: 'PerspectiveCamera',
+          arguments: [45, window.innerWidth / window.innerHeight, 0.05, 100]
         }
       ]
     }
@@ -285,7 +314,8 @@ class EntityTemplates {
     object3d: {
       children: [
         {
-          camera: ['OrthographicCamera', -window.innerWidth / window.innerHeight, window.innerWidth / window.innerHeight, 1, -1, 0.05, 100]
+          type: 'OrthographicCamera',
+          arguments: [-window.innerWidth / window.innerHeight, window.innerWidth / window.innerHeight, 1, -1, 0.05, 100]
         }
       ]
     }

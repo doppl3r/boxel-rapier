@@ -95,17 +95,17 @@ class EntityFactory {
   }
 
   static updateShapeDescFromObject3D(shapeDesc, object3D) {
-    if (shapeDesc[0] === 'trimesh') {
+    if (shapeDesc.type === 'trimesh') {
       // Add vertices & indices from the 3D object to shapeDesc
       const { geometry } = MeshFactory.mergeObjectMeshes(object3D);
-      shapeDesc.push(geometry.attributes.position.array, geometry.index.array, TriMeshFlags['FIX_INTERNAL_EDGES']);
+      shapeDesc.arguments = [geometry.attributes.position.array, geometry.index.array, TriMeshFlags['FIX_INTERNAL_EDGES']];
     }
   }
 
   static updateObject3DFromShapeDesc(object3D, shapeDesc) {
-    if (shapeDesc[0] === 'voxels') {
+    if (shapeDesc.type === 'voxels') {
       // Replace 3D object with instanced mesh (better performance)
-      const child = MeshFactory.createInstancedMesh(object3D, shapeDesc[1]);
+      const child = MeshFactory.createInstancedMesh(object3D, shapeDesc.arguments[0]);
       object3D.clear();
       object3D.add(child);
     }
@@ -123,13 +123,16 @@ class EntityFactory {
       isSensor: false,
       mass: 0,
       restitution: 0,
-      shapeDesc: [],
+      shapeDesc: {
+        type: null,
+        arguments: []
+      },
       solverGroups: 0xFFFFFFFF,
       translation: { x: 0, y: 0, z: 0 }
     }, options);
 
     // Create collider description using shape "type" (ex: "cuboid") with parameters (ex: 0.5, 0.5, 0.5)
-    const colliderDesc = ColliderDesc[options.shapeDesc[0]](...options.shapeDesc.slice(1));
+    const colliderDesc = ColliderDesc[options.shapeDesc.type](...options.shapeDesc.arguments);
     colliderDesc.setActiveCollisionTypes(isNaN(options.activeCollisionTypes) ? ActiveCollisionTypes[options.activeCollisionTypes] : options.activeCollisionTypes);
     colliderDesc.setActiveEvents(isNaN(options.activeEvents) ? ActiveEvents[options.activeEvents] : options.activeEvents);
     colliderDesc.setCollisionGroups(options.collisionGroups);
@@ -198,6 +201,8 @@ class EntityFactory {
               this.replaceAsset(childOptions, assetOptions.url, asset, () => {
                 // Assign options to asset and create child
                 ObjectAssign(asset, assetOptions);
+
+                // Create child from options
                 child = factory.create(childOptions);
               });
             }
@@ -227,9 +232,9 @@ class EntityFactory {
   static replaceAsset(obj, key, asset, callback) {
     if (obj && typeof obj === 'object') {
       // Loop through object keys
-      Object.keys(obj).forEach(k => {
-        if (obj[k] !== key) this.replaceAsset(obj[k], key, asset, callback)
-        else callback(obj[k] = asset)
+      Object.keys(obj).filter(k => k !== 'assets').forEach(k => {
+        if (obj[k] !== key) this.replaceAsset(obj[k], key, asset, callback);
+        else callback(obj[k] = asset);
       });
     }
   }

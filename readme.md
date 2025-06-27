@@ -44,7 +44,10 @@ static teleport = {
           value: { x: 0, y: 0, z: 0 }
         }
       ],
-      shapeDesc: ['cuboid', 0.5, 0.5, 0.5]
+      shapeDesc: {
+        type: 'cuboid',
+        arguments: [0.5, 0.5, 0.5]
+      }
     }
   ]
 }

@@ -11,7 +11,7 @@ class CameraFactory {
   }
 
   static create(options) {
-    const camera = new CameraFactory[options.camera[0]](...options.camera.slice(1));
+    const camera = new CameraFactory[options.type](...options.arguments);
     return camera;
   }
 
