@@ -7,6 +7,30 @@ class EntityTemplates {
 
   }
 
+  static camera_orthographic = {
+    name: 'camera',
+    object3d: {
+      children: [
+        {
+          type: 'OrthographicCamera',
+          arguments: [-window.innerWidth / window.innerHeight, window.innerWidth / window.innerHeight, 1, -1, 0.05, 100]
+        }
+      ]
+    }
+  }
+
+  static camera_perspective = {
+    name: 'camera',
+    object3d: {
+      children: [
+        {
+          type: 'PerspectiveCamera',
+          arguments: [45, window.innerWidth / window.innerHeight, 0.05, 100]
+        }
+      ]
+    }
+  }
+
   static cube = {
     body: {
       status: 1 // Fixed
@@ -34,6 +58,13 @@ class EntityTemplates {
     }
   }
 
+  static empty = {
+    body: {
+      status: 1 // Fixed
+    },
+    name: 'empty'
+  }
+
   static light_hemisphere = {
     body: {
       status: 1
@@ -46,6 +77,144 @@ class EntityTemplates {
           arguments: ['#ffffff', '#aaaaaa', Math.PI]
         }
       ]
+    }
+  }
+
+  static plane = {
+    body: {
+      position: { x: 0, y: 0, z: 0 },
+      rotation: { x: -Math.PI / 2, y: 0, z: 0 },
+      status: 1
+    },
+    colliders: [
+      {
+        friction: 0.5,
+        shapeDesc: {
+          type: 'trimesh'
+        }
+      }
+    ],
+    name: 'plane',
+    object3d: {
+      children: [
+        {
+          type: 'Mesh',
+          geometry: {
+            type: 'PlaneGeometry',
+            arguments: [9, 9, 9, 9]
+          },
+          material: {
+            type: 'MeshBasicMaterial',
+            arguments: [{ color: '#0287ef' }]
+          }
+        }
+      ]
+    }
+  }
+
+  static player = {
+    body: {
+      ccd: true,
+      enabledTranslations: { x: true, y: true, z: false },
+      enabledRotations: { x: false, y: false, z: true },
+      softCcdPrediction: 0.5,
+      status: 0
+    },
+    colliders: [
+      {
+        friction: 0,
+        shapeDesc: {
+          type: 'cuboid',
+          arguments: [0.375, 0.375, 0.375]
+        }
+      }
+    ],
+    name: 'player',
+    object3d: {
+      children: [
+        {
+          assets: [
+            {
+              url: 'glb/player.glb'
+            }
+          ]
+        }
+      ],
+      scale: { x: 0.75, y: 0.75, z: 0.75 }
+    }
+  }
+
+  static player_controller_2d = {
+    body: {
+      enabledTranslations: { x: true, y: true, z: false },
+      status: 2 // 2 = KinematicPositionBased
+    },
+    colliders: [
+      {
+        shapeDesc: {
+          type: 'cuboid',
+          arguments: [0.375, 0.375, 0.375]
+        }
+      }
+    ],
+    controller: {
+      offset: 0
+    },
+    name: 'player',
+    object3d: {
+      children: [
+        {
+          assets: [
+            {
+              url: 'glb/player.glb'
+            }
+          ]
+        }
+      ],
+      scale: { x: 0.75, y: 0.75, z: 0.75 }
+    }
+  }
+
+  static player_sprite = {
+    body: {
+      ccd: true,
+      enabledTranslations: { x: true, y: true, z: false },
+      enabledRotations: { x: false, y: false, z: true },
+      softCcdPrediction: 0.5,
+      status: 0
+    },
+    colliders: [
+      {
+        friction: 0,
+        shapeDesc: {
+          type: 'cuboid',
+          arguments: [0.375, 0.375, 0.375]
+        }
+      }
+    ],
+    name: 'player',
+    object3d: {
+      children: [
+        {
+          type: 'Mesh',
+          assets: [
+            {
+              url: 'png/character.png',
+              colorSpace: 'srgb',
+              magFilter: 1003,
+            }
+          ],
+          geometry: {
+            type: 'PlaneGeometry',
+            arguments: [1, 1, 1, 1]
+          },
+          material: {
+            type: 'MeshBasicMaterial',
+            arguments: [{ map: 'png/character.png', transparent: true }]
+          }
+        }
+      ],
+      scale: { x: 0.75, y: 0.75, z: 0.75 }
     }
   }
 
@@ -121,110 +290,19 @@ class EntityTemplates {
     name: 'teleport'
   }
 
-  static player = {
+  static trimesh = {
     body: {
-      ccd: true,
-      enabledTranslations: { x: true, y: true, z: false },
-      enabledRotations: { x: false, y: false, z: true },
-      softCcdPrediction: 0.5,
-      status: 0
+      status: 1
     },
     colliders: [
       {
-        friction: 0,
+        friction: 0.5,
         shapeDesc: {
-          type: 'cuboid',
-          arguments: [0.375, 0.375, 0.375]
+          type: 'trimesh'
         }
       }
     ],
-    name: 'player',
-    object3d: {
-      children: [
-        {
-          assets: [
-            {
-              url: 'glb/player.glb'
-            }
-          ]
-        }
-      ],
-      scale: { x: 0.75, y: 0.75, z: 0.75 }
-    }
-  }
-
-  static player_sprite = {
-    body: {
-      ccd: true,
-      enabledTranslations: { x: true, y: true, z: false },
-      enabledRotations: { x: false, y: false, z: true },
-      softCcdPrediction: 0.5,
-      status: 0
-    },
-    colliders: [
-      {
-        friction: 0,
-        shapeDesc: {
-          type: 'cuboid',
-          arguments: [0.375, 0.375, 0.375]
-        }
-      }
-    ],
-    name: 'player',
-    object3d: {
-      children: [
-        {
-          type: 'Mesh',
-          assets: [
-            {
-              url: 'png/character.png',
-              colorSpace: 'srgb',
-              magFilter: 1003,
-            }
-          ],
-          geometry: {
-            type: 'PlaneGeometry',
-            arguments: [1, 1, 1, 1]
-          },
-          material: {
-            type: 'MeshBasicMaterial',
-            arguments: [{ map: 'png/character.png', transparent: true }]
-          }
-        }
-      ],
-      scale: { x: 0.75, y: 0.75, z: 0.75 }
-    }
-  }
-
-  static player_controller_2d = {
-    body: {
-      enabledTranslations: { x: true, y: true, z: false },
-      status: 2 // 2 = KinematicPositionBased
-    },
-    colliders: [
-      {
-        shapeDesc: {
-          type: 'cuboid',
-          arguments: [0.375, 0.375, 0.375]
-        }
-      }
-    ],
-    controller: {
-      offset: 0
-    },
-    name: 'player',
-    object3d: {
-      children: [
-        {
-          assets: [
-            {
-              url: 'glb/player.glb'
-            }
-          ]
-        }
-      ],
-      scale: { x: 0.75, y: 0.75, z: 0.75 }
-    }
+    name: 'trimesh'
   }
 
   static voxels = {
@@ -250,84 +328,6 @@ class EntityTemplates {
               url: 'glb/cube.glb'
             }
           ]
-        }
-      ]
-    }
-  }
-
-  static trimesh = {
-    body: {
-      status: 1
-    },
-    colliders: [
-      {
-        friction: 0.5,
-        shapeDesc: {
-          type: 'trimesh'
-        }
-      }
-    ],
-    name: 'trimesh'
-  }
-
-  static empty = {
-    body: {
-      status: 1 // Fixed
-    },
-    name: 'empty'
-  }
-
-  static plane = {
-    body: {
-      position: { x: 0, y: 0, z: 0 },
-      rotation: { x: -Math.PI / 2, y: 0, z: 0 },
-      status: 1
-    },
-    colliders: [
-      {
-        friction: 0.5,
-        shapeDesc: {
-          type: 'trimesh'
-        }
-      }
-    ],
-    name: 'plane',
-    object3d: {
-      children: [
-        {
-          type: 'Mesh',
-          geometry: {
-            type: 'PlaneGeometry',
-            arguments: [9, 9, 9, 9]
-          },
-          material: {
-            type: 'MeshBasicMaterial',
-            arguments: [{ color: '#0287ef' }]
-          }
-        }
-      ]
-    }
-  }
-
-  static camera_perspective = {
-    name: 'camera',
-    object3d: {
-      children: [
-        {
-          type: 'PerspectiveCamera',
-          arguments: [45, window.innerWidth / window.innerHeight, 0.05, 100]
-        }
-      ]
-    }
-  }
-
-  static camera_orthographic = {
-    name: 'camera',
-    object3d: {
-      children: [
-        {
-          type: 'OrthographicCamera',
-          arguments: [-window.innerWidth / window.innerHeight, window.innerWidth / window.innerHeight, 1, -1, 0.05, 100]
         }
       ]
     }

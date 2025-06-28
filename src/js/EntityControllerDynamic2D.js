@@ -195,7 +195,7 @@ class EntityControllerDynamic2D {
       _v.x += this.forceDirection.x * acceleration;
       _v.y += this.forceDirection.y * acceleration;
       _v.z += this.forceDirection.z * acceleration;
-      this.entity.rigidBody.setLinvel(_v);
+      this.entity.rigidBody.setLinvel(_v, true);
     }
   }
 
