@@ -2,7 +2,7 @@
   The MeshFactory creates any Three.js mesh using basic JSON instructions
 */
 
-import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { mergeGeometries, mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import {
   BoxGeometry, CapsuleGeometry, CircleGeometry, ConeGeometry, CylinderGeometry,
   DodecahedronGeometry, EdgesGeometry, ExtrudeGeometry, IcosahedronGeometry, InstancedMesh,
@@ -72,6 +72,7 @@ class MeshFactory {
     
     // Return singular geometry and materials array
     geometry = mergeGeometries(geometries, true);
+    geometry = mergeVertices(geometry);
     return { geometry, materials };
   }
 

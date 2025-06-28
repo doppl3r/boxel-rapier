@@ -1,5 +1,6 @@
 import { Audio, AudioListener, AudioLoader, EventDispatcher, LoadingManager, TextureLoader } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 
 class Assets extends EventDispatcher {
   constructor() {
@@ -35,6 +36,11 @@ class Assets extends EventDispatcher {
           Object.assign(data.scene, { ...data });
           this.assign(fileName, data.scene);
         }
+      },
+      {
+        fileTypes: ['fbx'],
+        loader: new FBXLoader(this.manager),
+        onLoad: (fileName, data) => this.assign(fileName, data)
       },
       {
         fileTypes: ['jpg', 'jpeg', 'png'],

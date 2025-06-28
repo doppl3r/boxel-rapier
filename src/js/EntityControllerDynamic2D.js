@@ -125,7 +125,7 @@ class EntityControllerDynamic2D {
       const angle = Math.atan2(gravity.y, gravity.x) + (Math.PI / 2);
       
       // Update velocity and apply jump
-      this.setAngularVelocityAtAngle({ x: 0, y: 0, z: 8 }, angle); // Set angular velocity
+      this.setAngularVelocityAtAngle({ x: 0, y: 0, z: 10 }, angle); // Set angular velocity
       this.applyVelocityAtAxisAngle({ x: 1, y: 0, z: 1 }, { x: 0, y: 0, z: 1 }, angle); // Cancel y-velocity
       this.applyImpulseAtAngle(force, angle); // Jump
       this.allowJump = false;
