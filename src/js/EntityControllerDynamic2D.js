@@ -109,6 +109,7 @@ class EntityControllerDynamic2D {
   }
 
   lerpCamera(delta) {
+    delta %= this.cameraSpeed;
     this.camera.position.x = this.camera.position.x * (1 - delta / this.cameraSpeed) + (this.entity.snapshot.position.x + this.cameraOffset.x) * delta / this.cameraSpeed;
     this.camera.position.y = this.camera.position.y * (1 - delta / this.cameraSpeed) + (this.entity.snapshot.position.y + this.cameraOffset.y) * delta / this.cameraSpeed;
     this.camera.position.z = this.cameraOffset.z;
