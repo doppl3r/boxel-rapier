@@ -46,15 +46,7 @@ class EntityTemplates {
     ],
     name: 'cube',
     object3d: {
-      children: [
-        {
-          assets: [
-            {
-              url: 'glb/cube.glb'
-            }
-          ]
-        }
-      ]
+      children: ['asset:glb/cube.glb']
     }
   }
 
@@ -131,15 +123,7 @@ class EntityTemplates {
     ],
     name: 'player',
     object3d: {
-      children: [
-        {
-          assets: [
-            {
-              url: 'glb/player.glb'
-            }
-          ]
-        }
-      ],
+      children: ['asset:glb/player.glb'],
       scale: { x: 0.75, y: 0.75, z: 0.75 }
     }
   }
@@ -162,15 +146,7 @@ class EntityTemplates {
     },
     name: 'player',
     object3d: {
-      children: [
-        {
-          assets: [
-            {
-              url: 'glb/player.glb'
-            }
-          ]
-        }
-      ],
+      children: ['asset:glb/player.glb'],
       scale: { x: 0.75, y: 0.75, z: 0.75 }
     }
   }
@@ -197,20 +173,16 @@ class EntityTemplates {
       children: [
         {
           type: 'Mesh',
-          assets: [
-            {
-              url: 'png/character.png',
-              colorSpace: 'srgb',
-              magFilter: 1003,
-            }
-          ],
           geometry: {
             type: 'PlaneGeometry',
             arguments: [1, 1, 1, 1]
           },
           material: {
             type: 'MeshBasicMaterial',
-            arguments: [{ map: 'png/character.png', transparent: true }]
+            arguments: [{
+              map: 'asset:png/character.png',
+              transparent: true
+            }]
           }
         }
       ],
@@ -245,15 +217,7 @@ class EntityTemplates {
       }
     ],
     object3d: {
-      children: [
-        {
-          assets: [
-            {
-              url: 'glb/spike.glb'
-            }
-          ]
-        }
-      ]
+      children: ['asset:glb/spike.glb']
     },
     name: 'teleport'
   }
@@ -277,15 +241,7 @@ class EntityTemplates {
       }
     ],
     object3d: {
-      children: [
-        {
-          assets: [
-            {
-              url: 'glb/player.glb'
-            }
-          ]
-        }
-      ]
+      children: ['asset:glb/spike.glb']
     },
     name: 'teleport'
   }
@@ -321,15 +277,7 @@ class EntityTemplates {
     name: 'voxels',
     object3d: {
       scale: { x: 1, y: 1, z: 1 },
-      children: [
-        {
-          assets: [
-            {
-              url: 'glb/cube.glb'
-            }
-          ]
-        }
-      ]
+      children: ['asset:glb/cube.glb']
     }
   }
 }

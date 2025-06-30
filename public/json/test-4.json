@@ -15,15 +15,7 @@
     {
       "template": "trimesh",
       "object3d": {
-        "children": [
-          {
-            "assets": [
-              {
-                "url": "glb/dungeon.glb"
-              }
-            ]
-          }
-        ]
+        "children": ["asset:glb/dungeon.glb"]
       }
     },
 

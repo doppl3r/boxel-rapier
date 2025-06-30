@@ -176,8 +176,6 @@ class EntityFactory {
 
     // Create 3D object from options
     const object3D = new Object3D();
-    const factories = [CameraFactory, MeshFactory, LightFactory];
-    let child;
 
     // Copy 3D object properties
     ObjectAssign(object3D.userData, options.userData);
@@ -186,57 +184,65 @@ class EntityFactory {
     object3D.rotation.copy(options.rotation);
     object3D.scale.copy(options.scale);
 
-    // Loop through children options
-    options.children.forEach(childOptions => {
-      // Find the factory by child type
-      const factory = factories.find(f => f[childOptions.type]);
-
-      // Loop through all assets
-      if (childOptions.assets) {
-        childOptions.assets.forEach(assetOptions => {
-          // Load asset from URL
-          game.assets.load(assetOptions.url, asset => {
-            if (factory) {
-              // Recursively replace asset string(s) with loaded asset
-              this.replaceAsset(childOptions, assetOptions.url, asset, () => {
-                // Assign options to asset and create child
-                ObjectAssign(asset, assetOptions);
-
-                // Create child from options
-                child = factory.create(childOptions);
-              });
-            }
-            else {
-              // Clone asset if no factory exists
-              child = clone(asset);
-            }
-
-            // Add child to 3D object
-            object3D.add(child);
-            object3D.dispatchEvent({ type: 'loaded', child });
-          });
-        });
-      }
-      else {
-        // Create child immediately
-        child = factory.create(childOptions);
-        object3D.add(child);
-      }
-    });
+    // Resolve missing assets before creation
+    const queue = [];
+    this.queueAssets(options, queue, options.children);
+    this.createObject3DChildren(options, queue, object3D);
 
     // Return newly created 3D object
     return object3D;
   }
 
-  // Replace asset string value with the asset object
-  static replaceAsset(obj, key, asset, callback) {
-    if (obj && typeof obj === 'object') {
-      // Loop through object keys
-      Object.keys(obj).filter(k => k !== 'assets').forEach(k => {
-        if (obj[k] !== key) this.replaceAsset(obj[k], key, asset, callback);
-        else callback(obj[k] = asset);
+  static queueAssets(options, queue) {
+    if (typeof options === 'object') {
+      Object.keys(options).forEach(key => {
+        // Add url to queue
+        if (typeof options[key] === 'string') {
+          const url = options[key].split('asset:')[1];
+          if (url) queue.push({ options, key, url });
+        }
+        else {
+          // Continue recursion
+          this.queueAssets(options[key], queue);
+        }
       });
     }
+  }
+
+  static createObject3DChildren(options, queue, object3D) {
+    // Check queue before creation
+    if (queue.length > 0) {
+      for (let i = queue.length - 1; i >= 0; i--) {
+        const item = queue[i];
+        // Load and assign asset from queue and continue recursion
+        game.assets.load(item.url, asset => {
+          item.options[item.key] = asset;
+          queue.splice(queue.indexOf(item), 1); // Remove from queue
+          this.createObject3DChildren(options, queue, object3D);
+        });
+      }
+      return; // Wait for asset to load
+    }
+
+    // Create 3D object children
+    options.children.forEach(childOptions => {
+      let child;
+      if (childOptions.isObject3D) {
+        child = clone(childOptions);
+      }
+      else {
+        const factories = [CameraFactory, MeshFactory, LightFactory];
+        const factory = factories.find(f => f[childOptions.type]);
+        if (factory) {
+          child = factory.create(childOptions);
+        }
+      }
+
+      if (child) {
+        object3D.add(child);
+        object3D.dispatchEvent({ type: 'loaded', child });
+      }
+    });
   }
 
   static createMixer(object3D) {
