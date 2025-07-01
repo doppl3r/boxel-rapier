@@ -248,8 +248,33 @@ class EntityFactory {
     // Create animation mixer
     const mixer = new AnimationMixer(object3D);
 
+    // Add mixer helper function
+    mixer.play = (name, duration = 1) => {
+      var startAction = mixer.actions['active'];
+      var endAction = mixer.actions[name];
+      
+      // Check if action exists
+      if (endAction && endAction != startAction) {
+        // Fade in from no animation
+        if (startAction == null) {
+          endAction.setEffectiveWeight(1);
+          endAction.reset().fadeIn(duration);
+        }
+        else {
+          // Cross fade animation with duration
+          startAction.setEffectiveWeight(1);
+          endAction.setEffectiveWeight(1);
+          endAction.reset().crossFadeFrom(startAction, duration);
+        }
+
+        // Store action data for cross fade
+        endAction['duration'] = duration;
+        mixer.actions['active'] = endAction;
+      }
+    }
+
     // This function builds a mixer from children
-    const buildMixer = ({ child }) => {
+    const buildAnimations = ({ child }) => {
       // Add animations to mixer if animations exists
       if (child.animations.length > 0) {
         const loopType = child.userData.loop || 2201; // 2201 = LoopRepeat, 2200 = LoopOnce
@@ -273,39 +298,11 @@ class EntityFactory {
             action.setEffectiveWeight(1);
           }
         }
-
-        // Add mixer helper function
-        mixer.play = (name, duration = 1) => {
-          var startAction = mixer.actions['active'];
-          var endAction = mixer.actions[name];
-          
-          // Check if action exists
-          if (endAction && endAction != startAction) {
-            // Fade in from no animation
-            if (startAction == null) {
-              endAction.setEffectiveWeight(1);
-              endAction.reset().fadeIn(duration);
-            }
-            else {
-              // Cross fade animation with duration
-              startAction.setEffectiveWeight(1);
-              endAction.setEffectiveWeight(1);
-              endAction.reset().crossFadeFrom(startAction, duration);
-            }
-
-            // Store action data for cross fade
-            endAction['duration'] = duration;
-            mixer.actions['active'] = endAction;
-          }
-        }
       }
-
-      // Remove listener after loading child
-      object3D.removeEventListener('childadded', buildMixer);
     }
 
     // Listen for newly added children
-    object3D.addEventListener('childadded', buildMixer);
+    object3D.addEventListener('childadded', buildAnimations);
 
     // Return animation mixer
     return mixer;
