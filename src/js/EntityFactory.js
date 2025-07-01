@@ -184,65 +184,64 @@ class EntityFactory {
     object3D.rotation.copy(options.rotation);
     object3D.scale.copy(options.scale);
 
-    // Resolve missing assets before creation
-    const queue = [];
-    this.queueAssets(options, queue, options.children);
-    this.createObject3DChildren(options, queue, object3D);
+    // This function adds missing assets to a queue
+    const queueAssets = (options, queue) => {
+      if (typeof options === 'object') {
+        Object.keys(options).forEach(key => {
+          // Add to queue OR continue recursion
+          if (typeof options[key] === 'string') {
+            const url = options[key].split('asset:')[1];
+            if (url) queue.push({ options, key, url });
+          }
+          else queueAssets(options[key], queue);
+        });
+      }
+    }
+    
+    // This function adds children to the 3D object
+    const addChildren = (options, queue) => {
+      // Check queue before creation
+      if (queue.length > 0) {
+        for (let i = queue.length - 1; i >= 0; i--) {
+          const item = queue[i];
+          // Load and assign asset from queue and continue recursion
+          game.assets.load(item.url, asset => {
+            item.options[item.key] = asset;
+            queue.splice(queue.indexOf(item), 1); // Remove item from queue
+            addChildren(options, queue);
+          });
+        }
+        return; // Cancel addition
+      }
 
-    // Return newly created 3D object
-    return object3D;
-  }
-
-  static queueAssets(options, queue) {
-    if (typeof options === 'object') {
-      Object.keys(options).forEach(key => {
-        // Add url to queue
-        if (typeof options[key] === 'string') {
-          const url = options[key].split('asset:')[1];
-          if (url) queue.push({ options, key, url });
+      // Create 3D object children
+      options.children.forEach(childOptions => {
+        let child;
+        if (childOptions.isObject3D) {
+          child = clone(childOptions);
         }
         else {
-          // Continue recursion
-          this.queueAssets(options[key], queue);
+          const factories = [CameraFactory, MeshFactory, LightFactory];
+          const factory = factories.find(f => f[childOptions.type]);
+          if (factory) {
+            child = factory.create(childOptions);
+          }
+        }
+
+        if (child) {
+          object3D.add(child);
+          object3D.dispatchEvent({ type: 'loaded', child });
         }
       });
     }
-  }
+    
+    // Queue and add children
+    const queue = [];
+    queueAssets(options, queue);
+    addChildren(options, queue);
 
-  static createObject3DChildren(options, queue, object3D) {
-    // Check queue before creation
-    if (queue.length > 0) {
-      for (let i = queue.length - 1; i >= 0; i--) {
-        const item = queue[i];
-        // Load and assign asset from queue and continue recursion
-        game.assets.load(item.url, asset => {
-          item.options[item.key] = asset;
-          queue.splice(queue.indexOf(item), 1); // Remove from queue
-          this.createObject3DChildren(options, queue, object3D);
-        });
-      }
-      return; // Wait for asset to load
-    }
-
-    // Create 3D object children
-    options.children.forEach(childOptions => {
-      let child;
-      if (childOptions.isObject3D) {
-        child = clone(childOptions);
-      }
-      else {
-        const factories = [CameraFactory, MeshFactory, LightFactory];
-        const factory = factories.find(f => f[childOptions.type]);
-        if (factory) {
-          child = factory.create(childOptions);
-        }
-      }
-
-      if (child) {
-        object3D.add(child);
-        object3D.dispatchEvent({ type: 'loaded', child });
-      }
-    });
+    // Return newly created 3D object
+    return object3D;
   }
 
   static createMixer(object3D) {
