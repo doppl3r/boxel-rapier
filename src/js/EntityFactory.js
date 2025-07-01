@@ -20,7 +20,7 @@ class EntityFactory {
 
     // Initialize entity
     const entity = new Entity(options);
-    const object3D = this.createObject3D(options.object3d);
+    const object3D = this.createObject3D(options.object3D);
     const mixer = this.createMixer(object3D);
     const rigidBodyDesc = this.createRigidBodyDesc(options.body);
     const rigidBody = this.createRigidBody(rigidBodyDesc, world);
@@ -186,7 +186,7 @@ class EntityFactory {
 
     // This function adds missing assets to a queue
     const queueAssets = (options, queue) => {
-      if (typeof options === 'object') {
+      if (options && typeof options === 'object') {
         Object.keys(options).forEach(key => {
           // Add to queue OR continue recursion
           if (typeof options[key] === 'string') {
@@ -309,34 +309,32 @@ class EntityFactory {
   }
 
   static createController(options, world) {
-    if (options) {
-      // Set base options
-      options = ObjectAssign({
-        applyImpulsesMass: 1,
-        applyImpulsesToDynamicBodies: true,
-        autostepMaxHeight: 0.125, // 0.5
-        autostepMinWidth: 0.5, // 0.2
-        autostepIncludeDynamicBodies: true,
-        maxSlopeClimbAngle: 45 * Math.PI / 180,
-        minSlopeClimbAngle: 30 * Math.PI / 180,
-        offset: 0.01,
-        slideEnabled: true,
-        snapToGroundDistance: 0
-      }, options);
+    // Set base options
+    options = ObjectAssign({
+      applyImpulsesMass: 1,
+      applyImpulsesToDynamicBodies: true,
+      autostepMaxHeight: 0.125, // 0.5
+      autostepMinWidth: 0.5, // 0.2
+      autostepIncludeDynamicBodies: true,
+      maxSlopeClimbAngle: 45 * Math.PI / 180,
+      minSlopeClimbAngle: 30 * Math.PI / 180,
+      offset: 0.01,
+      slideEnabled: true,
+      snapToGroundDistance: 0
+    }, options);
 
-      // Create character controller from world
-      const controller = world.createCharacterController(options.offset); // Spacing
+    // Create character controller from world
+    const controller = world.createCharacterController(options.offset); // Spacing
 
-      // Update controller settings
-      controller.setSlideEnabled(options.slideEnabled); // Allow sliding down hill
-      controller.setMaxSlopeClimbAngle(options.maxSlopeClimbAngle); // Don’t allow climbing slopes larger than 45 degrees.
-      controller.setMinSlopeSlideAngle(options.minSlopeClimbAngle); // Automatically slide down on slopes smaller than 30 degrees.
-      controller.enableAutostep(options.autostepMaxHeight, options.autostepMinWidth, options.autostepIncludeDynamicBodies); // (maxHeight, minWidth, includeDynamicBodies) Stair behavior
-      controller.enableSnapToGround(options.snapToGroundDistance); // (distance) Set ground snap behavior
-      controller.setApplyImpulsesToDynamicBodies(options.applyImpulsesToDynamicBodies); // Add push behavior
-      controller.setCharacterMass(options.applyImpulsesMass); // (mass) Set character mass
-      return controller;
-    }
+    // Update controller settings
+    controller.setSlideEnabled(options.slideEnabled); // Allow sliding down hill
+    controller.setMaxSlopeClimbAngle(options.maxSlopeClimbAngle); // Don’t allow climbing slopes larger than 45 degrees.
+    controller.setMinSlopeSlideAngle(options.minSlopeClimbAngle); // Automatically slide down on slopes smaller than 30 degrees.
+    controller.enableAutostep(options.autostepMaxHeight, options.autostepMinWidth, options.autostepIncludeDynamicBodies); // (maxHeight, minWidth, includeDynamicBodies) Stair behavior
+    controller.enableSnapToGround(options.snapToGroundDistance); // (distance) Set ground snap behavior
+    controller.setApplyImpulsesToDynamicBodies(options.applyImpulsesToDynamicBodies); // Add push behavior
+    controller.setCharacterMass(options.applyImpulsesMass); // (mass) Set character mass
+    return controller;
   }
 
   static destroy(entity, world) {

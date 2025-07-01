@@ -49,7 +49,10 @@ static teleport = {
         arguments: [0.5, 0.5, 0.5]
       }
     }
-  ]
+  ],
+  object3D: {
+    children: ['asset:glb/teleport.glb']
+  }
 }
 ```
 

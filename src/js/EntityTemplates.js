@@ -9,7 +9,7 @@ class EntityTemplates {
 
   static camera_orthographic = {
     name: 'camera',
-    object3d: {
+    object3D: {
       children: [
         {
           type: 'OrthographicCamera',
@@ -21,7 +21,7 @@ class EntityTemplates {
 
   static camera_perspective = {
     name: 'camera',
-    object3d: {
+    object3D: {
       children: [
         {
           type: 'PerspectiveCamera',
@@ -45,7 +45,7 @@ class EntityTemplates {
       }
     ],
     name: 'cube',
-    object3d: {
+    object3D: {
       children: ['asset:glb/cube.glb']
     }
   }
@@ -62,7 +62,7 @@ class EntityTemplates {
       status: 1
     },
     name: 'light',
-    object3d: {
+    object3D: {
       children: [
         {
           type: 'HemisphereLight',
@@ -87,7 +87,7 @@ class EntityTemplates {
       }
     ],
     name: 'plane',
-    object3d: {
+    object3D: {
       children: [
         {
           type: 'Mesh',
@@ -122,7 +122,7 @@ class EntityTemplates {
       }
     ],
     name: 'player',
-    object3d: {
+    object3D: {
       children: ['asset:glb/player.glb'],
       scale: { x: 0.75, y: 0.75, z: 0.75 }
     }
@@ -145,7 +145,7 @@ class EntityTemplates {
       offset: 0
     },
     name: 'player',
-    object3d: {
+    object3D: {
       children: ['asset:glb/player.glb'],
       scale: { x: 0.75, y: 0.75, z: 0.75 }
     }
@@ -169,7 +169,7 @@ class EntityTemplates {
       }
     ],
     name: 'player',
-    object3d: {
+    object3D: {
       children: [
         {
           type: 'Mesh',
@@ -216,7 +216,7 @@ class EntityTemplates {
         translation: { x: 0, y: 0.5, z: 0 }
       }
     ],
-    object3d: {
+    object3D: {
       children: ['asset:glb/spike.glb']
     },
     name: 'teleport'
@@ -240,7 +240,7 @@ class EntityTemplates {
         }
       }
     ],
-    object3d: {
+    object3D: {
       children: ['asset:glb/spike.glb']
     },
     name: 'teleport'
@@ -275,7 +275,7 @@ class EntityTemplates {
       }
     ],
     name: 'voxels',
-    object3d: {
+    object3D: {
       scale: { x: 1, y: 1, z: 1 },
       children: ['asset:glb/cube.glb']
     }
