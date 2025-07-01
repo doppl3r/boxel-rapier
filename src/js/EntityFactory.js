@@ -198,20 +198,20 @@ class EntityFactory {
       }
     }
     
-    // This function adds children to the 3D object
-    const addChildren = (options, queue) => {
+    // This function builds & adds children to the 3D object
+    const buildChildren = (options, queue) => {
       // Check queue before creation
       if (queue.length > 0) {
         for (let i = queue.length - 1; i >= 0; i--) {
           const item = queue[i];
-          // Load and assign asset from queue and continue recursion
+          // Load asset
           game.assets.load(item.url, asset => {
-            item.options[item.key] = asset;
+            item.options[item.key] = asset; // Assign asset from queue
             queue.splice(queue.indexOf(item), 1); // Remove item from queue
-            addChildren(options, queue);
+            buildChildren(options, queue); // Continue recursion
           });
         }
-        return; // Cancel addition
+        return; // End recursion until queue is empty
       }
 
       // Create 3D object children
@@ -238,7 +238,7 @@ class EntityFactory {
     // Queue and add children
     const queue = [];
     queueAssets(options, queue);
-    addChildren(options, queue);
+    buildChildren(options, queue);
 
     // Return newly created 3D object
     return object3D;
