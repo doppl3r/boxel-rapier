@@ -248,8 +248,8 @@ class EntityFactory {
     // Create animation mixer
     const mixer = new AnimationMixer(object3D);
 
-    // Listen for newly added children
-    object3D.addEventListener('childadded', ({ child }) => {
+    // This function builds a mixer from children
+    const buildMixer = ({ child }) => {
       // Add animations to mixer if animations exists
       if (child.animations.length > 0) {
         const loopType = child.userData.loop || 2201; // 2201 = LoopRepeat, 2200 = LoopOnce
@@ -299,7 +299,13 @@ class EntityFactory {
           }
         }
       }
-    });
+
+      // Remove listener after loading child
+      object3D.removeEventListener('childadded', buildMixer);
+    }
+
+    // Listen for newly added children
+    object3D.addEventListener('childadded', buildMixer);
 
     // Return animation mixer
     return mixer;
