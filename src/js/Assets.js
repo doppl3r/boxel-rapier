@@ -45,7 +45,10 @@ class Assets extends EventDispatcher {
       {
         fileTypes: ['jpg', 'jpeg', 'png'],
         loader: new TextureLoader(this.manager),
-        onLoad: (fileName, data) => this.assign(fileName, data)
+        onLoad: (fileName, data) => {
+          Object.assign(data, { colorSpace: 'srgb', magFilter: 1003 })
+          this.assign(fileName, data)
+        }
       }
     ];
   }
