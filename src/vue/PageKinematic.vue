@@ -4,12 +4,19 @@
   import { Game } from '../js/Game.js';
   import { EntityFactory } from '../js/EntityFactory.js';
   import { EntityControllerKinematic2D } from '../js/EntityControllerKinematic2D.js';
+  import ProgressBar from './ProgressBar.vue';
 
   // Initialize Vue components
   const route = useRoute();
   const canvas = ref();
+  const progress = ref({ url: '', itemsLoaded: 0, itemsTotal: 0 });
   let entityController;
   let game;
+
+  const loadLevel = async e => {
+    // Start game
+    game.start();
+  }
 
   // Initialize app after canvas has been mounted
   onMounted(async () => {
@@ -29,7 +36,6 @@
     );
     await game.load('json/test-1.json');
     game.debugger.enable();
-    game.start();
 
     // Initialize 2D controller
     game.entities.forEach(entity => {
@@ -37,6 +43,11 @@
         entityController.setEntity(entity);
       }
     });
+
+    // Load level after assets are loaded
+    game.assets.addEventListener('onStart', e => progress.value = e);
+    game.assets.addEventListener('onProgress', e => progress.value = e);
+    game.assets.addEventListener('onLoad', loadLevel);
 
     // Replace canvas element
     canvas.value.replaceWith(game.graphics.canvas);
@@ -54,6 +65,7 @@
   <div>
     <canvas ref="canvas"></canvas>
     <h1>{{ route.meta.title }}</h1>
+    <ProgressBar :progress="progress" />
   </div>
 </template>
 

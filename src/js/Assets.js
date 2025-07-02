@@ -13,9 +13,9 @@ class Assets extends EventDispatcher {
     
     // Define manager and assign callbacks
     this.manager = new LoadingManager();
-    this.manager.onStart = (url, index, total) => this.dispatchEvent({ type: 'onStart', url, index, total });
+    this.manager.onStart = (url, itemsLoaded, itemsTotal) => this.dispatchEvent({ type: 'onStart', url, itemsLoaded, itemsTotal });
     this.manager.onLoad = () => this.dispatchEvent({ type: 'onLoad' });
-    this.manager.onProgress = (url, index, total) => this.dispatchEvent({ type: 'onProgress', url, index, total });
+    this.manager.onProgress = (url, itemsLoaded, itemsTotal) => this.dispatchEvent({ type: 'onProgress', url, itemsLoaded, itemsTotal });
     this.manager.onError = url => console.error(`File "${ url }" not found`);
     
     // Initialize loaders with manager
