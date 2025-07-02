@@ -73,10 +73,10 @@ class EntityFactory {
   }
 
   static createColliders({ options, rigidBody, object3D, entity, world }) {
-    const buildCollider = (colliderOptions) => {
+    const buildCollider = (colliderOptions, index, total) => {
       // Wait for child mesh to load before creating collider
       if (object3D.children.length === 0) {
-        object3D.addEventListener('loaded', () => buildCollider(colliderOptions));
+        object3D.addEventListener('childLoaded', () => buildCollider(colliderOptions, index, total));
         return;
       }
 
@@ -88,10 +88,13 @@ class EntityFactory {
       const colliderDesc = this.createColliderDesc(colliderOptions);
       const collider = this.createCollider(colliderDesc, rigidBody, world);
       this.createColliderEvents(colliderOptions.events, collider, entity);
+
+      // Dispatch collider creation events
+      entity.dispatchEvent({ type: 'colliderCreated', collider, index, total });
     }
 
     // Loop through each collider option
-    options?.forEach(colliderOptions => buildCollider(colliderOptions));
+    options?.forEach((colliderOptions, index) => buildCollider(colliderOptions, index, options.length));
   }
 
   static updateShapeDescFromObject3D(shapeDesc, object3D) {
@@ -215,7 +218,7 @@ class EntityFactory {
       }
 
       // Create 3D object children
-      options.children.forEach(childOptions => {
+      options.children.forEach((childOptions, index) => {
         let child;
         if (childOptions.isObject3D) {
           child = clone(childOptions);
@@ -229,8 +232,9 @@ class EntityFactory {
         }
 
         if (child) {
+          // Add loaded child and dispatch event
           object3D.add(child);
-          object3D.dispatchEvent({ type: 'loaded', child });
+          object3D.dispatchEvent({ type: 'childLoaded', child, index, total: options.children.length });
         }
       });
     }
