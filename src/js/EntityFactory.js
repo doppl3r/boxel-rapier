@@ -317,8 +317,8 @@ class EntityFactory {
     options = ObjectAssign({
       applyImpulsesMass: 1,
       applyImpulsesToDynamicBodies: true,
-      autostepMaxHeight: 0.125, // 0.5
-      autostepMinWidth: 0.5, // 0.2
+      autostepMaxHeight: 0.5,
+      autostepMinWidth: 0.2,
       autostepIncludeDynamicBodies: true,
       maxSlopeClimbAngle: 45 * Math.PI / 180,
       minSlopeClimbAngle: 30 * Math.PI / 180,

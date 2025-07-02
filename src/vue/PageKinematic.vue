@@ -24,7 +24,11 @@
     game = window.game = new Game();
 
     // Create controller
-    const controller = EntityFactory.createController({}, game.world);
+    const optionsController = {
+      autostepMaxHeight: 0.125,
+      autostepMinWidth: 0.5
+    };
+    const controller = EntityFactory.createController(optionsController, game.world);
     entityController = new EntityControllerKinematic2D(controller);
     entityController.setCamera(game.graphics.camera);
 
