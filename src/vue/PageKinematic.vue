@@ -9,6 +9,7 @@
   // Initialize Vue components
   const route = useRoute();
   const canvas = ref();
+  const rendererCSS = ref();
   const progress = ref({ url: '', itemsLoaded: 0, itemsTotal: 0 });
   let entityController;
   let game;
@@ -55,6 +56,7 @@
 
     // Replace canvas element
     canvas.value.replaceWith(game.graphics.canvas);
+    rendererCSS.value.replaceWith(game.graphics.rendererCSS.domElement)
   });
 
   onUnmounted(() => {
@@ -68,6 +70,7 @@
 <template>
   <div>
     <canvas ref="canvas"></canvas>
+    <div ref="rendererCSS"></div>
     <h1>{{ route.meta.title }}</h1>
     <ProgressBar :progress="progress" />
   </div>
@@ -76,8 +79,17 @@
 <style lang="scss" scoped>
   h1 {
     color: #ffffff;
-    position: absolute;
-    top: 0;
     left: 0;
+    position: absolute;
+    text-shadow: 0.125em 0.125em 0 #000000;
+    top: 0;
+  }
+
+  :deep(.CSS2DRenderer) {
+    .CSS2DObject {
+      color: #ffffff;
+      font-size: 0.75em;
+      text-shadow: 0.125em 0.125em 0 #000000;
+    }
   }
 </style>

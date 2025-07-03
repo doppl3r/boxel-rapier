@@ -15,7 +15,14 @@
     {
       "template": "trimesh",
       "object3D": {
-        "children": ["asset:glb/dungeon.glb"]
+        "children": [
+          "asset:glb/dungeon.glb",
+          {
+            "type": "CSS2DObject",
+            "innerHTML": "Test",
+            "style": "margin-top: -3em;"
+          }
+        ]
       }
     },
 

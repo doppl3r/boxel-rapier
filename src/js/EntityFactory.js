@@ -6,6 +6,7 @@ import { EntityEvents } from './EntityEvents.js';
 import { EntityTemplates } from './EntityTemplates.js';
 import { LightFactory } from './LightFactory.js';
 import { MeshFactory } from './MeshFactory.js';
+import { DOMFactory } from './DOMFactory.js';
 import { ObjectAssign } from './ObjectAssign.js';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 
@@ -224,7 +225,7 @@ class EntityFactory {
           child = clone(childOptions);
         }
         else {
-          const factories = [CameraFactory, MeshFactory, LightFactory];
+          const factories = [CameraFactory, LightFactory, MeshFactory, DOMFactory];
           const factory = factories.find(f => f[childOptions.type]);
           if (factory) {
             child = factory.create(childOptions);
