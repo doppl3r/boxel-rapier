@@ -23,6 +23,7 @@
   onMounted(async () => {
     // Create new instances of game components
     game = window.game = new Game();
+    game.world.gravity.y = -9.81 * 8; // 8x heavier than normal
 
     // Create controller
     const optionsController = {

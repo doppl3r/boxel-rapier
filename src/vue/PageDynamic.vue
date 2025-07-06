@@ -21,6 +21,7 @@
   onMounted(async () => {
     // Initialize singleton game
     const game = window.game = new Game();
+    game.world.gravity.y = -9.81 * 8; // 8x heavier than normal
     
     // Load entities from JSON data
     await game.load('json/test-4.json');

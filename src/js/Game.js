@@ -10,14 +10,13 @@ class Game {
     this.assets = new Assets();
     this.interval = new Interval();
     this.graphics = new Graphics();
-    this.world = new World({ x: 0.0, y: -9.81 * 8, z: 0.0 });
+    this.world = new World({ x: 0.0, y: -9.81, z: 0.0 });
     this.world.numSolverIterations = 4; // Default = 4
     this.world.timestep = 1 / 60; // Default 1 / 60
     this.debugger = new Debugger(this.world);
     this.graphics.scene.add(this.debugger);
     this.eventQueue = new EventQueue(true);
     this.entities = new Map();
-    this.entityInput2D;
   }
 
   start() {
@@ -70,8 +69,13 @@ class Game {
       children: []
     };
 
-    // Load stage from JSON file
-    json = await (await fetch(url)).json();
+    // Load entity descriptions from JSON file
+    try {
+      json = await (await fetch(url)).json();
+    }
+    catch {
+      console.error(`Error: ${ url } not found.`);
+    }
 
     // Create entities from children
     json.children.forEach(child => {
