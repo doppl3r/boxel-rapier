@@ -33,12 +33,7 @@
     entityController = new EntityControllerKinematic2D(controller);
     entityController.setCamera(game.graphics.camera);
 
-    // Load batch of assets
-    game.assets.loadBatch([
-        'png/icon.png',
-        'ogg/click.ogg'
-      ]
-    );
+    // Load game entities
     await game.load('json/test-1.json');
     game.debugger.enable();
 
