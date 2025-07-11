@@ -41,10 +41,10 @@ class EntityControllerDynamic2D {
     }
   }
 
-  onUpdated = ({ delta }) => {
+  onUpdated = ({ loop }) => {
     // Calculate input buffer
     if (this.jumpBuffer > 0) {
-      this.jumpBuffer -= delta; // ms
+      this.jumpBuffer -= loop.delta; // ms
 
       // Automatically jump if buffer is set
       if (this.allowJump === true) {
