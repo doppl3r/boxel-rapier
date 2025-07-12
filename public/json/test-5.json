@@ -1,0 +1,44 @@
+{
+  "children": [
+    {
+      "body": {
+        "position": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        }
+      },
+      "template": "player_sprite"
+    },
+
+
+    {
+      "body": {
+        "status": 1
+      },
+      "colliders": [
+        {
+          "friction": 0,
+          "shapeDesc": {
+            "type": "trimesh"
+          }
+        }
+      ],
+      "object3D": {
+        "children": ["asset:glb/dungeon.glb"]
+      }
+    },
+
+    
+    {
+      "body": {
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 4
+        }
+      },
+      "template": "light_hemisphere"
+    }
+  ]
+}

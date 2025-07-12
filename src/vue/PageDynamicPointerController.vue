@@ -1,16 +1,14 @@
 <script setup>
   import { onMounted, onUnmounted, ref } from 'vue';
-  import { useRoute } from 'vue-router';
   import { Game } from '../js/Game.js';
-  import { EntityControllerDynamic2D } from '../js/EntityControllerDynamic2D.js';
+  import { EntityControllerDynamicPointer2D } from '../js/EntityControllerDynamicPointer2D.js';
   import ProgressBar from './ProgressBar.vue';
 
   // Initialize Vue components
-  const route = useRoute();
   const canvas = ref();
   const rendererCSS = ref();
   const progress = ref({ url: '', itemsLoaded: 0, itemsTotal: 0 });
-  const entityController = new EntityControllerDynamic2D();
+  const entityController = new EntityControllerDynamicPointer2D();
 
   const loadLevel = async e => {
     // Start game
@@ -24,7 +22,7 @@
     game.world.gravity.y = -9.81 * 8; // 8x heavier than normal
     
     // Load entities from JSON data
-    await game.load('json/test-4.json');
+    await game.load('json/test-5.json');
 
     // Configure entity controller
     entityController.setCamera(game.graphics.camera);
@@ -56,20 +54,11 @@
   <div>
     <canvas ref="canvas"></canvas>
     <div ref="rendererCSS"></div>
-    <h1>{{ route.meta.title }}</h1>
     <ProgressBar :progress="progress" />
   </div>
 </template>
 
 <style lang="scss" scoped>
-  h1 {
-    color: #ffffff;
-    left: 0;
-    position: absolute;
-    text-shadow: 0.125em 0.125em 0 #000000;
-    top: 0;
-  }
-
   :deep(.CSS2DRenderer) {
     .CSS2DObject {
       color: #ffffff;

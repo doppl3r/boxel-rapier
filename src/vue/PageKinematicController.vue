@@ -1,13 +1,11 @@
 <script setup>
   import { onMounted, onUnmounted, ref } from 'vue';
-  import { useRoute } from 'vue-router';
   import { Game } from '../js/Game.js';
   import { EntityFactory } from '../js/EntityFactory.js';
   import { EntityControllerKinematic2D } from '../js/EntityControllerKinematic2D.js';
   import ProgressBar from './ProgressBar.vue';
 
   // Initialize Vue components
-  const route = useRoute();
   const canvas = ref();
   const rendererCSS = ref();
   const progress = ref({ url: '', itemsLoaded: 0, itemsTotal: 0 });
@@ -67,20 +65,11 @@
   <div>
     <canvas ref="canvas"></canvas>
     <div ref="rendererCSS"></div>
-    <h1>{{ route.meta.title }}</h1>
     <ProgressBar :progress="progress" />
   </div>
 </template>
 
 <style lang="scss" scoped>
-  h1 {
-    color: #ffffff;
-    left: 0;
-    position: absolute;
-    text-shadow: 0.125em 0.125em 0 #000000;
-    top: 0;
-  }
-
   :deep(.CSS2DRenderer) {
     .CSS2DObject {
       color: #ffffff;

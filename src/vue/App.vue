@@ -1,6 +1,7 @@
 <script setup>
   import '../scss/Global.scss';
   import { useRoute } from 'vue-router';
+  import Menu from './Menu.vue';
 
   // Initialize components
   const route = useRoute();
@@ -14,7 +15,10 @@
         <component :is="Component" />
       </transition>
     </router-view>
+    
+    <Menu></Menu>
   </div>
+
 </template>
 
 <style lang="scss" scoped>

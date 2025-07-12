@@ -1,5 +1,6 @@
-import PageKinematic from '../vue/PageKinematic.vue'
-import PageDynamic from '../vue/PageDynamic.vue'
+import PageDynamicController from '../vue/PageDynamicController.vue'
+import PageDynamicPointerController from '../vue/PageDynamicPointerController.vue'
+import PageKinematicController from '../vue/PageKinematicController.vue'
 
 /*
   Vue Router is used to change page components using URL paths. This solution 
@@ -12,22 +13,36 @@ export default [
   {
     name: 'home',
     path: '/',
-    redirect: '/dynamic'
+    redirect: '/dynamic-controller'
   },
   {
-    name: 'dynamic',
-    path: '/dynamic',
-    component: PageDynamic,
+    name: 'dynamic-controller',
+    path: '/dynamic-controller',
+    component: PageDynamicController,
     meta: {
-      title: 'Dynamic Controller (DCC)'
+      title: 'Dynamic Controller'
     }
   },
   {
-    name: 'kinematic',
-    path: '/kinematic',
-    component: PageKinematic,
+    name: 'dynamic-pointer-controller',
+    path: '/dynamic-pointer-controller',
+    component: PageDynamicPointerController,
     meta: {
-      title: 'Kinematic Controller (KCC)'
+      title: 'Dynamic Pointer Controller'
     }
-  }
+  },
+  {
+    name: 'kinematic-controller',
+    path: '/kinematic-controller',
+    component: PageKinematicController,
+    meta: {
+      title: 'Kinematic Controller'
+    }
+  },
+
+  {
+    path: '/:pathMatch(.*)*', // Catch-all route
+    name: 'NotFound',
+    redirect: '/'
+  },
 ];
