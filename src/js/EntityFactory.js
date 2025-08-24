@@ -6,7 +6,6 @@ import { EntityEvents } from './EntityEvents.js';
 import { EntityTemplates } from './EntityTemplates.js';
 import { LightFactory } from './LightFactory.js';
 import { MeshFactory } from './MeshFactory.js';
-import { DOMFactory } from './DOMFactory.js';
 import { ObjectAssign } from './ObjectAssign.js';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 
@@ -177,6 +176,7 @@ class EntityFactory {
   }
 
   static createObject3D(options) {
+    // Assign default options
     options = ObjectAssign({
       position: { x: 0, y: 0, z: 0 },
       rotation: { x: 0, y: 0, z: 0 },
@@ -223,13 +223,13 @@ class EntityFactory {
       }
 
       // Create 3D object children
-      options.children.forEach((childOptions, index) => {
+      options.children?.forEach((childOptions, index) => {
         let child;
         if (childOptions.isObject3D) {
           child = clone(childOptions);
         }
         else {
-          const factories = [CameraFactory, LightFactory, MeshFactory, DOMFactory];
+          const factories = [CameraFactory, MeshFactory, LightFactory];
           const factory = factories.find(f => f[childOptions.type]);
           if (factory) {
             child = factory.create(childOptions);
@@ -237,6 +237,9 @@ class EntityFactory {
         }
 
         if (child) {
+          // Add optional 3D object event listeners
+          this.createChildEvents(child, childOptions.events);
+
           // Add loaded child and dispatch event
           object3D.add(child);
           object3D.dispatchEvent({ type: 'childLoaded', child, index, total: options.children.length });
@@ -251,6 +254,21 @@ class EntityFactory {
 
     // Return newly created 3D object
     return object3D;
+  }
+
+  static createChildEvents(child, events) {
+    // Loop through all event options and add event listeners by type
+    events?.forEach(event => {
+      child.addEventListener(event.type, e => {
+        // Run event if it exists
+        try {
+          EntityEvents[event.name](e);
+        }
+        catch(error) {
+          console.error(error);
+        }
+      })
+    });
   }
 
   static createMixer(object3D) {

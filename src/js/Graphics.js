@@ -1,12 +1,11 @@
 import { Fog, PCFSoftShadowMap, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
-import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { RenderPixelatedPass } from 'three/examples/jsm/postprocessing/RenderPixelatedPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js';
-import Stats from './Stats.js';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
 
 class Graphics {
   constructor(canvas = document.createElement('canvas')) {
@@ -21,21 +20,13 @@ class Graphics {
 
     // Add stats
     this.stats = new Stats();
+    this.stats.dom.style = 'position: fixed; bottom: 0px; left: 0px; cursor: pointer; opacity: 0.9; z-index: 10000;';
 
     // Initialize renderer components
-    window.devicePixelRatio = 1; // Force pixelation
     this.renderer = new WebGLRenderer({ alpha: true, canvas: canvas });
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.shadowMap.enabled = false;
     this.renderer.shadowMap.type = PCFSoftShadowMap;
-
-    // Initialize CSS2DRenderer
-    this.rendererCSS = new CSS2DRenderer();
-    this.rendererCSS.domElement.className = 'CSS2DRenderer';
-    this.rendererCSS.domElement.style.position = 'absolute';
-    this.rendererCSS.domElement.style.pointerEvents = 'none';
-    this.rendererCSS.domElement.style.top = '0px';
-    this.rendererCSS.domElement.style.left = '0px';
 
     // Assign post processing on top of renderer
     this.renderPass = new RenderPass(this.scene, this.camera);
@@ -48,7 +39,7 @@ class Graphics {
     this.outlinePass.edgeThickness = 0.125; // Default 1
     this.outlinePass.visibleEdgeColor.set('#000000');
     this.outlinePass.hiddenEdgeColor.set('#000000');
-    this.outlinePass.enabled = true;
+    this.outlinePass.enabled = false;
 
     // Anti-aliasing
     this.smaaPass = new SMAAPass(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio);
@@ -77,7 +68,6 @@ class Graphics {
   render() {
     this.stats.begin();
     this.composer.render();
-    this.rendererCSS.render(this.scene, this.camera);
     this.stats.end();
   }
 
@@ -103,9 +93,8 @@ class Graphics {
     this.camera.updateProjectionMatrix();
 
     // Update renderer size
-    this.composer.setSize(width, height);
     this.renderer.setSize(width, height);
-    this.rendererCSS.setSize(width, height);
+    this.composer.setSize(width, height);
   }
 
   setCamera(camera) {
@@ -145,6 +134,14 @@ class Graphics {
 
   removeStats() {
     document.body.removeChild(this.stats.dom);
+  }
+
+  showStats() {
+    this.stats.dom.style.display = 'block';
+  }
+
+  hideStats() {
+    this.stats.dom.style.display = 'none';
   }
 }
 

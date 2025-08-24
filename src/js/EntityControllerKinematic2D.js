@@ -45,6 +45,10 @@ class EntityControllerKinematic2D {
     this.entity = entity;
     this.entity.addEventListener('updated', this.onUpdated);
     this.entity.addEventListener('rendered', this.onRendered);
+
+    // Update camera position/rotation
+    this.camera.position.copy(this.cameraOffset);
+    this.camera.lookAt(this.entity.object3D.position);
   }
 
   onUpdated = ({ loop }) => {

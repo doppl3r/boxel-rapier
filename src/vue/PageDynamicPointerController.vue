@@ -6,7 +6,6 @@
 
   // Initialize Vue components
   const canvas = ref();
-  const rendererCSS = ref();
   const progress = ref({ url: '', itemsLoaded: 0, itemsTotal: 0 });
   const entityController = new EntityControllerDynamicPointer2D();
 
@@ -39,7 +38,6 @@
 
     // Replace canvas element
     canvas.value.replaceWith(game.graphics.canvas);
-    rendererCSS.value.replaceWith(game.graphics.rendererCSS.domElement)
   });
 
   onUnmounted(() => {
@@ -53,7 +51,6 @@
 <template>
   <div>
     <canvas ref="canvas"></canvas>
-    <div ref="rendererCSS"></div>
     <ProgressBar :progress="progress" />
   </div>
 </template>
